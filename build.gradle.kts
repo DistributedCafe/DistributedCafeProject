@@ -4,8 +4,8 @@ plugins {
 
 sonar {
     properties {
-        property("sonar.projectKey", "DistributedCafe_DistributedCafeProject")
-        property("sonar.organization", "distributedcafe")
-        property("sonar.host.url", "https://sonarcloud.io")
+        property("systemProp.sonar.projectKey")
+        property("systemProp.sonar.organization")
+        property("systemProp.sonar.host.url")
     }
 }
