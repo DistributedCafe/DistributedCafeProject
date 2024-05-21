@@ -1,4 +1,3 @@
-
 name: Main project workflow
 
 on:
@@ -12,8 +11,8 @@ jobs:
     name: check format kotlin
     uses: ./.github/workflows/ktlint_check_pipeline.yml
 
-  jacoco:
+  test:
     needs:
       - ktlintCheck
-    name: test and coverage kotlin
+    name: test kotlin
     uses: ./.github/workflows/kotlin_test_pipeline.yml
