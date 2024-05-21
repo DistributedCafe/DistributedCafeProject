@@ -1,5 +1,15 @@
 [versions]
 sonarqube = "4.4.1.3373"
+kotlin = "1.8.22"
+kotest = "5.8.0"
+
+[libraries]
+kotest-junit5-jvm = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
+kotest-assertions-core-jvm = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
+
+[bundles]
+kotlin-testing = [ "kotest-junit5-jvm", "kotest-assertions-core-jvm" ]
 
 [plugins]
 sonarqube = {id = "org.sonarqube", version.ref = "sonarqube"}
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
