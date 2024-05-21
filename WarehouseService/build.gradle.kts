@@ -31,3 +31,11 @@ tasks.jacocoTestReport {
         csv.required.set(true)
     }
 }
+
+ktlint {
+    filter {
+        include("**/main/kotlin/**/*.kt")
+        exclude("**/*.gradle.kts")
+    }
+}
+
