@@ -2,14 +2,24 @@
 sonarqube = "4.4.1.3373"
 kotlin = "1.8.22"
 kotest = "5.8.0"
+dokka = "1.9.20"
+ktlint = "12.1.0"
+cucumber = "7.17.0"
+jacoco = "0.8.11"
 
 [libraries]
 kotest-junit5-jvm = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
 kotest-assertions-core-jvm = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
+junit-vintage = {module = "org.junit.vintage:junit-vintage-engine"}
+cucumber-java = { module = "io.cucumber:cucumber-java", version.ref = "cucumber"}
+cucumber-junit = { module = "io.cucumber:cucumber-junit", version.ref = "cucumber"}
 
 [bundles]
 kotlin-testing = [ "kotest-junit5-jvm", "kotest-assertions-core-jvm" ]
+cucumber-testing = ["cucumber-java", "cucumber-junit"]
 
 [plugins]
 sonarqube = {id = "org.sonarqube", version.ref = "sonarqube"}
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
