@@ -1,5 +1,5 @@
 [versions]
-sonarqube = "4.4.1.3373"
+sonarqube = "5.0.0.4638"
 kotlin = "1.8.22"
 kotest = "5.8.0"
 dokka = "1.9.20"
