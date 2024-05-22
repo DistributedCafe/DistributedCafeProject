@@ -11,6 +11,10 @@ jobs:
     name: check format kotlin
     uses: ./.github/workflows/ktlint_check_pipeline.yml
 
+  tsFormatCheck:
+    name: check format ts
+    uses: ./.github/workflows/ts_format_check_pipeline.yml
+
   test:
     needs:
       - ktlintCheck
