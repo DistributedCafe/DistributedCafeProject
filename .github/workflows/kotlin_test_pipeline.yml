@@ -2,9 +2,8 @@ name: Test workflow
 
 on:
   workflow_call:
-
 jobs:
-  jacoco-java-gradle:
+  kotlinTest:
     strategy:
       matrix:
         java-version: [ 11, 16, 17, 18 ]

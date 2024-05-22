@@ -3,7 +3,7 @@ name: Ts format check workflow
 on:
   workflow_call:
 jobs:
-  formatCheck:
+  tsFormatCheck:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]
