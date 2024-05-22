@@ -1,8 +1,12 @@
 name: Main project workflow
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - develop
 jobs:
+
   ktlintCheck:
     name: check format kotlin
     uses: ./.github/workflows/ktlint_check_pipeline.yml
