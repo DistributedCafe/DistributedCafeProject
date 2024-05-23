@@ -18,6 +18,7 @@ dependencies {
     testImplementation(libs.bundles.cucumber.testing)
     testImplementation(libs.junit.vintage)
     implementation(libs.bundles.vertx)
+    implementation(libs.mongodb.driver)
 }
 
 tasks.test {

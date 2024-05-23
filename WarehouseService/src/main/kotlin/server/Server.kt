@@ -1,12 +1,12 @@
 package server
 
-import io.vertx.core.*
 import io.vertx.kotlin.core.http.httpServerOptionsOf
+import io.vertx.kotlin.coroutines.CoroutineVerticle
 
 
-class Server : AbstractVerticle() {
+class Server : CoroutineVerticle() {
 
-    override fun start() {
+    override suspend fun start() {
         vertx.createHttpServer(
             httpServerOptionsOf(
                 port = 8080,
