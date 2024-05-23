@@ -6,6 +6,7 @@ dokka = "1.9.20"
 ktlint = "12.1.0"
 cucumber = "7.17.0"
 jacoco = "0.8.11"
+vertx = "4.5.7"
 
 [libraries]
 kotest-junit5-jvm = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
@@ -13,10 +14,13 @@ kotest-assertions-core-jvm = { module = "io.kotest:kotest-assertions-core-jvm", 
 junit-vintage = {module = "org.junit.vintage:junit-vintage-engine"}
 cucumber-java = { module = "io.cucumber:cucumber-java", version.ref = "cucumber"}
 cucumber-junit = { module = "io.cucumber:cucumber-junit", version.ref = "cucumber"}
+vertx-core = { module = "io.vertx:vertx-core", version.ref = "vertx"}
+vertx-kotlin = { module = "io.vertx:vertx-lang-kotlin", version.ref = "vertx"}
 
 [bundles]
 kotlin-testing = [ "kotest-junit5-jvm", "kotest-assertions-core-jvm" ]
 cucumber-testing = ["cucumber-java", "cucumber-junit"]
+vertx = ["vertx-core", "vertx-kotlin"]
 
 [plugins]
 sonarqube = {id = "org.sonarqube", version.ref = "sonarqube"}

@@ -17,6 +17,7 @@ dependencies {
     testImplementation(libs.bundles.kotlin.testing)
     testImplementation(libs.bundles.cucumber.testing)
     testImplementation(libs.junit.vintage)
+    implementation(libs.bundles.vertx)
 }
 
 tasks.test {
