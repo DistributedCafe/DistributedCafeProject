@@ -15,6 +15,7 @@ kotest-assertions-core-jvm = { module = "io.kotest:kotest-assertions-core-jvm", 
 junit-vintage = {module = "org.junit.vintage:junit-vintage-engine"}
 cucumber-java = { module = "io.cucumber:cucumber-java", version.ref = "cucumber"}
 cucumber-junit = { module = "io.cucumber:cucumber-junit", version.ref = "cucumber"}
+cucumber-java8 = {module = "io.cucumber:cucumber-java8",  version.ref="cucumber"}
 vertx-core = { module = "io.vertx:vertx-core", version.ref = "vertx"}
 vertx-kotlin = { module = "io.vertx:vertx-lang-kotlin", version.ref = "vertx"}
 vertx-kotlin-coroutines = {module = "io.vertx:vertx-lang-kotlin-coroutines", version.ref="vertx"}
@@ -22,7 +23,7 @@ mongodb-driver = {module = "org.mongodb:mongodb-driver-kotlin-coroutine", versio
 
 [bundles]
 kotlin-testing = [ "kotest-junit5-jvm", "kotest-assertions-core-jvm" ]
-cucumber-testing = ["cucumber-java", "cucumber-junit"]
+cucumber-testing = ["cucumber-java", "cucumber-junit", "cucumber-java8"]
 vertx = ["vertx-core", "vertx-kotlin", "vertx-kotlin-coroutines"]
 
 [plugins]
