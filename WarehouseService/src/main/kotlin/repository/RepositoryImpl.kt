@@ -2,6 +2,8 @@ package repository
 
 import com.mongodb.MongoException
 import com.mongodb.client.model.Filters
+import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Projections
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import io.vertx.core.*
@@ -9,6 +11,8 @@ import io.vertx.kotlin.core.http.httpServerOptionsOf
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
+import org.bson.BsonDocument
+import org.bson.conversions.Bson
 import java.util.logging.Filter
 import java.util.stream.Stream
 
@@ -34,7 +38,7 @@ class RepositoryImpl(mongoAddress: String) : Repository{
     }
 
     override suspend fun isIngredientPresent(name: String): Boolean {
-        TODO("Not yet implemented")
+        return collection.find(eq(Ingredient::name.name, name)).toList().isNotEmpty()
     }
 
     override suspend fun getIngredientQuantity(name: String): Int {

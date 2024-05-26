@@ -14,3 +14,7 @@ Feature: Interacting with the warehouse
       |milk     | 99    |      ERROR   |
       |coffee         | 5 | OK         |
 
+  Scenario: Manager wants to check if milk is present in the warehouse
+    Given only milk and tea are in the warehouse
+    When Manager asks if milk is present
+    Then Manager receives "true"

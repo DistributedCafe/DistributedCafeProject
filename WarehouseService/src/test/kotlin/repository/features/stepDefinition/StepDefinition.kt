@@ -23,6 +23,7 @@ class StepDefinition {
     private val ingredients = listOf(Ingredient("milk", 99), Ingredient("tea", 4))
 
     private var warehouseResponse: String = ""
+    private var isMilkPresent: Boolean = false
 
 
     @Given("only milk and tea are in the warehouse")
@@ -58,6 +59,16 @@ class StepDefinition {
     fun managerReceivesResponse(expectedResponse: String){
         assertEquals(expectedResponse, warehouseResponse)
 
+    }
+
+    @When("Manager asks if milk is present")
+    fun managerAsksIfMilkIsPresent() {
+        runBlocking { isMilkPresent = warehouse.isIngredientPresent("milk") }
+    }
+
+    @Then("Manager receives {string}")
+    fun managerReceives(expectedResponse: String) {
+        assertEquals(isMilkPresent.toString(), expectedResponse)
     }
 
 
