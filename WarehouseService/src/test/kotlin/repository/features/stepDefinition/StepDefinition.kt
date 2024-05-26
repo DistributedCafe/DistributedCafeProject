@@ -11,19 +11,19 @@ import repository.Ingredient
 import repository.RepositoryImpl
 
 class StepDefinition {
-    val mongoAddress = "mongodb://localhost:27017/"
+    private val mongoAddress = "mongodb://localhost:27017/"
 
-    val db = MongoClient.create(mongoAddress).getDatabase("Warehouse")
-    val collection = db.getCollection<Ingredient>("Ingredient")
+    private val db = MongoClient.create(mongoAddress).getDatabase("Warehouse")
+    private val collection = db.getCollection<Ingredient>("Ingredient")
 
-    val warehouse = RepositoryImpl(mongoAddress)
+    private val warehouse = RepositoryImpl(mongoAddress)
 
     private var actualAnswer : List<Ingredient> = ArrayList()
+    private val ingredients = listOf(Ingredient("milk", 99), Ingredient("tea", 4))
 
-    @Given("milk and tea are in the warehouse")
+
+    @Given("only milk and tea are in the warehouse")
         fun milkAndTeaInTheWarehouse() {
-
-        val ingredients = listOf(Ingredient("milk", 99), Ingredient("tea", 4))
 
         runBlocking {
 
@@ -39,8 +39,11 @@ class StepDefinition {
         runBlocking { actualAnswer = warehouse.getAllIngredients() }
     }
 
-    @Then("Manager receives")
-    fun managerReceives(expectedAnswer: List<String>) {
-        assertEquals(expectedAnswer, actualAnswer.map { i -> i.name })
+    @Then("Manager receives a list of ingredients with only milk and tea")
+    fun managerReceives() {
+
+        assertEquals(ingredients, actualAnswer)
     }
+
+
 }
