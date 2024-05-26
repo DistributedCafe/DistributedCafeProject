@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import repository.Ingredient
 import repository.RepositoryImpl
+import repository.WarehouseResponse
 
 class StepDefinition {
     private val mongoAddress = "mongodb://localhost:27017/"
@@ -20,6 +21,8 @@ class StepDefinition {
 
     private var actualAnswer : List<Ingredient> = ArrayList()
     private val ingredients = listOf(Ingredient("milk", 99), Ingredient("tea", 4))
+
+    private var warehouseResponse: String = ""
 
 
     @Given("only milk and tea are in the warehouse")
@@ -43,6 +46,18 @@ class StepDefinition {
     fun managerReceives() {
 
         assertEquals(ingredients, actualAnswer)
+    }
+
+    @When("Manager adds an ingredient with {word} and {word}")
+    fun managerAddsAnIngredient(name: String, quantity: String){
+        runBlocking { warehouseResponse = warehouse.createIngredient(name, quantity.toInt()).toString() }
+
+    }
+
+    @Then("Manager receives a {word} from the warehouse")
+    fun managerReceivesResponse(expectedResponse: String){
+        assertEquals(expectedResponse, warehouseResponse)
+
     }
 
 

@@ -1,5 +1,6 @@
 package repository
 
+import com.mongodb.MongoException
 import com.mongodb.client.model.Filters
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
@@ -16,13 +17,20 @@ class RepositoryImpl(mongoAddress: String) : Repository{
 
     val mongoClient = MongoClient.create(mongoAddress)
     val db = mongoClient.getDatabase("Warehouse")
+    val collection = db.getCollection<Ingredient>("Ingredient")
 
     override suspend fun getAllIngredients(): List<Ingredient> {
-        return db.getCollection<Ingredient>("Ingredient").find<Ingredient>().toList()
+        return collection.find<Ingredient>().toList()
     }
 
     override suspend fun createIngredient(name: String, quantity: Int): WarehouseResponse {
-        TODO("Not yet implemented")
+        return try {
+            collection.insertOne(Ingredient(name, quantity)).wasAcknowledged()
+            WarehouseResponse.OK
+        } catch (e: MongoException){
+            WarehouseResponse.ERROR
+        }
+
     }
 
     override suspend fun isIngredientPresent(name: String): Boolean {
