@@ -32,11 +32,20 @@ Feature: Interacting with the warehouse
       |milk     |99       |
       |coffee   |null     |
 
-  Scenario Outline: Manager wants to restock the tea in the warehouse
+  Scenario Outline: System wants to decrease the <name> quantity in the warehouse
+    Given there are 99 units of milk and 4 units of tea in the warehouse
+    When System decreases the <name> quantity by <quantity>
+    Then System receives <response>
+    Examples:
+      |name   |quantity |response |
+      |coffee |1        |ERROR    |
+      |milk   |10       |OK       |
+
+  Scenario Outline: Manager wants to restock the <name> in the warehouse
     Given there are 99 units of milk and 4 units of tea in the warehouse
     When Manager restocks the <name> adding <quantity> units
     Then Manager receives <response>
     Examples:
       |name   |quantity |response |
-      |tea    |5        |OK       |
       |coffee |10       |ERROR    |
+      |tea    |5        |OK       |

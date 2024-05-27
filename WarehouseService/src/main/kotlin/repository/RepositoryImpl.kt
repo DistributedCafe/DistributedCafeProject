@@ -64,7 +64,8 @@ class RepositoryImpl(mongoAddress: String) : Repository {
         name: String,
         quantity: Int,
     ): WarehouseResponse {
-        TODO("Not yet implemented")
+        // TODO non si può andare sotto allo 0
+        return updateIngredientQuantity(name, -quantity)
     }
 
     override suspend fun restock(
