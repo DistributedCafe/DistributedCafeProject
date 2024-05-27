@@ -20,6 +20,11 @@ class StepDefinitionGetAllIngredients {
         runBlocking { actualAnswer = warehouse.getAllIngredients() }
     }
 
+    @When("Manager asks for the list of available ingredients in the warehouse")
+    fun managerAsksForTheListOfAvailableIngredientsInTheWarehouse() {
+        runBlocking { actualAnswer = warehouse.getAllAvailableIngredients() }
+    }
+
     @Then("Manager receives a list of ingredients with only milk and tea")
     fun managerReceives() {
         Assertions.assertEquals(ingredients, actualAnswer)

@@ -6,7 +6,7 @@ import io.cucumber.java.en.Given
 import kotlinx.coroutines.runBlocking
 import repository.Ingredient
 
-class StepDefinitionGiven() {
+class StepDefinitionGiven {
     private val mongoAddress = "mongodb://localhost:27017/"
 
     private val db = MongoClient.create(mongoAddress).getDatabase("Warehouse")
@@ -19,6 +19,14 @@ class StepDefinitionGiven() {
         runBlocking {
             collection.deleteMany(Filters.empty())
             collection.insertMany(ingredients)
+        }
+    }
+
+    @Given("there are 99 units of milk, 4 units of tea and 0 unit of coffee in the warehouse")
+    fun thereAre99UnitsOfMilk4UnitsOfTeaAnd0UnitOfCoffeeInTheWarehouse() {
+        thereAre99UnitsOfMilkAnd4UnitsOfTeaInTheWarehouse()
+        runBlocking {
+            collection.insertOne(Ingredient("coffee", 0))
         }
     }
 }

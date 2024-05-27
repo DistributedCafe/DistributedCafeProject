@@ -49,3 +49,8 @@ Feature: Interacting with the warehouse
       |name   |quantity |response |
       |coffee |10       |ERROR    |
       |tea    |5        |OK       |
+
+  Scenario: Manager wants to check the list of available ingredients in the warehouse
+    Given there are 99 units of milk, 4 units of tea and 0 unit of coffee in the warehouse
+    When Manager asks for the list of available ingredients in the warehouse
+    Then Manager receives a list of ingredients with only milk and tea

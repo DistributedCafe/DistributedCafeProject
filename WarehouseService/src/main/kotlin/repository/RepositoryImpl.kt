@@ -76,6 +76,7 @@ class RepositoryImpl(mongoAddress: String) : Repository {
     }
 
     override suspend fun getAllAvailableIngredients(): List<Ingredient> {
-        TODO("Not yet implemented")
+        return getAllIngredients()
+            .filter { i -> getIngredientQuantity(i.name) != null && getIngredientQuantity(i.name)!! > 0 }
     }
 }
