@@ -10,16 +10,24 @@ Feature: Interacting with the warehouse
     When Manager adds an ingredient with <name> and <quantity>
     Then Manager receives a <response> from the warehouse
     Examples:
-      |name |  quantity |response |
-      |milk     | 99    |      ERROR   |
-      |coffee         | 5 | OK         |
+      |name     |quantity |response |
+      |milk     |99       |ERROR    |
+      |coffee   |5        |OK       |
 
-  Scenario: Manager wants to check if milk is present in the warehouse
+  Scenario Outline: Manager wants to check if <name> is present in the warehouse
     Given there are 99 units of milk and 4 units of tea in the warehouse
-    When Manager asks if milk is present
-    Then Manager receives "true"
+    When Manager asks if <name> is present
+    Then Manager receives <response>
+    Examples:
+      |name     |response |
+      |milk     |true     |
+      |coffee   |false    |
 
-  Scenario: Manager wants to check the quantity of milk in the warehouse
+  Scenario Outline: Manager wants to check the quantity of <name> in the warehouse
     Given there are 99 units of milk and 4 units of tea in the warehouse
-    When Manager asks the quantity of the milk
-    Then Manager receives 99
+    When Manager asks the quantity of the <name>
+    Then Manager receives <quantity> as quantity
+    Examples:
+      |name     |quantity |
+      |milk     |99       |
+      |coffee   |null     |

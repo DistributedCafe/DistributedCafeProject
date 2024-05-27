@@ -56,23 +56,25 @@ class StepDefinition {
         assertEquals(expectedResponse, warehouseResponse)
     }
 
-    @When("Manager asks if milk is present")
-    fun managerAsksIfMilkIsPresent() {
-        runBlocking { isMilkPresent = warehouse.isIngredientPresent("milk") }
+    @When("Manager asks if {word} is present")
+    fun managerAsksIfMilkIsPresent(name: String) {
+        runBlocking { isMilkPresent = warehouse.isIngredientPresent(name) }
     }
 
-    @Then("Manager receives {string}")
+    @Then("Manager receives {word}")
     fun managerReceives(expectedResponse: String) {
         assertEquals(isMilkPresent.toString(), expectedResponse)
     }
 
-    @When("Manager asks the quantity of the milk")
-    fun managerAsksTheQuantityOfTheMilk() {
-        runBlocking { milkQuantity = warehouse.getIngredientQuantity("milk") }
+    @When("Manager asks the quantity of the {word}")
+    fun managerAsksTheQuantityOfTheMilk(name: String) {
+        runBlocking {
+            milkQuantity = warehouse.getIngredientQuantity(name)
+        }
     }
 
-    @Then("Manager receives {int}")
-    fun managerReceives(expectedResponse: Int) {
-        assertEquals(milkQuantity, expectedResponse)
+    @Then("Manager receives {word} as quantity")
+    fun managerReceivesAsQuantity(expectedResponse: String) {
+        assertEquals(milkQuantity.toString(), expectedResponse)
     }
 }
