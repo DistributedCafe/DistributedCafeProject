@@ -1,10 +1,8 @@
 package repository
 
 import com.mongodb.MongoException
-import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Projections
-import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.model.Updates
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import kotlinx.coroutines.flow.firstOrNull
@@ -38,26 +36,34 @@ class RepositoryImpl(mongoAddress: String) : Repository {
     override suspend fun getIngredientQuantity(name: String): Int? {
         val projectionQuantity = Projections.fields(Projections.include(Ingredient::quantity.name))
         // TODO error management (not return 0)
-        return collection.withDocumentClass<Quantity>().find(eq(Ingredient::name.name, name)).projection(projectionQuantity).firstOrNull()?.quantity
+        return collection.withDocumentClass<Quantity>().find(
+            eq(Ingredient::name.name, name),
+        ).projection(projectionQuantity).firstOrNull()?.quantity
     }
 
-    private suspend fun updateIngredientQuantity(name: String, quantity: Int): WarehouseResponse{
+    private suspend fun updateIngredientQuantity(
+        name: String,
+        quantity: Int,
+    ): WarehouseResponse {
         val oldQuantity = getIngredientQuantity(name)
-        return if ( oldQuantity != null){
+        return if (oldQuantity != null) {
             val filter = eq(Ingredient::name.name, name)
             val updates = Updates.combine(Updates.set(Ingredient::quantity.name, oldQuantity + quantity))
             val res = collection.updateOne(filter, updates)
-            if (res.modifiedCount > 0){
+            if (res.modifiedCount > 0) {
                 WarehouseResponse.OK
-            }else{
+            } else {
                 WarehouseResponse.ERROR
             }
-        }else {
+        } else {
             WarehouseResponse.ERROR
         }
     }
 
-    override suspend fun decreaseIngredientQuantity(name: String, quantity: Int): WarehouseResponse {
+    override suspend fun decreaseIngredientQuantity(
+        name: String,
+        quantity: Int,
+    ): WarehouseResponse {
         TODO("Not yet implemented")
     }
 

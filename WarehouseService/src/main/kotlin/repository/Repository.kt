@@ -36,7 +36,10 @@ interface Repository {
      * @param quantity to remove from the warehouse
      * @return if the new ingredient has been successfully updated
      */
-    suspend fun decreaseIngredientQuantity(name: String, quantity: Int): WarehouseResponse
+    suspend fun decreaseIngredientQuantity(
+        name: String,
+        quantity: Int,
+    ): WarehouseResponse
 
     /**
      * @param name of the ingredient to restock
