@@ -77,4 +77,16 @@ class StepDefinition {
     fun managerReceivesAsQuantity(expectedResponse: String) {
         assertEquals(milkQuantity.toString(), expectedResponse)
     }
+
+    @When("Manager restocks the {word} adding {word} units")
+    fun managerRestocksTea(name: String, quantity: String) {
+        runBlocking {
+            warehouseResponse = warehouse.restock(name, quantity.toInt()).toString()
+        }
+    }
+
+    @Then("Manager receives {word} as a response")
+    fun managerReceivesFromTheSystem(expectedResponse: String) {
+        assertEquals(warehouseResponse, expectedResponse)
+    }
 }

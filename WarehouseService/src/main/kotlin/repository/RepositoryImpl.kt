@@ -1,16 +1,19 @@
 package repository
 
 import com.mongodb.MongoException
+import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Projections
+import com.mongodb.client.model.UpdateOptions
+import com.mongodb.client.model.Updates
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 
 class RepositoryImpl(mongoAddress: String) : Repository {
-    val mongoClient = MongoClient.create(mongoAddress)
-    val db = mongoClient.getDatabase("Warehouse")
-    val collection = db.getCollection<Ingredient>("Ingredient")
+    private val mongoClient = MongoClient.create(mongoAddress)
+    private val db = mongoClient.getDatabase("Warehouse")
+    private val collection = db.getCollection<Ingredient>("Ingredient")
 
     override suspend fun getAllIngredients(): List<Ingredient> {
         return collection.find<Ingredient>().toList()
@@ -38,11 +41,31 @@ class RepositoryImpl(mongoAddress: String) : Repository {
         return collection.withDocumentClass<Quantity>().find(eq(Ingredient::name.name, name)).projection(projectionQuantity).firstOrNull()?.quantity
     }
 
+    private suspend fun updateIngredientQuantity(name: String, quantity: Int): WarehouseResponse{
+        val oldQuantity = getIngredientQuantity(name)
+        return if ( oldQuantity != null){
+            val filter = eq(Ingredient::name.name, name)
+            val updates = Updates.combine(Updates.set(Ingredient::quantity.name, oldQuantity + quantity))
+            val res = collection.updateOne(filter, updates)
+            if (res.modifiedCount > 0){
+                WarehouseResponse.OK
+            }else{
+                WarehouseResponse.ERROR
+            }
+        }else {
+            WarehouseResponse.ERROR
+        }
+    }
+
+    override suspend fun decreaseIngredientQuantity(name: String, quantity: Int): WarehouseResponse {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun restock(
         name: String,
         quantity: Int,
     ): WarehouseResponse {
-        TODO("Not yet implemented")
+        return updateIngredientQuantity(name, quantity)
     }
 
     override suspend fun getAllAvailableIngredients(): List<Ingredient> {

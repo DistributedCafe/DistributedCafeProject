@@ -31,3 +31,12 @@ Feature: Interacting with the warehouse
       |name     |quantity |
       |milk     |99       |
       |coffee   |null     |
+
+  Scenario Outline: Manager wants to restock the tea in the warehouse
+    Given there are 99 units of milk and 4 units of tea in the warehouse
+    When Manager restocks the <name> adding <quantity> units
+    Then Manager receives <response> as a response
+    Examples:
+      |name   |quantity |response |
+      |tea    |5        |OK       |
+      |coffee |10       |ERROR    |
