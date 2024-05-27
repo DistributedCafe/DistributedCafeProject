@@ -27,7 +27,7 @@ interface Repository {
 
     /**
      * @param name of the ingredient
-     * @return the quantity of that ingredient
+     * @return the quantity of that ingredient if it's present in the warehouse, otherwise it returns null
      */
     suspend fun getIngredientQuantity(name: String): Int?
 
