@@ -7,8 +7,8 @@ Feature: Interacting with the warehouse
 
   Scenario Outline: Manager adds a new ingredient
     Given there are 99 units of milk and 4 units of tea in the warehouse
-    When Manager adds an ingredient with <name> and <quantity>
-    Then Manager receives a <response> from the warehouse
+    When Manager adds an ingredient with name <name> and quantity <quantity>
+    Then Manager receives <response>
     Examples:
       |name     |quantity |response |
       |milk     |99       |ERROR    |
@@ -26,7 +26,7 @@ Feature: Interacting with the warehouse
   Scenario Outline: Manager wants to check the quantity of <name> in the warehouse
     Given there are 99 units of milk and 4 units of tea in the warehouse
     When Manager asks the quantity of the <name>
-    Then Manager receives <quantity> as quantity
+    Then Manager receives <quantity>
     Examples:
       |name     |quantity |
       |milk     |99       |
@@ -35,7 +35,7 @@ Feature: Interacting with the warehouse
   Scenario Outline: Manager wants to restock the tea in the warehouse
     Given there are 99 units of milk and 4 units of tea in the warehouse
     When Manager restocks the <name> adding <quantity> units
-    Then Manager receives <response> as a response
+    Then Manager receives <response>
     Examples:
       |name   |quantity |response |
       |tea    |5        |OK       |
