@@ -1,11 +1,9 @@
 package repository.features.stepDefinition
 
-import com.mongodb.kotlin.client.coroutine.MongoClient
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
-import repository.Ingredient
 import repository.RepositoryImpl
 
 class StepDefinitionDecreaseIngredientQuantity {
