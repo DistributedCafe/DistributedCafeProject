@@ -2,16 +2,14 @@ package repository.features.stepDefinition
 
 import MongoOptions
 import com.mongodb.client.model.Filters
-import com.mongodb.kotlin.client.coroutine.MongoClient
 import io.cucumber.java.en.Given
 import kotlinx.coroutines.runBlocking
 import domain.Ingredient
+import repository.MongoUtils
 
 class StepDefinitionGiven {
-    private val mongoOptions = MongoOptions()
 
-    private val db = MongoClient.create(mongoOptions.mongoAddress).getDatabase(mongoOptions.databaseName)
-    private val collection = db.getCollection<Ingredient>(mongoOptions.collectionName)
+    private val collection = MongoUtils.getMongoCollection(MongoOptions())
 
     private val ingredients = listOf(Ingredient("milk", 99), Ingredient("tea", 4))
 

@@ -1,10 +1,8 @@
 package repository
 
-import MongoOptions
+import BaseTest
 import com.mongodb.client.model.Filters
-import com.mongodb.kotlin.client.coroutine.MongoClient
 import domain.Ingredient
-import io.kotest.core.spec.style.AnnotationSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
@@ -13,21 +11,11 @@ import kotlinx.coroutines.flow.toList
 /**
  * Test class for Repository with kotest
  */
-class RepositoryTest : AnnotationSpec() {
+class RepositoryTest : BaseTest() {
+
     private val decreaseQuantity = 1
     private val increaseQuantity = 1
-
-    private val mongoOptions = MongoOptions()
-
-    private val db = MongoClient.create(mongoOptions.mongoAddress).getDatabase(mongoOptions.databaseName)
-    private val collection = db.getCollection<Ingredient>(mongoOptions.collectionName)
-    private val milk = Ingredient("milk", 99)
-    private val tea = Ingredient("tea", 4)
-    private val coffee = Ingredient("coffee", 1)
-    private val notAvailableCoffee = Ingredient(coffee.name, 0)
-    private val ingredients = listOf(milk, tea)
-
-    private val repository = RepositoryImpl(mongoOptions)
+    private val repository = RepositoryImpl()
 
     @BeforeEach
     suspend fun beforeTest() {

@@ -1,6 +1,5 @@
 package repository.features.stepDefinition
 
-import MongoOptions
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import kotlinx.coroutines.runBlocking
@@ -9,7 +8,7 @@ import repository.RepositoryImpl
 
 class StepDefinition {
 
-    private val warehouse = RepositoryImpl(MongoOptions())
+    private val warehouse = RepositoryImpl()
     private var actualAnswer: String = ""
 
     @When("Manager adds an ingredient with name {word} and quantity {word}")

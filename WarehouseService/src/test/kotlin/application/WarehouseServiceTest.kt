@@ -1,23 +1,11 @@
 package application
 
-import MongoOptions
+import BaseTest
 import com.mongodb.client.model.Filters
-import com.mongodb.kotlin.client.coroutine.MongoClient
 import domain.Ingredient
-import io.kotest.core.spec.style.AnnotationSpec
 import io.kotest.matchers.shouldBe
 
-open class WarehouseServiceTest : AnnotationSpec() {
-
-    private val mongoOptions = MongoOptions()
-
-    private val db = MongoClient.create(mongoOptions.mongoAddress).getDatabase(mongoOptions.databaseName)
-    private val collection = db.getCollection<Ingredient>(mongoOptions.collectionName)
-    private val milk = Ingredient("milk", 99)
-    private val tea = Ingredient("tea", 4)
-    private val coffee = Ingredient("coffee", 1)
-    private val notAvailableCoffee = Ingredient(coffee.name, 0)
-    private val ingredients = listOf(milk, tea)
+class WarehouseServiceTest : BaseTest() {
 
     private val warehouseService = WarehouseServiceImpl()
 

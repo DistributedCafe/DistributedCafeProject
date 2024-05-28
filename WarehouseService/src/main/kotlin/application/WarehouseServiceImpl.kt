@@ -1,12 +1,11 @@
 package application
 
-import MongoOptions
 import domain.Ingredient
 import repository.RepositoryImpl
 import repository.WarehouseResponse
 
 class WarehouseServiceImpl : WarehouseService {
-    val repository = RepositoryImpl(MongoOptions())
+    val repository = RepositoryImpl()
 
     override suspend fun getAllIngredients(): IngredientsResponse {
         val ingredients = repository.getAllIngredients()
