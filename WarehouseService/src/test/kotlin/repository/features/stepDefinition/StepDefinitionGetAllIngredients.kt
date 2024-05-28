@@ -4,7 +4,7 @@ import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
-import repository.Ingredient
+import domain.Ingredient
 import repository.RepositoryImpl
 
 class StepDefinitionGetAllIngredients {

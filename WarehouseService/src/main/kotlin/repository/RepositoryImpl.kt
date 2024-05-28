@@ -7,6 +7,7 @@ import com.mongodb.client.model.Updates
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
+import domain.Ingredient
 
 class RepositoryImpl(mongoAddress: String) : Repository {
     private val mongoClient = MongoClient.create(mongoAddress)
@@ -80,3 +81,5 @@ class RepositoryImpl(mongoAddress: String) : Repository {
             .filter { i -> getIngredientQuantity(i.name) != null && getIngredientQuantity(i.name)!! > 0 }
     }
 }
+
+data class Quantity(val quantity: Int)

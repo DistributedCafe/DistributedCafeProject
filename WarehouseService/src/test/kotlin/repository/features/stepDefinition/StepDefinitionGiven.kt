@@ -4,7 +4,7 @@ import com.mongodb.client.model.Filters
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import io.cucumber.java.en.Given
 import kotlinx.coroutines.runBlocking
-import repository.Ingredient
+import domain.Ingredient
 
 class StepDefinitionGiven {
     private val mongoAddress = "mongodb://localhost:27017/"

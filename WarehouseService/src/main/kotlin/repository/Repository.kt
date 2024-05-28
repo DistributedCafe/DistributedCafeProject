@@ -1,4 +1,5 @@
 package repository
+import domain.Ingredient
 
 /**
  * Repository between the domain and the database
