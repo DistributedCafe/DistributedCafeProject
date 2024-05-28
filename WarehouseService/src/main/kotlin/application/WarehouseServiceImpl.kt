@@ -1,11 +1,12 @@
 package application
 
+import MongoOptions
 import domain.Ingredient
 import repository.RepositoryImpl
 import repository.WarehouseResponse
 
 class WarehouseServiceImpl : WarehouseService {
-    val repository = RepositoryImpl("mongodb://localhost:27017/")
+    val repository = RepositoryImpl(MongoOptions())
 
     override suspend fun getAllIngredients(): IngredientsResponse {
         val ingredients = repository.getAllIngredients()

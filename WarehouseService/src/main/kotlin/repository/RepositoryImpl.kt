@@ -1,5 +1,6 @@
 package repository
 
+import MongoOptions
 import com.mongodb.MongoException
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Projections
@@ -9,10 +10,10 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 import domain.Ingredient
 
-class RepositoryImpl(mongoAddress: String) : Repository {
-    private val mongoClient = MongoClient.create(mongoAddress)
-    private val db = mongoClient.getDatabase("Warehouse")
-    private val collection = db.getCollection<Ingredient>("Ingredient")
+class RepositoryImpl(mongoOptions: MongoOptions) : Repository {
+    private val mongoClient = MongoClient.create(mongoOptions.mongoAddress)
+    private val db = mongoClient.getDatabase(mongoOptions.databaseName)
+    private val collection = db.getCollection<Ingredient>(mongoOptions.collectionName)
 
     override suspend fun getAllIngredients(): List<Ingredient> {
         return collection.find<Ingredient>().toList()

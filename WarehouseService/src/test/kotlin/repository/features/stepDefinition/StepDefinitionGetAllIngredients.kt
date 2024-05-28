@@ -1,5 +1,6 @@
 package repository.features.stepDefinition
 
+import MongoOptions
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import kotlinx.coroutines.runBlocking
@@ -8,9 +9,9 @@ import domain.Ingredient
 import repository.RepositoryImpl
 
 class StepDefinitionGetAllIngredients {
-    private val mongoAddress = "mongodb://localhost:27017/"
 
-    private val warehouse = RepositoryImpl(mongoAddress)
+
+    private val warehouse = RepositoryImpl(MongoOptions())
 
     private var actualAnswer: List<Ingredient> = ArrayList()
     private val ingredients = listOf(Ingredient("milk", 99), Ingredient("tea", 4))

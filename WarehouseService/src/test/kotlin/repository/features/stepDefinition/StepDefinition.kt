@@ -1,5 +1,6 @@
 package repository.features.stepDefinition
 
+import MongoOptions
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import kotlinx.coroutines.runBlocking
@@ -7,8 +8,8 @@ import org.junit.jupiter.api.Assertions
 import repository.RepositoryImpl
 
 class StepDefinition {
-    private val mongoAddress = "mongodb://localhost:27017/"
-    private val warehouse = RepositoryImpl(mongoAddress)
+
+    private val warehouse = RepositoryImpl(MongoOptions())
     private var actualAnswer: String = ""
 
     @When("Manager adds an ingredient with name {word} and quantity {word}")

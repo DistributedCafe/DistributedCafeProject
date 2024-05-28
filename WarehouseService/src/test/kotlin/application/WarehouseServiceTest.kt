@@ -1,17 +1,18 @@
 package application
 
+import MongoOptions
 import com.mongodb.client.model.Filters
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import domain.Ingredient
 import io.kotest.core.spec.style.AnnotationSpec
 import io.kotest.matchers.shouldBe
 
-class WarehouseServiceTest : AnnotationSpec() {
+open class WarehouseServiceTest : AnnotationSpec() {
 
-    private val mongoAddress = "mongodb://localhost:27017/"
+    private val mongoOptions = MongoOptions()
 
-    private val db = MongoClient.create(mongoAddress).getDatabase("Warehouse")
-    private val collection = db.getCollection<Ingredient>("Ingredient")
+    private val db = MongoClient.create(mongoOptions.mongoAddress).getDatabase(mongoOptions.databaseName)
+    private val collection = db.getCollection<Ingredient>(mongoOptions.collectionName)
     private val milk = Ingredient("milk", 99)
     private val tea = Ingredient("tea", 4)
     private val coffee = Ingredient("coffee", 1)

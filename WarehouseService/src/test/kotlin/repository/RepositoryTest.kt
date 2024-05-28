@@ -1,5 +1,6 @@
 package repository
 
+import MongoOptions
 import com.mongodb.client.model.Filters
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import domain.Ingredient
@@ -16,17 +17,17 @@ class RepositoryTest : AnnotationSpec() {
     private val decreaseQuantity = 1
     private val increaseQuantity = 1
 
-    private val mongoAddress = "mongodb://localhost:27017/"
+    private val mongoOptions = MongoOptions()
 
-    private val db = MongoClient.create(mongoAddress).getDatabase("Warehouse")
-    private val collection = db.getCollection<Ingredient>("Ingredient")
+    private val db = MongoClient.create(mongoOptions.mongoAddress).getDatabase(mongoOptions.databaseName)
+    private val collection = db.getCollection<Ingredient>(mongoOptions.collectionName)
     private val milk = Ingredient("milk", 99)
     private val tea = Ingredient("tea", 4)
     private val coffee = Ingredient("coffee", 1)
     private val notAvailableCoffee = Ingredient(coffee.name, 0)
     private val ingredients = listOf(milk, tea)
 
-    private val repository = RepositoryImpl(mongoAddress)
+    private val repository = RepositoryImpl(mongoOptions)
 
     @BeforeEach
     suspend fun beforeTest() {
