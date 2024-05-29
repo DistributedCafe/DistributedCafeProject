@@ -1,6 +1,6 @@
 [versions]
 sonarqube = "5.0.0.4638"
-kotlin = "1.8.22"
+kotlin = "1.9.24"
 kotest = "5.8.0"
 dokka = "1.9.20"
 ktlint = "12.1.0"
@@ -17,6 +17,8 @@ cucumber-java = { module = "io.cucumber:cucumber-java", version.ref = "cucumber"
 cucumber-junit = { module = "io.cucumber:cucumber-junit", version.ref = "cucumber"}
 cucumber-java8 = {module = "io.cucumber:cucumber-java8",  version.ref="cucumber"}
 vertx-core = { module = "io.vertx:vertx-core", version.ref = "vertx"}
+vertx-web = {module = "io.vertx:vertx-web", version.ref="vertx"}
+vertx-web-client = {module = "io.vertx:vertx-web-client", version.ref="vertx"}
 vertx-kotlin = { module = "io.vertx:vertx-lang-kotlin", version.ref = "vertx"}
 vertx-kotlin-coroutines = {module = "io.vertx:vertx-lang-kotlin-coroutines", version.ref="vertx"}
 mongodb-driver = {module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "mongodb"}
@@ -24,7 +26,7 @@ mongodb-driver = {module = "org.mongodb:mongodb-driver-kotlin-coroutine", versio
 [bundles]
 kotlin-testing = [ "kotest-junit5-jvm", "kotest-assertions-core-jvm" ]
 cucumber-testing = ["cucumber-java", "cucumber-junit", "cucumber-java8"]
-vertx = ["vertx-core", "vertx-kotlin", "vertx-kotlin-coroutines"]
+vertx = ["vertx-core", "vertx-kotlin", "vertx-kotlin-coroutines", "vertx-web", "vertx-web-client"]
 
 [plugins]
 sonarqube = {id = "org.sonarqube", version.ref = "sonarqube"}

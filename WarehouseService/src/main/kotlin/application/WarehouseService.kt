@@ -2,6 +2,7 @@ package application
 
 import domain.Ingredient
 
+@kotlinx.serialization.Serializable
 data class IngredientsResponse(
     val response: WarehouseServiceResponse,
     val ingredients: List<Ingredient>
@@ -15,8 +16,7 @@ interface WarehouseService {
     suspend fun getAllIngredients(): IngredientsResponse
 
     /**
-     * @param name of the new ingredient
-     * @param quantity of the new ingredient
+     * @param ingredient to create
      * @return if the new ingredient has been successfully added or not
      */
     suspend fun createIngredient(
@@ -32,8 +32,7 @@ interface WarehouseService {
     ): WarehouseServiceResponse
 
     /**
-     * @param name of the ingredient to restock
-     * @param quantity to add to the warehouse
+     * @param ingredient information needed to restock
      * @return if the new ingredient has been successfully restocked
      */
     suspend fun restock(

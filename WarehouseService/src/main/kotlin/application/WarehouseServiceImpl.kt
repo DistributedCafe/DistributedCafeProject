@@ -5,7 +5,7 @@ import repository.RepositoryImpl
 import repository.WarehouseResponse
 
 class WarehouseServiceImpl : WarehouseService {
-    val repository = RepositoryImpl()
+    private val repository = RepositoryImpl()
 
     override suspend fun getAllIngredients(): IngredientsResponse {
         val ingredients = repository.getAllIngredients()
