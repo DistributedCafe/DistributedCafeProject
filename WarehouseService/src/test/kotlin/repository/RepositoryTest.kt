@@ -17,12 +17,6 @@ class RepositoryTest : BaseTest() {
     private val increaseQuantity = 1
     private val repository = RepositoryImpl()
 
-    @BeforeEach
-    suspend fun beforeTest() {
-        collection.deleteMany(Filters.empty())
-        collection.insertMany(ingredients)
-    }
-
     @Test
     suspend fun getAllIngredientTest() {
         val expectedCollection = collection.find<Ingredient>().toList()

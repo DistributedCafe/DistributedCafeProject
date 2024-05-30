@@ -9,13 +9,6 @@ class WarehouseServiceTest : BaseTest() {
 
     private val warehouseService = WarehouseServiceImpl()
 
-
-    @BeforeEach
-    suspend fun beforeTest() {
-        collection.deleteMany(Filters.empty())
-        collection.insertMany(ingredients)
-    }
-
     @Test
     suspend fun getAllIngredientsTest(){
         warehouseService.getAllIngredients() shouldBe IngredientsResponse(WarehouseServiceResponse.OK, ingredients)
