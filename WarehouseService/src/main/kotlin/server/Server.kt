@@ -14,11 +14,11 @@ class Server : CoroutineVerticle() {
         val router = Router.router(vertx)
 
         router.post("/warehouse/").handler{
-                ctx ->
-            launch(Vertx.currentContext().dispatcher()) {
-                handler.createIngredient(ctx)
+                ctx -> launch(Vertx.currentContext().dispatcher()) { handler.createIngredient(ctx) }
+        }
 
-            }
+        router.get("/warehouse/").handler {
+            ctx -> launch(Vertx.currentContext().dispatcher()){ handler.getAllIngredients(ctx)}
         }
 
         vertx.createHttpServer(
