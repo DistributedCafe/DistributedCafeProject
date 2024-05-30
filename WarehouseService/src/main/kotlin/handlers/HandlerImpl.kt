@@ -18,14 +18,10 @@ class HandlerImpl: Handler {
 
         val ingredient = Json.decodeFromString<Ingredient>(param)
 
-        println(ingredient)
-
         val response = warehouseService.createIngredient(ingredient)
 
-        println(response)
-
         val code = if (response == WarehouseServiceResponse.OK) 200 else 403
-        context.response().setStatusCode(code).end(response.toString())
+        context.response().setStatusCode(code).end()
 
     }
 }
