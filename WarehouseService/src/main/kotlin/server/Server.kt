@@ -21,6 +21,18 @@ class Server : CoroutineVerticle() {
             ctx -> launch(Vertx.currentContext().dispatcher()){ handler.getAllIngredients(ctx)}
         }
 
+        router.put("/warehouse/").handler {
+            ctx -> launch(Vertx.currentContext().dispatcher()){ handler.updateConsumedIngredientsQuantity(ctx)}
+        }
+
+        router.put("/warehouse/:ingredient").handler {
+                ctx -> launch(Vertx.currentContext().dispatcher()){ handler.restock(ctx)}
+        }
+
+        router.get("/warehouse/available").handler {
+                ctx -> launch(Vertx.currentContext().dispatcher()){ handler.getAllAvailableIngredients(ctx)}
+        }
+
         vertx.createHttpServer(
             httpServerOptionsOf(
                 port = 8080,

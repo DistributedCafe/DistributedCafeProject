@@ -2,6 +2,7 @@ package server
 
 import BaseTest
 import com.mongodb.client.model.Filters
+import domain.Ingredient
 import io.kotest.matchers.shouldBe
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
@@ -33,18 +34,64 @@ class RoutesTester: BaseTest() {
     }
 
     @Test
+    suspend fun updateConsumedIngredientsQuantityRouteTest(){
+        val decreaseMilk = 10
+        val decreaseTea = 4
+
+        var decreaseIngredients = Json.encodeToString(listOf(Ingredient("milk", decreaseMilk), Ingredient("tea", decreaseTea)))
+
+        val request = initializePut("/warehouse/")
+
+        request.addQueryParam("ingredients", decreaseIngredients).send().coAwait().statusCode() shouldBe 200
+
+        decreaseIngredients = Json.encodeToString(listOf(Ingredient("tea", decreaseTea)))
+
+        request.addQueryParam("ingredients", decreaseIngredients).send().coAwait().statusCode() shouldBe 403
+    }
+
+    @Test
+    suspend fun restockRouteTest(){
+        val teaQuantity = 10
+        val quantity = Json.encodeToString(teaQuantity)
+
+        var request = initializePut("/warehouse/tea")
+        request.addQueryParam("quantity", quantity).send().coAwait().statusCode() shouldBe 200
+
+        request = initializePut("/warehouse/coffee")
+        request.addQueryParam("quantity", quantity).send().coAwait().statusCode() shouldBe 403
+    }
+
+    @Test
     suspend fun getAllIngredientsRouteTest(){
 
         val request = initializeGet("/warehouse/")
+        val positiveResult = request.send().coAwait()
 
-        request.send().coAwait().statusCode() shouldBe 200
-        request.send().coAwait().bodyAsString() shouldBe Json.encodeToString(ingredients)
+        positiveResult.statusCode() shouldBe 200
+        positiveResult.bodyAsString() shouldBe Json.encodeToString(ingredients)
 
         collection.deleteMany(Filters.empty())
-        val result = request.send().coAwait()
-        result.statusCode() shouldBe 403
-        result.bodyAsString() shouldBe "[]"
-        }
+        val negativeResult = request.send().coAwait()
+        negativeResult.statusCode() shouldBe 403
+        negativeResult.bodyAsString() shouldBe "[]"
+    }
+
+    @Test
+    suspend fun getAllAvailableIngredients(){
+        collection.insertOne(Ingredient("coffee", 0))
+
+        val request = initializeGet("/warehouse/available")
+        val positiveResult = request.send().coAwait()
+
+        positiveResult.statusCode() shouldBe 200
+        positiveResult.bodyAsString() shouldBe Json.encodeToString(ingredients)
+
+        collection.deleteMany(Filters.empty())
+        val negativeResult = request.send().coAwait()
+
+        negativeResult.statusCode() shouldBe 403
+        negativeResult.bodyAsString() shouldBe "[]"
+    }
 
     private fun initializePost(URI: String): HttpRequest<Buffer> {
         return client.post(URI).port(8080).host("localhost")
@@ -52,5 +99,9 @@ class RoutesTester: BaseTest() {
 
     private fun initializeGet(URI: String): HttpRequest<Buffer> {
         return client.get(URI).port(8080).host("localhost")
+    }
+
+    private fun initializePut(URI: String): HttpRequest<Buffer> {
+        return client.put(URI).port(8080).host("localhost")
     }
 }
