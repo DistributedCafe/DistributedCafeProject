@@ -12,29 +12,26 @@ import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class RoutesTester: BaseTest() {
-
+class RoutesTester : BaseTest() {
     private val server = Vertx.vertx().deployVerticle(Server())
     private val client = WebClient.create(Vertx.vertx())
 
-
     @BeforeAll
-    fun before(){
-        server.onComplete{}
+    fun before() {
+        server.onComplete {}
     }
 
     @Test
-    suspend fun createIngredientRouteTest(){
+    suspend fun createIngredientRouteTest() {
         val newIngredient = Json.encodeToString(coffee)
         val existingIngredient = Json.encodeToString(milk)
         val request = initializePost("/warehouse/")
         request.addQueryParam("ingredient", newIngredient).send().coAwait().statusCode() shouldBe 200
         request.addQueryParam("ingredient", existingIngredient).send().coAwait().statusCode() shouldBe 403
-
     }
 
     @Test
-    suspend fun updateConsumedIngredientsQuantityRouteTest(){
+    suspend fun updateConsumedIngredientsQuantityRouteTest() {
         val decreaseMilk = 10
         val decreaseTea = 4
 
@@ -50,7 +47,7 @@ class RoutesTester: BaseTest() {
     }
 
     @Test
-    suspend fun restockRouteTest(){
+    suspend fun restockRouteTest() {
         val teaQuantity = 10
         val quantity = Json.encodeToString(teaQuantity)
 
@@ -62,8 +59,7 @@ class RoutesTester: BaseTest() {
     }
 
     @Test
-    suspend fun getAllIngredientsRouteTest(){
-
+    suspend fun getAllIngredientsRouteTest() {
         val request = initializeGet("/warehouse/")
         val positiveResult = request.send().coAwait()
 
@@ -77,7 +73,7 @@ class RoutesTester: BaseTest() {
     }
 
     @Test
-    suspend fun getAllAvailableIngredients(){
+    suspend fun getAllAvailableIngredients() {
         collection.insertOne(Ingredient("coffee", 0))
 
         val request = initializeGet("/warehouse/available")

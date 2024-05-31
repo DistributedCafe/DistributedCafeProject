@@ -11,5 +11,4 @@ object Main {
         val vertxServer = Vertx.vertx()
         vertxServer.deployVerticle(Server())
     }
-
 }

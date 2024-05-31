@@ -1,14 +1,13 @@
 package repository.features.stepDefinition
 
+import domain.Ingredient
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
-import domain.Ingredient
 import repository.RepositoryImpl
 
 class StepDefinitionGetAllIngredients {
-
     private val warehouse = RepositoryImpl()
 
     private var actualAnswer: List<Ingredient> = ArrayList()

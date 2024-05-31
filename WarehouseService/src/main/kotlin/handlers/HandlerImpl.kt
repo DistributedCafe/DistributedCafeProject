@@ -3,18 +3,14 @@ package handlers
 import application.WarehouseServiceImpl
 import application.WarehouseServiceResponse
 import domain.Ingredient
-
 import io.vertx.ext.web.RoutingContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-
-class HandlerImpl: Handler {
-
+class HandlerImpl : Handler {
     private val warehouseService = WarehouseServiceImpl()
 
     override suspend fun createIngredient(context: RoutingContext) {
-
         val param = context.request().params().get("ingredient")
 
         val ingredient = Json.decodeFromString<Ingredient>(param)
@@ -22,7 +18,6 @@ class HandlerImpl: Handler {
         val response = warehouseService.createIngredient(ingredient)
 
         context.response().setStatusCode(toCode(response)).end()
-
     }
 
     override suspend fun getAllIngredients(context: RoutingContext) {
@@ -49,7 +44,7 @@ class HandlerImpl: Handler {
         context.response().setStatusCode(toCode(response)).end()
     }
 
-    private fun toCode(response: WarehouseServiceResponse): Int{
+    private fun toCode(response: WarehouseServiceResponse): Int {
         return if (response == WarehouseServiceResponse.OK) 200 else 403
     }
 }

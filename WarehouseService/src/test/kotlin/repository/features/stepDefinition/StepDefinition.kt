@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions
 import repository.RepositoryImpl
 
 class StepDefinition {
-
     private val warehouse = RepositoryImpl()
     private var actualAnswer: String = ""
 

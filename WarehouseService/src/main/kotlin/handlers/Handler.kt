@@ -6,7 +6,6 @@ import io.vertx.ext.web.RoutingContext
  * Interface exposing handler methods
  */
 interface Handler {
-
     /**
      * Uri: /warehouse/
      * Http method: POST

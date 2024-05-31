@@ -5,12 +5,11 @@ import com.mongodb.MongoException
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Projections
 import com.mongodb.client.model.Updates
+import domain.Ingredient
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
-import domain.Ingredient
 
 class RepositoryImpl() : Repository {
-
     private val collection = MongoUtils.getMongoCollection(MongoOptions())
 
     override suspend fun getAllIngredients(): List<Ingredient> {

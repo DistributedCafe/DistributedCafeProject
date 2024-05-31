@@ -15,17 +15,18 @@ class WarehouseServiceImpl : WarehouseService {
     override suspend fun createIngredient(ingredient: Ingredient): WarehouseServiceResponse {
         val response = repository.createIngredient(ingredient.name, ingredient.quantity)
         return mapResponse(response)
-
     }
 
     override suspend fun updateConsumedIngredientsQuantity(ingredients: List<Ingredient>): WarehouseServiceResponse {
-        ingredients.forEach{
-            if (repository.getAllAvailableIngredients().none { i -> i.name == it.name && it.quantity <= i.quantity })
+        ingredients.forEach {
+            if (repository.getAllAvailableIngredients().none { i -> i.name == it.name && it.quantity <= i.quantity }) {
                 return WarehouseServiceResponse.ERROR
+            }
         }
 
-        ingredients.forEach{
-                i -> repository.decreaseIngredientQuantity(i.name, i.quantity)
+        ingredients.forEach {
+                i ->
+            repository.decreaseIngredientQuantity(i.name, i.quantity)
         }
         return WarehouseServiceResponse.OK
     }
@@ -40,20 +41,19 @@ class WarehouseServiceImpl : WarehouseService {
         return correctIngredientList(ingredients)
     }
 
-    private fun mapResponse(repositoryResponse: WarehouseResponse): WarehouseServiceResponse{
-        return if (repositoryResponse == WarehouseResponse.OK){
+    private fun mapResponse(repositoryResponse: WarehouseResponse): WarehouseServiceResponse {
+        return if (repositoryResponse == WarehouseResponse.OK) {
             WarehouseServiceResponse.OK
-        }else{
+        } else {
             WarehouseServiceResponse.ERROR
         }
     }
 
     private fun correctIngredientList(ingredients: List<Ingredient>): IngredientsResponse {
-        return if (ingredients.isNotEmpty()){
+        return if (ingredients.isNotEmpty()) {
             IngredientsResponse(WarehouseServiceResponse.OK, ingredients)
-        }else {
+        } else {
             IngredientsResponse(WarehouseServiceResponse.ERROR, ingredients)
         }
     }
-
 }

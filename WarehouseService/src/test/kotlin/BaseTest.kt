@@ -3,8 +3,7 @@ import domain.Ingredient
 import io.kotest.core.spec.style.AnnotationSpec
 import repository.MongoUtils
 
-open class BaseTest: AnnotationSpec(){
-
+open class BaseTest : AnnotationSpec() {
     protected val collection = MongoUtils.getMongoCollection(MongoOptions())
     protected val milk = Ingredient("milk", 99)
     protected val tea = Ingredient("tea", 4)

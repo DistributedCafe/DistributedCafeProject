@@ -2,13 +2,12 @@ package repository.features.stepDefinition
 
 import MongoOptions
 import com.mongodb.client.model.Filters
+import domain.Ingredient
 import io.cucumber.java.en.Given
 import kotlinx.coroutines.runBlocking
-import domain.Ingredient
 import repository.MongoUtils
 
 class StepDefinitionGiven {
-
     private val collection = MongoUtils.getMongoCollection(MongoOptions())
 
     private val ingredients = listOf(Ingredient("milk", 99), Ingredient("tea", 4))

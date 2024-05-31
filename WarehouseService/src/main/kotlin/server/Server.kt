@@ -13,24 +13,29 @@ class Server : CoroutineVerticle() {
         val handler = HandlerImpl()
         val router = Router.router(vertx)
 
-        router.post("/warehouse/").handler{
-                ctx -> launch(Vertx.currentContext().dispatcher()) { handler.createIngredient(ctx) }
+        router.post("/warehouse/").handler {
+                ctx ->
+            launch(Vertx.currentContext().dispatcher()) { handler.createIngredient(ctx) }
         }
 
         router.get("/warehouse/").handler {
-            ctx -> launch(Vertx.currentContext().dispatcher()){ handler.getAllIngredients(ctx)}
+                ctx ->
+            launch(Vertx.currentContext().dispatcher()) { handler.getAllIngredients(ctx) }
         }
 
         router.put("/warehouse/").handler {
-            ctx -> launch(Vertx.currentContext().dispatcher()){ handler.updateConsumedIngredientsQuantity(ctx)}
+                ctx ->
+            launch(Vertx.currentContext().dispatcher()) { handler.updateConsumedIngredientsQuantity(ctx) }
         }
 
         router.put("/warehouse/:ingredient").handler {
-                ctx -> launch(Vertx.currentContext().dispatcher()){ handler.restock(ctx)}
+                ctx ->
+            launch(Vertx.currentContext().dispatcher()) { handler.restock(ctx) }
         }
 
         router.get("/warehouse/available").handler {
-                ctx -> launch(Vertx.currentContext().dispatcher()){ handler.getAllAvailableIngredients(ctx)}
+                ctx ->
+            launch(Vertx.currentContext().dispatcher()) { handler.getAllAvailableIngredients(ctx) }
         }
 
         vertx.createHttpServer(
