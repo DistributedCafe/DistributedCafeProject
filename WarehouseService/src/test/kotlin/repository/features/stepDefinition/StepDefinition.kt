@@ -1,42 +1,56 @@
 package repository.features.stepDefinition
 
+import ApiUtils
+import BaseTest
+import domain.Ingredient
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
+import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions
-import repository.RepositoryImpl
 
-class StepDefinition {
-    private val warehouse = RepositoryImpl()
+class StepDefinition : BaseTest() {
     private var actualAnswer: String = ""
+    private val apiUtils = ApiUtils(8080)
 
     @When("Manager adds an ingredient with name {word} and quantity {word}")
     fun managerAddsAnIngredient(
         name: String,
         quantity: String,
     ) {
-        runBlocking { actualAnswer = warehouse.createIngredient(name, quantity.toInt()).toString() }
-    }
-
-    @When("Manager asks the quantity of the {word}")
-    fun managerAsksTheQuantityOfTheMilk(name: String) {
+        val ingredient = Ingredient(name, quantity.toInt())
         runBlocking {
-            actualAnswer = warehouse.getIngredientQuantity(name).toString()
+            actualAnswer =
+                apiUtils.createIngredient(Json.encodeToString(ingredient)).send().coAwait().statusCode().toString()
         }
     }
 
-    @When("Manager asks if {word} is present")
-    fun managerAsksIfMilkIsPresent(name: String) {
-        runBlocking { actualAnswer = warehouse.isIngredientPresent(name).toString() }
-    }
-
     @When("Manager restocks the {word} adding {word} units")
-    fun managerRestocksTea(
+    fun managerRestocks(
         name: String,
         quantity: String,
     ) {
         runBlocking {
-            actualAnswer = warehouse.restock(name, quantity.toInt()).toString()
+            actualAnswer =
+                apiUtils.restock(name, Json.encodeToString(quantity.toInt())).send().coAwait().statusCode().toString()
+        }
+    }
+
+    @When("Manager asks for the list of ingredients in the warehouse")
+    fun managerAsksForTheListOfIngredientsInTheWarehouse() {
+        runBlocking {
+            actualAnswer =
+                apiUtils.getAllIngredients("").send().coAwait().statusCode().toString()
+        }
+    }
+
+    @When("Manager asks for the list of available ingredients in the warehouse")
+    fun managerAsksForTheListOfAvailableIngredientsInTheWarehouse() {
+        runBlocking {
+            actualAnswer =
+                apiUtils.getAllIngredients("available").send().coAwait().statusCode().toString()
         }
     }
 

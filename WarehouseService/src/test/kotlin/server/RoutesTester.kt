@@ -1,74 +1,77 @@
 package server
 
+import ApiUtils
 import BaseTest
+import MongoInfo
 import com.mongodb.client.model.Filters
 import domain.Ingredient
 import io.kotest.matchers.shouldBe
 import io.vertx.core.Vertx
-import io.vertx.core.buffer.Buffer
-import io.vertx.ext.web.client.HttpRequest
-import io.vertx.ext.web.client.WebClient
 import io.vertx.kotlin.coroutines.coAwait
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.net.HttpURLConnection
 
 class RoutesTester : BaseTest() {
-    private val server = Vertx.vertx().deployVerticle(Server())
-    private val client = WebClient.create(Vertx.vertx())
+    private val port = 8080
+    private val apiUtils = ApiUtils(port)
 
-    @BeforeAll
-    fun before() {
-        server.onComplete {}
+    init {
+        runBlocking {
+            Vertx.vertx().deployVerticle(Server(MongoInfo(), port)).coAwait()
+        }
     }
 
     @Test
     suspend fun createIngredientRouteTest() {
         val newIngredient = Json.encodeToString(coffee)
         val existingIngredient = Json.encodeToString(milk)
-        val request = initializePost("/warehouse/")
-        request.addQueryParam("ingredient", newIngredient).send().coAwait().statusCode() shouldBe 200
-        request.addQueryParam("ingredient", existingIngredient).send().coAwait().statusCode() shouldBe 403
+        apiUtils.createIngredient(newIngredient).send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_OK
+        apiUtils.createIngredient(existingIngredient).send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
     }
 
     @Test
     suspend fun updateConsumedIngredientsQuantityRouteTest() {
-        val decreaseMilk = 10
-        val decreaseTea = 4
+        val decrease = 4
+        val decreaseMilk = 100
+        var decreaseIngredients =
+            Json.encodeToString(listOf(Ingredient("milk", decrease), Ingredient("tea", decrease)))
+        apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients)
+            .send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_OK
 
-        var decreaseIngredients = Json.encodeToString(listOf(Ingredient("milk", decreaseMilk), Ingredient("tea", decreaseTea)))
+        decreaseIngredients = Json.encodeToString(listOf(Ingredient("tea", decrease)))
+        apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients)
+            .send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
 
-        val request = initializePut("/warehouse/")
+        decreaseIngredients = Json.encodeToString(listOf(Ingredient("milk", decreaseMilk)))
+        apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients)
+            .send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
 
-        request.addQueryParam("ingredients", decreaseIngredients).send().coAwait().statusCode() shouldBe 200
-
-        decreaseIngredients = Json.encodeToString(listOf(Ingredient("tea", decreaseTea)))
-
-        request.addQueryParam("ingredients", decreaseIngredients).send().coAwait().statusCode() shouldBe 403
+        decreaseIngredients = Json.encodeToString(listOf(Ingredient("coffee", decrease)))
+        apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients)
+            .send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
     }
 
     @Test
     suspend fun restockRouteTest() {
-        val teaQuantity = 10
-        val quantity = Json.encodeToString(teaQuantity)
+        val quantity = Json.encodeToString(10)
 
-        var request = initializePut("/warehouse/tea")
-        request.addQueryParam("quantity", quantity).send().coAwait().statusCode() shouldBe 200
+        apiUtils.restock("tea", quantity).send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_OK
 
-        request = initializePut("/warehouse/coffee")
-        request.addQueryParam("quantity", quantity).send().coAwait().statusCode() shouldBe 403
+        apiUtils.restock("coffee", quantity).send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
     }
 
     @Test
     suspend fun getAllIngredientsRouteTest() {
-        val request = initializeGet("/warehouse/")
-        val positiveResult = request.send().coAwait()
+        val positiveResult = apiUtils.getAllIngredients("").send().coAwait()
 
-        positiveResult.statusCode() shouldBe 200
+        positiveResult.statusCode() shouldBe HttpURLConnection.HTTP_OK
         positiveResult.bodyAsString() shouldBe Json.encodeToString(ingredients)
 
         collection.deleteMany(Filters.empty())
-        val negativeResult = request.send().coAwait()
-        negativeResult.statusCode() shouldBe 403
+        val negativeResult = apiUtils.getAllIngredients("").send().coAwait()
+        negativeResult.statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
         negativeResult.bodyAsString() shouldBe "[]"
     }
 
@@ -76,28 +79,15 @@ class RoutesTester : BaseTest() {
     suspend fun getAllAvailableIngredients() {
         collection.insertOne(Ingredient("coffee", 0))
 
-        val request = initializeGet("/warehouse/available")
-        val positiveResult = request.send().coAwait()
+        val positiveResult = apiUtils.getAllIngredients("available").send().coAwait()
 
-        positiveResult.statusCode() shouldBe 200
+        positiveResult.statusCode() shouldBe HttpURLConnection.HTTP_OK
         positiveResult.bodyAsString() shouldBe Json.encodeToString(ingredients)
 
         collection.deleteMany(Filters.empty())
-        val negativeResult = request.send().coAwait()
+        val negativeResult = apiUtils.getAllIngredients("available").send().coAwait()
 
-        negativeResult.statusCode() shouldBe 403
+        negativeResult.statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
         negativeResult.bodyAsString() shouldBe "[]"
-    }
-
-    private fun initializePost(URI: String): HttpRequest<Buffer> {
-        return client.post(URI).port(8080).host("localhost")
-    }
-
-    private fun initializeGet(URI: String): HttpRequest<Buffer> {
-        return client.get(URI).port(8080).host("localhost")
-    }
-
-    private fun initializePut(URI: String): HttpRequest<Buffer> {
-        return client.put(URI).port(8080).host("localhost")
     }
 }

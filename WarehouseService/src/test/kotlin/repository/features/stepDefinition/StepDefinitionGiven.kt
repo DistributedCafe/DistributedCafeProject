@@ -1,14 +1,23 @@
 package repository.features.stepDefinition
 
-import MongoOptions
+import MongoInfo
 import com.mongodb.client.model.Filters
 import domain.Ingredient
 import io.cucumber.java.en.Given
+import io.vertx.core.Vertx
+import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.runBlocking
-import repository.MongoUtils
+import server.MongoUtils
+import server.Server
 
 class StepDefinitionGiven {
-    private val collection = MongoUtils.getMongoCollection(MongoOptions())
+    private val collection = MongoUtils.getMongoCollection(MongoInfo())
+
+    init {
+        runBlocking {
+            Vertx.vertx().deployVerticle(Server(MongoInfo(), 8080)).coAwait()
+        }
+    }
 
     private val ingredients = listOf(Ingredient("milk", 99), Ingredient("tea", 4))
 
@@ -25,6 +34,13 @@ class StepDefinitionGiven {
         thereAre99UnitsOfMilkAnd4UnitsOfTeaInTheWarehouse()
         runBlocking {
             collection.insertOne(Ingredient("coffee", 0))
+        }
+    }
+
+    @Given("there are no ingredients in the warehouse")
+    fun thereAreNoIngredientsInTheWarehouse() {
+        runBlocking {
+            collection.deleteMany(Filters.empty())
         }
     }
 }

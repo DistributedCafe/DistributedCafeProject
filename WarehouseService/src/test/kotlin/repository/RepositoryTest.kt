@@ -1,6 +1,8 @@
 package repository
 
 import BaseTest
+import MongoInfo
+import WarehouseMessage
 import domain.Ingredient
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
@@ -13,13 +15,14 @@ import kotlinx.coroutines.flow.toList
 class RepositoryTest : BaseTest() {
     private val decreaseQuantity = 1
     private val increaseQuantity = 1
-    private val repository = RepositoryImpl()
+    private val repository = RepositoryImpl(MongoInfo())
 
     @Test
     suspend fun getAllIngredientTest() {
         val expectedCollection = collection.find<Ingredient>().toList()
         val actualCollection = repository.getAllIngredients()
-        actualCollection shouldBe expectedCollection
+        actualCollection.data shouldBe expectedCollection
+        actualCollection.message shouldBe WarehouseMessage.OK
     }
 
     @Test
@@ -28,7 +31,7 @@ class RepositoryTest : BaseTest() {
         val expectedCollection = ingredients + coffee
         val actualCollection = collection.find<Ingredient>().toList()
         actualCollection shouldBe expectedCollection
-        response shouldBe WarehouseResponse.OK
+        response shouldBe WarehouseMessage.OK
     }
 
     @Test
@@ -36,35 +39,39 @@ class RepositoryTest : BaseTest() {
         val response = repository.createIngredient(milk.name, milk.quantity)
         val actualCollection = collection.find<Ingredient>().toList()
         actualCollection shouldBe ingredients
-        response shouldBe WarehouseResponse.ERROR
+        response shouldBe WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS
     }
 
     @Test
     suspend fun isIngredientPresentPositiveCaseTest() {
         val actualCollection = collection.find<Ingredient>().toList()
         actualCollection shouldContain milk
-        repository.isIngredientPresent(milk.name) shouldBe true
+        repository.isIngredientPresent(milk.name) shouldBe WarehouseMessage.OK
     }
 
     @Test
     suspend fun isIngredientPresentNegativeCaseTest() {
         val actualCollection = collection.find<Ingredient>().toList()
         actualCollection shouldNotContain coffee
-        repository.isIngredientPresent(coffee.name) shouldBe false
+        repository.isIngredientPresent(coffee.name) shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
     }
 
     @Test
     suspend fun getIngredientQuantityPositiveCaseTest() {
         val actualCollection = collection.find<Ingredient>().toList()
         actualCollection shouldContain milk
-        repository.getIngredientQuantity(milk.name) shouldBe milk.quantity
+        val response = repository.getIngredientQuantity(milk.name)
+        response.data shouldBe milk.quantity
+        response.message shouldBe WarehouseMessage.OK
     }
 
     @Test
     suspend fun getIngredientQuantityNegativeCaseTest() {
         val actualCollection = collection.find<Ingredient>().toList()
         actualCollection shouldNotContain coffee
-        repository.getIngredientQuantity(coffee.name) shouldBe null
+        val response = repository.getIngredientQuantity(coffee.name)
+        response.data shouldBe null
+        response.message shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
     }
 
     @Test
@@ -73,7 +80,7 @@ class RepositoryTest : BaseTest() {
         actualCollection shouldNotContain coffee
         val response = repository.decreaseIngredientQuantity(coffee.name, decreaseQuantity)
         collection.find<Ingredient>().toList() shouldBe ingredients
-        response shouldBe WarehouseResponse.ERROR
+        response shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
     }
 
     @Test
@@ -84,7 +91,7 @@ class RepositoryTest : BaseTest() {
         val expectedCollection: List<Ingredient> =
             listOf(Ingredient(milk.name, milk.quantity - decreaseQuantity), tea)
         collection.find<Ingredient>().toList() shouldBe expectedCollection
-        response shouldBe WarehouseResponse.OK
+        response shouldBe WarehouseMessage.OK
     }
 
     @Test
@@ -93,7 +100,7 @@ class RepositoryTest : BaseTest() {
         actualCollection shouldNotContain coffee
         val response = repository.restock(coffee.name, increaseQuantity)
         collection.find<Ingredient>().toList() shouldBe ingredients
-        response shouldBe WarehouseResponse.ERROR
+        response shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
     }
 
     @Test
@@ -104,7 +111,7 @@ class RepositoryTest : BaseTest() {
         val expectedCollection: List<Ingredient> =
             listOf(Ingredient(milk.name, milk.quantity + increaseQuantity), tea)
         collection.find<Ingredient>().toList() shouldBe expectedCollection
-        response shouldBe WarehouseResponse.OK
+        response shouldBe WarehouseMessage.OK
     }
 
     @Test
@@ -113,6 +120,7 @@ class RepositoryTest : BaseTest() {
         val actualCollection = collection.find<Ingredient>().toList()
         actualCollection shouldBe ingredients + notAvailableCoffee
         val availableIngredients = repository.getAllAvailableIngredients()
-        availableIngredients shouldBe ingredients
+        availableIngredients.data shouldBe ingredients
+        availableIngredients.message shouldBe WarehouseMessage.OK
     }
 }
