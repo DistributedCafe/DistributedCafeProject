@@ -1,50 +1,75 @@
 package handlers
 
+import MongoInfo
+import WarehouseMessage
+import WarehouseMessageToCode
 import application.WarehouseServiceImpl
-import application.WarehouseServiceResponse
 import domain.Ingredient
 import io.vertx.ext.web.RoutingContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import server.MongoUtils
 
-class HandlerImpl : Handler {
-    private val warehouseService = WarehouseServiceImpl()
+class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
+    private val warehouseService = WarehouseServiceImpl(mongoInfo)
 
     override suspend fun createIngredient(context: RoutingContext) {
         val param = context.request().params().get("ingredient")
 
         val ingredient = Json.decodeFromString<Ingredient>(param)
 
-        val response = warehouseService.createIngredient(ingredient)
-
-        context.response().setStatusCode(toCode(response)).end()
+        val response =
+            if (MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
+                warehouseService.createIngredient(ingredient)
+            } else {
+                WarehouseMessage.ERROR_DB_NOT_AVAILABLE
+            }
+        context.response().setStatusCode(WarehouseMessageToCode.convert(response)).end()
     }
 
     override suspend fun getAllIngredients(context: RoutingContext) {
-        val response = warehouseService.getAllIngredients()
-        context.response().setStatusCode(toCode(response.response)).end(Json.encodeToString(response.ingredients))
+        if (MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
+            val response = warehouseService.getAllIngredients()
+            context.response().setStatusCode(
+                WarehouseMessageToCode.convert(response.response),
+            ).end(Json.encodeToString(response.ingredients))
+        } else {
+            context.response().setStatusCode(WarehouseMessageToCode.convert(WarehouseMessage.ERROR_DB_NOT_AVAILABLE)).end()
+        }
     }
 
     override suspend fun getAllAvailableIngredients(context: RoutingContext) {
-        val response = warehouseService.getAllAvailableIngredients()
-        context.response().setStatusCode(toCode(response.response)).end(Json.encodeToString(response.ingredients))
+        if (MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
+            val response = warehouseService.getAllAvailableIngredients()
+            context.response().setStatusCode(
+                WarehouseMessageToCode.convert(response.response),
+            ).end(Json.encodeToString(response.ingredients))
+        } else {
+            context.response().setStatusCode(WarehouseMessageToCode.convert(WarehouseMessage.ERROR_DB_NOT_AVAILABLE)).end()
+        }
     }
 
     override suspend fun updateConsumedIngredientsQuantity(context: RoutingContext) {
         val params = context.request().params().get("ingredients")
         val ingredients = Json.decodeFromString<List<Ingredient>>(params)
-        val response = warehouseService.updateConsumedIngredientsQuantity(ingredients)
-        context.response().setStatusCode(toCode(response)).end()
+        val response =
+            if (MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
+                warehouseService.updateConsumedIngredientsQuantity(ingredients)
+            } else {
+                WarehouseMessage.ERROR_DB_NOT_AVAILABLE
+            }
+        context.response().setStatusCode(WarehouseMessageToCode.convert(response)).end()
     }
 
     override suspend fun restock(context: RoutingContext) {
         val ingredientName = context.request().params().get("ingredient")
         val quantity = context.request().params().get("quantity")
-        val response = warehouseService.restock(Ingredient(ingredientName, quantity.toInt()))
-        context.response().setStatusCode(toCode(response)).end()
-    }
-
-    private fun toCode(response: WarehouseServiceResponse): Int {
-        return if (response == WarehouseServiceResponse.OK) 200 else 403
+        val response =
+            if (MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
+                warehouseService.restock(Ingredient(ingredientName, quantity.toInt()))
+            } else {
+                WarehouseMessage.ERROR_DB_NOT_AVAILABLE
+            }
+        context.response().setStatusCode(WarehouseMessageToCode.convert(response)).end()
     }
 }

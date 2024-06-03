@@ -1,5 +1,6 @@
 package server
 
+import MongoInfo
 import io.vertx.core.Vertx
 
 /**
@@ -9,6 +10,6 @@ object Main {
     @JvmStatic
     fun main(args: Array<String>) {
         val vertxServer = Vertx.vertx()
-        vertxServer.deployVerticle(Server())
+        vertxServer.deployVerticle(Server(MongoInfo(), 8080))
     }
 }

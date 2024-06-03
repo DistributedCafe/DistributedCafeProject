@@ -3,7 +3,7 @@ package handlers
 import io.vertx.ext.web.RoutingContext
 
 /**
- * Interface exposing handler methods
+ * Interface exposing handler methods and set contexts status code
  */
 interface Handler {
     /**
@@ -17,6 +17,7 @@ interface Handler {
      * Uri: /warehouse/
      * Http method: GET
      * Service: @see WarehouseService.getAllIngredients
+     * Response body: list of ingredients in the warehouse
      */
     suspend fun getAllIngredients(context: RoutingContext)
 
@@ -37,6 +38,7 @@ interface Handler {
     /**
      * Uri: /warehouse/available
      * Http method: GET
+     * Response body: list of available ingredients in the warehouse
      * Service: @see WarehouseService.getAllAvailableIngredients
      */
     suspend fun getAllAvailableIngredients(context: RoutingContext)

@@ -1,26 +1,29 @@
 package application
 
+import MongoInfo
+import WarehouseMessage
 import domain.Ingredient
 import repository.RepositoryImpl
-import repository.WarehouseResponse
 
-class WarehouseServiceImpl : WarehouseService {
-    private val repository = RepositoryImpl()
+class WarehouseServiceImpl(mongoInfo: MongoInfo) : WarehouseService {
+    private val repository = RepositoryImpl(mongoInfo)
 
-    override suspend fun getAllIngredients(): IngredientsResponse {
+    override suspend fun getAllIngredients(): WarehouseServiceResponse {
         val ingredients = repository.getAllIngredients()
-        return correctIngredientList(ingredients)
+        return correctIngredientList(ingredients.data)
     }
 
-    override suspend fun createIngredient(ingredient: Ingredient): WarehouseServiceResponse {
-        val response = repository.createIngredient(ingredient.name, ingredient.quantity)
-        return mapResponse(response)
+    override suspend fun createIngredient(ingredient: Ingredient): WarehouseMessage {
+        return repository.createIngredient(ingredient.name, ingredient.quantity)
     }
 
-    override suspend fun updateConsumedIngredientsQuantity(ingredients: List<Ingredient>): WarehouseServiceResponse {
+    override suspend fun updateConsumedIngredientsQuantity(ingredients: List<Ingredient>): WarehouseMessage {
+        val availableIngredients = repository.getAllAvailableIngredients().data
         ingredients.forEach {
-            if (repository.getAllAvailableIngredients().none { i -> i.name == it.name && it.quantity <= i.quantity }) {
-                return WarehouseServiceResponse.ERROR
+            if (availableIngredients.none { i -> i.name == it.name }) {
+                return WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
+            } else if (availableIngredients.find { i -> i.name == it.name }?.quantity!! < it.quantity) {
+                return WarehouseMessage.ERROR_INGREDIENT_QUANTITY
             }
         }
 
@@ -28,32 +31,27 @@ class WarehouseServiceImpl : WarehouseService {
                 i ->
             repository.decreaseIngredientQuantity(i.name, i.quantity)
         }
-        return WarehouseServiceResponse.OK
+        return WarehouseMessage.OK
     }
 
-    override suspend fun restock(ingredient: Ingredient): WarehouseServiceResponse {
-        val response = repository.restock(ingredient.name, ingredient.quantity)
-        return mapResponse(response)
+    override suspend fun restock(ingredient: Ingredient): WarehouseMessage {
+        return repository.restock(ingredient.name, ingredient.quantity)
     }
 
-    override suspend fun getAllAvailableIngredients(): IngredientsResponse {
+    override suspend fun getAllAvailableIngredients(): WarehouseServiceResponse {
         val ingredients = repository.getAllAvailableIngredients()
-        return correctIngredientList(ingredients)
+        return correctIngredientList(ingredients.data)
     }
 
-    private fun mapResponse(repositoryResponse: WarehouseResponse): WarehouseServiceResponse {
-        return if (repositoryResponse == WarehouseResponse.OK) {
-            WarehouseServiceResponse.OK
-        } else {
-            WarehouseServiceResponse.ERROR
-        }
-    }
-
-    private fun correctIngredientList(ingredients: List<Ingredient>): IngredientsResponse {
-        return if (ingredients.isNotEmpty()) {
-            IngredientsResponse(WarehouseServiceResponse.OK, ingredients)
-        } else {
-            IngredientsResponse(WarehouseServiceResponse.ERROR, ingredients)
-        }
+    private fun correctIngredientList(ingredients: List<Ingredient>): WarehouseServiceResponse {
+        return WarehouseServiceResponse(
+            if (ingredients.isNotEmpty())
+                {
+                    WarehouseMessage.OK
+                } else {
+                WarehouseMessage.ERROR_EMPTY_WAREHOUSE
+            },
+            ingredients,
+        )
     }
 }

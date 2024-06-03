@@ -1,4 +1,5 @@
 package repository
+import WarehouseMessage
 import domain.Ingredient
 
 /**
@@ -6,54 +7,64 @@ import domain.Ingredient
  */
 interface Repository {
     /**
-     * @return all the ingredients
+     * @return a list of all the ingredients and WarehouseMessage.OK
      */
-    suspend fun getAllIngredients(): List<Ingredient>
+    suspend fun getAllIngredients(): RepositoryResponse<List<Ingredient>>
 
     /**
      * @param name of the new ingredient
      * @param quantity of the new ingredient
-     * @return if the new ingredient has been successfully added or not
+     * @return WarehouseMessage.OK
+     *      if the new ingredient has been successfully added,
+     *      otherwise it returns WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS
      */
     suspend fun createIngredient(
         name: String,
         quantity: Int,
-    ): WarehouseResponse
+    ): WarehouseMessage
 
     /**
      * @param name of the ingredient to search for
-     * @return true if the ingredient is in the warehouse, false otherwise
+     * @return WarehouseMessage.OK
+     *      if the ingredient is in the warehouse,
+     *      otherwise it returns WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
      */
-    suspend fun isIngredientPresent(name: String): Boolean
+    suspend fun isIngredientPresent(name: String): WarehouseMessage
 
     /**
      * @param name of the ingredient
-     * @return the quantity of that ingredient if it's present in the warehouse, otherwise it returns null
+     * @return the quantity of that ingredient and WarehouseMessage.OK
+     *      if it's present in the warehouse,
+     *      otherwise it returns null and WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
      */
-    suspend fun getIngredientQuantity(name: String): Int?
+    suspend fun getIngredientQuantity(name: String): RepositoryResponse<Int?>
 
     /**
      * @param name of the ingredient to update
      * @param quantity to remove from the warehouse
-     * @return if the new ingredient has been successfully updated
+     * @return WarehouseMessage.OK
+     *      if the new ingredient has been successfully updated,
+     *      otherwise it returns WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
      */
     suspend fun decreaseIngredientQuantity(
         name: String,
         quantity: Int,
-    ): WarehouseResponse
+    ): WarehouseMessage
 
     /**
      * @param name of the ingredient to restock
      * @param quantity to add to the warehouse
-     * @return if the new ingredient has been successfully restocked
+     * @return WarehouseMessage.OK
+     *      if the new ingredient has been successfully restocked,
+     *      otherwise it returns WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
      */
     suspend fun restock(
         name: String,
         quantity: Int,
-    ): WarehouseResponse
+    ): WarehouseMessage
 
     /**
-     * @return all the available ingredients
+     * @return a list of all the available ingredients and WarehouseMessage.OK
      */
-    suspend fun getAllAvailableIngredients(): List<Ingredient>
+    suspend fun getAllAvailableIngredients(): RepositoryResponse<List<Ingredient>>
 }

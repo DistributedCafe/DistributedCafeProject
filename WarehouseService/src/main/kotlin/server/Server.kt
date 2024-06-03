@@ -1,5 +1,6 @@
 package server
 
+import MongoInfo
 import handlers.HandlerImpl
 import io.vertx.core.Vertx
 import io.vertx.ext.web.Router
@@ -8,9 +9,14 @@ import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.launch
 
-class Server : CoroutineVerticle() {
+/**
+ * Class that exposes the routes of the API
+ * @param mongoInfo that contains the information necessary to connect to the database
+ * @param port for the server connection
+ */
+class Server(private val mongoInfo: MongoInfo, private val port: Int) : CoroutineVerticle() {
     override suspend fun start() {
-        val handler = HandlerImpl()
+        val handler = HandlerImpl(mongoInfo)
         val router = Router.router(vertx)
 
         router.post("/warehouse/").handler {
@@ -40,7 +46,7 @@ class Server : CoroutineVerticle() {
 
         vertx.createHttpServer(
             httpServerOptionsOf(
-                port = 8080,
+                port = port,
                 host = "localhost",
             ),
         ).requestHandler(router).listen()
