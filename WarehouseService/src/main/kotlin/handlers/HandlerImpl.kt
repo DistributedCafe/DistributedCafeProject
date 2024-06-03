@@ -3,6 +3,7 @@ package handlers
 import MongoInfo
 import WarehouseMessage
 import WarehouseMessageToCode
+import application.UpdateQuantity
 import application.WarehouseServiceImpl
 import domain.Ingredient
 import io.vertx.ext.web.RoutingContext
@@ -51,7 +52,7 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
 
     override suspend fun updateConsumedIngredientsQuantity(context: RoutingContext) {
         val params = context.request().params().get("ingredients")
-        val ingredients = Json.decodeFromString<List<Ingredient>>(params)
+        val ingredients = Json.decodeFromString<List<UpdateQuantity>>(params)
         val response =
             if (MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
                 warehouseService.updateConsumedIngredientsQuantity(ingredients)
@@ -66,7 +67,7 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
         val quantity = context.request().params().get("quantity")
         val response =
             if (MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
-                warehouseService.restock(Ingredient(ingredientName, quantity.toInt()))
+                warehouseService.restock(UpdateQuantity(ingredientName, quantity.toInt()))
             } else {
                 WarehouseMessage.ERROR_DB_NOT_AVAILABLE
             }

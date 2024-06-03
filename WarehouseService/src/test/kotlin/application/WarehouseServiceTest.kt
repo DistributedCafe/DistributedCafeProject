@@ -34,7 +34,7 @@ class WarehouseServiceTest : BaseTest() {
     suspend fun successfulUpdateConsumedIngredientsQuantityTest() {
         val decreaseMilk = 10
         val decreaseTea = 4
-        val decreaseIngredients = listOf(Ingredient(milk.name, decreaseMilk), Ingredient(tea.name, decreaseTea))
+        val decreaseIngredients = listOf(UpdateQuantity(milk.name, decreaseMilk), UpdateQuantity(tea.name, decreaseTea))
         warehouseService.updateConsumedIngredientsQuantity(decreaseIngredients) shouldBe WarehouseMessage.OK
 
         val updatedIngredients = warehouseService.getAllIngredients().ingredients
@@ -47,7 +47,7 @@ class WarehouseServiceTest : BaseTest() {
     suspend fun failedUpdateConsumedIngredientsQuantityTest() {
         val decreaseMilk = 200
         val decreaseTea = 3
-        val decreaseIngredients = listOf(Ingredient(milk.name, decreaseMilk), Ingredient(tea.name, decreaseTea))
+        val decreaseIngredients = listOf(UpdateQuantity(milk.name, decreaseMilk), UpdateQuantity(tea.name, decreaseTea))
         warehouseService
             .updateConsumedIngredientsQuantity(decreaseIngredients)shouldBe WarehouseMessage.ERROR_INGREDIENT_QUANTITY
 
@@ -57,8 +57,8 @@ class WarehouseServiceTest : BaseTest() {
 
     @Test
     suspend fun restockTest() {
-        warehouseService.restock(tea) shouldBe WarehouseMessage.OK
-        warehouseService.restock(coffee) shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
+        warehouseService.restock(UpdateQuantity(tea.name, tea.quantity)) shouldBe WarehouseMessage.OK
+        warehouseService.restock(UpdateQuantity(coffee.name, coffee.quantity)) shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
     }
 
     @Test

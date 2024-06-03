@@ -17,7 +17,7 @@ class WarehouseServiceImpl(mongoInfo: MongoInfo) : WarehouseService {
         return repository.createIngredient(ingredient.name, ingredient.quantity)
     }
 
-    override suspend fun updateConsumedIngredientsQuantity(ingredients: List<Ingredient>): WarehouseMessage {
+    override suspend fun updateConsumedIngredientsQuantity(ingredients: List<UpdateQuantity>): WarehouseMessage {
         val availableIngredients = repository.getAllAvailableIngredients().data
         ingredients.forEach {
             if (availableIngredients.none { i -> i.name == it.name }) {
@@ -34,7 +34,7 @@ class WarehouseServiceImpl(mongoInfo: MongoInfo) : WarehouseService {
         return WarehouseMessage.OK
     }
 
-    override suspend fun restock(ingredient: Ingredient): WarehouseMessage {
+    override suspend fun restock(ingredient: UpdateQuantity): WarehouseMessage {
         return repository.restock(ingredient.name, ingredient.quantity)
     }
 
@@ -45,10 +45,9 @@ class WarehouseServiceImpl(mongoInfo: MongoInfo) : WarehouseService {
 
     private fun correctIngredientList(ingredients: List<Ingredient>): WarehouseServiceResponse {
         return WarehouseServiceResponse(
-            if (ingredients.isNotEmpty())
-                {
-                    WarehouseMessage.OK
-                } else {
+            if (ingredients.isNotEmpty()) {
+                WarehouseMessage.OK
+            } else {
                 WarehouseMessage.ERROR_EMPTY_WAREHOUSE
             },
             ingredients,

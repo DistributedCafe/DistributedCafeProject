@@ -26,13 +26,13 @@ interface WarehouseService {
      *      WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
      *          if one consumed ingredient is not found in the warehouse
      */
-    suspend fun updateConsumedIngredientsQuantity(ingredients: List<Ingredient>): WarehouseMessage
+    suspend fun updateConsumedIngredientsQuantity(ingredients: List<UpdateQuantity>): WarehouseMessage
 
     /**
      * @param ingredient information needed to restock
      * @return the repository response
      */
-    suspend fun restock(ingredient: Ingredient): WarehouseMessage
+    suspend fun restock(ingredient: UpdateQuantity): WarehouseMessage
 
     /**
      * @return a list of all the available ingredients in the warehouse and WarehouseMessage.OK
