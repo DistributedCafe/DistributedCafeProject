@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.dokka)
     alias(libs.plugins.ktlint)
-    kotlin("plugin.serialization") version "1.9.24"
+    alias(libs.plugins.serialization)
     id("jacoco")
 }
 
@@ -20,7 +20,7 @@ dependencies {
     testImplementation(libs.junit.vintage)
     implementation(libs.bundles.vertx)
     implementation(libs.mongodb.driver)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation(libs.bundles.kotlinx)
 }
 
 tasks.test {
