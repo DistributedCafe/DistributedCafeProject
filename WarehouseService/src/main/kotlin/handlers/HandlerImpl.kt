@@ -34,7 +34,7 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
             } else if (!MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
                 WarehouseMessage.ERROR_DB_NOT_AVAILABLE
             } else {
-                warehouseService.createIngredient(Json.decodeFromString(param))
+                warehouseService.createIngredient(Json.decodeFromString(param)).response
             }
         checkIfError(response, context)
         context.response().setStatusCode(WarehouseMessageToCode.convert(response)).end()
@@ -56,7 +56,7 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
     }
 
     private suspend fun getIngredients(
-        warehouseServiceResponse: WarehouseServiceResponse,
+        warehouseServiceResponse: WarehouseServiceResponse<List<Ingredient>>,
         context: RoutingContext,
     ) {
         val response =
@@ -67,7 +67,7 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
             }
         checkIfError(response, context)
         val res = context.response().setStatusCode(WarehouseMessageToCode.convert(response))
-        setBody(warehouseServiceResponse.ingredients, res)
+        setBody(warehouseServiceResponse.ingredients!!, res)
     }
 
     override suspend fun getAllAvailableIngredients(context: RoutingContext) {
@@ -83,7 +83,7 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
                 WarehouseMessage.ERROR_DB_NOT_AVAILABLE
             } else {
                 try {
-                    warehouseService.updateConsumedIngredientsQuantity(Json.decodeFromString(params))
+                    warehouseService.updateConsumedIngredientsQuantity(Json.decodeFromString(params)).response
                 } catch (e: Exception) {
                     WarehouseMessage.ERROR_WRONG_PARAMETERS
                 }
@@ -101,7 +101,7 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
             } else if (!MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
                 WarehouseMessage.ERROR_DB_NOT_AVAILABLE
             } else {
-                warehouseService.restock(UpdateQuantity(ingredientName, quantity.toInt()))
+                warehouseService.restock(UpdateQuantity(ingredientName, quantity.toInt())).response
             }
 
         checkIfError(response, context)

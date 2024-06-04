@@ -11,23 +11,23 @@ class WarehouseServiceTest : BaseTest() {
 
     @Test
     suspend fun getAllIngredientsTest() {
-        warehouseService.getAllIngredients() shouldBe WarehouseServiceResponse(WarehouseMessage.OK, ingredients)
+        warehouseService.getAllIngredients() shouldBe WarehouseServiceResponse(ingredients, WarehouseMessage.OK)
     }
 
     @Test
     suspend fun getAllIngredientsEmpty() {
         collection.deleteMany(Filters.empty())
-        warehouseService.getAllIngredients() shouldBe WarehouseServiceResponse(WarehouseMessage.ERROR_EMPTY_WAREHOUSE, emptyList())
+        warehouseService.getAllIngredients() shouldBe WarehouseServiceResponse(emptyList(), WarehouseMessage.ERROR_EMPTY_WAREHOUSE)
     }
 
     @Test
     suspend fun createNewIngredientTest() {
-        warehouseService.createIngredient(coffee) shouldBe WarehouseMessage.OK
+        warehouseService.createIngredient(coffee) shouldBe WarehouseServiceResponse(coffee, WarehouseMessage.OK)
     }
 
     @Test
     suspend fun createExistingIngredientTest() {
-        warehouseService.createIngredient(milk) shouldBe WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS
+        warehouseService.createIngredient(milk) shouldBe WarehouseServiceResponse(null, WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS)
     }
 
     @Test
@@ -35,11 +35,13 @@ class WarehouseServiceTest : BaseTest() {
         val decreaseMilk = 10
         val decreaseTea = 4
         val decreaseIngredients = listOf(UpdateQuantity(milk.name, decreaseMilk), UpdateQuantity(tea.name, decreaseTea))
-        warehouseService.updateConsumedIngredientsQuantity(decreaseIngredients) shouldBe WarehouseMessage.OK
-
-        val updatedIngredients = warehouseService.getAllIngredients().ingredients
         val expectedIngredients =
             listOf(Ingredient(milk.name, milk.quantity - decreaseMilk), Ingredient(tea.name, tea.quantity - decreaseTea))
+        warehouseService
+            .updateConsumedIngredientsQuantity(decreaseIngredients) shouldBe
+            WarehouseServiceResponse(expectedIngredients, WarehouseMessage.OK)
+
+        val updatedIngredients = warehouseService.getAllIngredients().ingredients
         updatedIngredients shouldBe expectedIngredients
     }
 
@@ -49,7 +51,8 @@ class WarehouseServiceTest : BaseTest() {
         val decreaseTea = 3
         val decreaseIngredients = listOf(UpdateQuantity(milk.name, decreaseMilk), UpdateQuantity(tea.name, decreaseTea))
         warehouseService
-            .updateConsumedIngredientsQuantity(decreaseIngredients)shouldBe WarehouseMessage.ERROR_INGREDIENT_QUANTITY
+            .updateConsumedIngredientsQuantity(decreaseIngredients) shouldBe
+            WarehouseServiceResponse(null, WarehouseMessage.ERROR_INGREDIENT_QUANTITY)
 
         val updatedIngredients = warehouseService.getAllIngredients().ingredients
         updatedIngredients shouldBe ingredients
@@ -57,21 +60,23 @@ class WarehouseServiceTest : BaseTest() {
 
     @Test
     suspend fun restockTest() {
-        warehouseService.restock(UpdateQuantity(tea.name, tea.quantity)) shouldBe WarehouseMessage.OK
-        warehouseService.restock(UpdateQuantity(coffee.name, coffee.quantity)) shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
+        warehouseService.restock(UpdateQuantity(tea.name, tea.quantity)) shouldBe
+            WarehouseServiceResponse(Ingredient(tea.name, tea.quantity * 2), WarehouseMessage.OK)
+        warehouseService.restock(UpdateQuantity(coffee.name, coffee.quantity)) shouldBe
+            WarehouseServiceResponse(null, WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND)
     }
 
     @Test
     suspend fun getAllAvailableIngredientsTest() {
         collection.insertOne(notAvailableCoffee)
         warehouseService
-            .getAllAvailableIngredients() shouldBe WarehouseServiceResponse(WarehouseMessage.OK, ingredients)
+            .getAllAvailableIngredients() shouldBe WarehouseServiceResponse(ingredients, WarehouseMessage.OK)
     }
 
     @Test
     suspend fun getAllAvailableIngredientsEmpty() {
         collection.deleteMany(Filters.empty())
         warehouseService
-            .getAllAvailableIngredients() shouldBe WarehouseServiceResponse(WarehouseMessage.ERROR_EMPTY_WAREHOUSE, emptyList())
+            .getAllAvailableIngredients() shouldBe WarehouseServiceResponse(emptyList(), WarehouseMessage.ERROR_EMPTY_WAREHOUSE)
     }
 }

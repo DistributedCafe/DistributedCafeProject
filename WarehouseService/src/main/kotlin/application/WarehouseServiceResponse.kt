@@ -1,14 +1,13 @@
 package application
 
 import WarehouseMessage
-import domain.Ingredient
 
 /**
  * Data class representing the response of the WarehouseService
- * @param response returned by the WarehouseService
  * @param ingredients list of ingredients
+ * @param response returned by the WarehouseService
  */
-data class WarehouseServiceResponse(
+data class WarehouseServiceResponse<Data>(
+    val ingredients: Data?,
     val response: WarehouseMessage,
-    val ingredients: List<Ingredient>,
 )

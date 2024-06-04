@@ -7,6 +7,7 @@ import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Projections
 import com.mongodb.client.model.Updates
 import domain.Ingredient
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 import server.MongoUtils
@@ -18,15 +19,19 @@ class RepositoryImpl(mongoInfo: MongoInfo) : Repository {
         return RepositoryResponse(collection.find<Ingredient>().toList(), WarehouseMessage.OK)
     }
 
+    private suspend fun getIngredient(name: String): Ingredient {
+        return collection.find(eq(Ingredient::name.name, name)).first()
+    }
+
     override suspend fun createIngredient(
         name: String,
         quantity: Int,
-    ): WarehouseMessage {
+    ): RepositoryResponse<Ingredient> {
         return try {
             collection.insertOne(Ingredient(name, quantity)).wasAcknowledged()
-            WarehouseMessage.OK
+            RepositoryResponse(getIngredient(name), WarehouseMessage.OK)
         } catch (e: MongoException) {
-            WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS
+            RepositoryResponse(null, WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS)
         }
     }
 
@@ -57,39 +62,39 @@ class RepositoryImpl(mongoInfo: MongoInfo) : Repository {
     private suspend fun updateIngredientQuantity(
         name: String,
         quantity: Int,
-    ): WarehouseMessage {
+    ): RepositoryResponse<Ingredient> {
         val oldQuantity = getIngredientQuantity(name)
         return if (oldQuantity.message == WarehouseMessage.OK) {
             val filter = eq(Ingredient::name.name, name)
             val updates = Updates.combine(Updates.set(Ingredient::quantity.name, oldQuantity.data!! + quantity))
             val res = collection.updateOne(filter, updates)
             if (res.modifiedCount > 0) {
-                WarehouseMessage.OK
+                RepositoryResponse(getIngredient(name), WarehouseMessage.OK)
             } else {
-                WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
+                RepositoryResponse(null, WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND)
             }
         } else {
-            WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
+            RepositoryResponse(null, WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND)
         }
     }
 
     override suspend fun decreaseIngredientQuantity(
         name: String,
         quantity: Int,
-    ): WarehouseMessage {
+    ): RepositoryResponse<Ingredient> {
         return updateIngredientQuantity(name, -quantity)
     }
 
     override suspend fun restock(
         name: String,
         quantity: Int,
-    ): WarehouseMessage {
+    ): RepositoryResponse<Ingredient> {
         return updateIngredientQuantity(name, quantity)
     }
 
     override suspend fun getAllAvailableIngredients(): RepositoryResponse<List<Ingredient>> {
         val availableIngredients =
-            getAllIngredients().data.filter { i ->
+            getAllIngredients().data!!.filter { i ->
                 val qty = getIngredientQuantity(i.name)
                 qty.message == WarehouseMessage.OK && qty.data!! > 0
             }

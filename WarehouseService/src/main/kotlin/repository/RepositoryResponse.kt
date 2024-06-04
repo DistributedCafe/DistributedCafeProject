@@ -8,6 +8,6 @@ import WarehouseMessage
  *  @param message returned by the Repository
  */
 data class RepositoryResponse<Data>(
-    val data: Data,
+    val data: Data?,
     val message: WarehouseMessage,
 )

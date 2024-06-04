@@ -21,8 +21,7 @@ class RepositoryTest : BaseTest() {
     suspend fun getAllIngredientTest() {
         val expectedCollection = collection.find<Ingredient>().toList()
         val actualCollection = repository.getAllIngredients()
-        actualCollection.data shouldBe expectedCollection
-        actualCollection.message shouldBe WarehouseMessage.OK
+        actualCollection shouldBe RepositoryResponse(expectedCollection, WarehouseMessage.OK)
     }
 
     @Test
@@ -31,7 +30,7 @@ class RepositoryTest : BaseTest() {
         val expectedCollection = ingredients + coffee
         val actualCollection = collection.find<Ingredient>().toList()
         actualCollection shouldBe expectedCollection
-        response shouldBe WarehouseMessage.OK
+        response shouldBe RepositoryResponse(coffee, WarehouseMessage.OK)
     }
 
     @Test
@@ -39,7 +38,7 @@ class RepositoryTest : BaseTest() {
         val response = repository.createIngredient(milk.name, milk.quantity)
         val actualCollection = collection.find<Ingredient>().toList()
         actualCollection shouldBe ingredients
-        response shouldBe WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS
+        response shouldBe RepositoryResponse(null, WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS)
     }
 
     @Test
@@ -61,8 +60,7 @@ class RepositoryTest : BaseTest() {
         val actualCollection = collection.find<Ingredient>().toList()
         actualCollection shouldContain milk
         val response = repository.getIngredientQuantity(milk.name)
-        response.data shouldBe milk.quantity
-        response.message shouldBe WarehouseMessage.OK
+        response shouldBe RepositoryResponse(milk.quantity, WarehouseMessage.OK)
     }
 
     @Test
@@ -70,8 +68,7 @@ class RepositoryTest : BaseTest() {
         val actualCollection = collection.find<Ingredient>().toList()
         actualCollection shouldNotContain coffee
         val response = repository.getIngredientQuantity(coffee.name)
-        response.data shouldBe null
-        response.message shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
+        response shouldBe RepositoryResponse(null, WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND)
     }
 
     @Test
@@ -80,7 +77,7 @@ class RepositoryTest : BaseTest() {
         actualCollection shouldNotContain coffee
         val response = repository.decreaseIngredientQuantity(coffee.name, decreaseQuantity)
         collection.find<Ingredient>().toList() shouldBe ingredients
-        response shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
+        response shouldBe RepositoryResponse(null, WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND)
     }
 
     @Test
@@ -91,7 +88,7 @@ class RepositoryTest : BaseTest() {
         val expectedCollection: List<Ingredient> =
             listOf(Ingredient(milk.name, milk.quantity - decreaseQuantity), tea)
         collection.find<Ingredient>().toList() shouldBe expectedCollection
-        response shouldBe WarehouseMessage.OK
+        response shouldBe RepositoryResponse(Ingredient(milk.name, milk.quantity - decreaseQuantity), WarehouseMessage.OK)
     }
 
     @Test
@@ -100,7 +97,7 @@ class RepositoryTest : BaseTest() {
         actualCollection shouldNotContain coffee
         val response = repository.restock(coffee.name, increaseQuantity)
         collection.find<Ingredient>().toList() shouldBe ingredients
-        response shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
+        response shouldBe RepositoryResponse(null, WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND)
     }
 
     @Test
@@ -111,7 +108,7 @@ class RepositoryTest : BaseTest() {
         val expectedCollection: List<Ingredient> =
             listOf(Ingredient(milk.name, milk.quantity + increaseQuantity), tea)
         collection.find<Ingredient>().toList() shouldBe expectedCollection
-        response shouldBe WarehouseMessage.OK
+        response shouldBe RepositoryResponse(Ingredient(milk.name, milk.quantity + increaseQuantity), WarehouseMessage.OK)
     }
 
     @Test

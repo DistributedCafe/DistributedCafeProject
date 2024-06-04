@@ -14,14 +14,14 @@ interface Repository {
     /**
      * @param name of the new ingredient
      * @param quantity of the new ingredient
-     * @return WarehouseMessage.OK
+     * @return the ingredient created and WarehouseMessage.OK
      *      if the new ingredient has been successfully added,
-     *      otherwise it returns WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS
+     *      otherwise it returns null and WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS
      */
     suspend fun createIngredient(
         name: String,
         quantity: Int,
-    ): WarehouseMessage
+    ): RepositoryResponse<Ingredient>
 
     /**
      * @param name of the ingredient to search for
@@ -42,26 +42,26 @@ interface Repository {
     /**
      * @param name of the ingredient to update
      * @param quantity to remove from the warehouse
-     * @return WarehouseMessage.OK
+     * @return the updated ingredient and WarehouseMessage.OK
      *      if the new ingredient has been successfully updated,
-     *      otherwise it returns WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
+     *      otherwise it returns null and WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
      */
     suspend fun decreaseIngredientQuantity(
         name: String,
         quantity: Int,
-    ): WarehouseMessage
+    ): RepositoryResponse<Ingredient>
 
     /**
      * @param name of the ingredient to restock
      * @param quantity to add to the warehouse
-     * @return WarehouseMessage.OK
+     * @return the restocked ingredient and WarehouseMessage.OK
      *      if the new ingredient has been successfully restocked,
      *      otherwise it returns WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND
      */
     suspend fun restock(
         name: String,
         quantity: Int,
-    ): WarehouseMessage
+    ): RepositoryResponse<Ingredient>
 
     /**
      * @return a list of all the available ingredients and WarehouseMessage.OK
