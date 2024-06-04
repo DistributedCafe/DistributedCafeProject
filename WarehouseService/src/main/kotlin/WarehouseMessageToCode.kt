@@ -9,7 +9,7 @@ object WarehouseMessageToCode {
             WarehouseMessage.OK -> {
                 HttpURLConnection.HTTP_OK
             }
-            WarehouseMessage.ERROR_SERVER_NOT_AVAILABLE, WarehouseMessage.ERROR_DB_NOT_AVAILABLE -> {
+            WarehouseMessage.ERROR_DB_NOT_AVAILABLE -> {
                 HttpURLConnection.HTTP_INTERNAL_ERROR
             }
             WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS, WarehouseMessage.ERROR_INGREDIENT_QUANTITY -> {

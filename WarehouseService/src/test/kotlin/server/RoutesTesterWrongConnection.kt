@@ -2,6 +2,7 @@ package server
 
 import ApiUtils
 import BaseTest
+import WarehouseMessage
 import domain.Ingredient
 import io.kotest.matchers.shouldBe
 import io.vertx.core.Vertx
@@ -24,7 +25,9 @@ class RoutesTesterWrongConnection : BaseTest() {
     suspend fun createIngredientRouteTest() {
         val newIngredient = Json.encodeToString(coffee)
 
-        apiUtils.createIngredient(newIngredient).send().coAwait().statusCode() shouldBe 500
+        val response = apiUtils.createIngredient(newIngredient).send().coAwait()
+        response.statusCode() shouldBe 500
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
     }
 
     @Ignore
@@ -36,7 +39,9 @@ class RoutesTesterWrongConnection : BaseTest() {
         val decreaseIngredients =
             Json.encodeToString(listOf(Ingredient("milk", decreaseMilk), Ingredient("tea", decreaseTea)))
 
-        apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients).send().coAwait().statusCode() shouldBe 500
+        val response = apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients).send().coAwait()
+        response.statusCode() shouldBe 500
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
     }
 
     @Ignore
@@ -44,16 +49,19 @@ class RoutesTesterWrongConnection : BaseTest() {
     suspend fun restockRouteTest() {
         val quantity = Json.encodeToString(10)
 
-        apiUtils.restock("tea", quantity).send().coAwait().statusCode() shouldBe 500
+        val response = apiUtils.restock("tea", quantity).send().coAwait()
+        response.statusCode() shouldBe 500
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
     }
 
     @Ignore
     @Test
     suspend fun getAllIngredientsRouteTest() {
-        val positiveResult = apiUtils.getAllIngredients("").send().coAwait()
+        val response = apiUtils.getAllIngredients("").send().coAwait()
 
-        positiveResult.statusCode() shouldBe 500
-        positiveResult.bodyAsString() shouldBe null
+        response.statusCode() shouldBe 500
+        response.bodyAsString() shouldBe null
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
     }
 
     @Ignore
@@ -61,9 +69,10 @@ class RoutesTesterWrongConnection : BaseTest() {
     suspend fun getAllAvailableIngredients() {
         collection.insertOne(Ingredient("coffee", 0))
 
-        val positiveResult = apiUtils.getAllIngredients("available").send().coAwait()
+        val response = apiUtils.getAllIngredients("available").send().coAwait()
 
-        positiveResult.statusCode() shouldBe 500
-        positiveResult.bodyAsString() shouldBe null
+        response.statusCode() shouldBe 500
+        response.bodyAsString() shouldBe null
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
     }
 }

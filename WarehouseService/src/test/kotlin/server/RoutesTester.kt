@@ -3,6 +3,7 @@ package server
 import ApiUtils
 import BaseTest
 import MongoInfo
+import WarehouseMessage
 import com.mongodb.client.model.Filters
 import domain.Ingredient
 import io.kotest.matchers.shouldBe
@@ -28,7 +29,10 @@ class RoutesTester : BaseTest() {
         val newIngredient = Json.encodeToString(coffee)
         val existingIngredient = Json.encodeToString(milk)
         apiUtils.createIngredient(newIngredient).send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_OK
-        apiUtils.createIngredient(existingIngredient).send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
+
+        val response = apiUtils.createIngredient(existingIngredient).send().coAwait()
+        response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS.toString()
     }
 
     @Test
@@ -41,16 +45,19 @@ class RoutesTester : BaseTest() {
             .send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_OK
 
         decreaseIngredients = Json.encodeToString(listOf(Ingredient("tea", decrease)))
-        apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients)
-            .send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
+        var response = apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients).send().coAwait()
+        response.statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND.toString()
 
         decreaseIngredients = Json.encodeToString(listOf(Ingredient("milk", decreaseMilk)))
-        apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients)
-            .send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
+        response = apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients).send().coAwait()
+        response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_INGREDIENT_QUANTITY.toString()
 
         decreaseIngredients = Json.encodeToString(listOf(Ingredient("coffee", decrease)))
-        apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients)
-            .send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
+        response = apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients).send().coAwait()
+        response.statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND.toString()
     }
 
     @Test
@@ -59,7 +66,9 @@ class RoutesTester : BaseTest() {
 
         apiUtils.restock("tea", quantity).send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_OK
 
-        apiUtils.restock("coffee", quantity).send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
+        val response = apiUtils.restock("coffee", quantity).send().coAwait()
+        response.statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND.toString()
     }
 
     @Test
@@ -72,7 +81,7 @@ class RoutesTester : BaseTest() {
         collection.deleteMany(Filters.empty())
         val negativeResult = apiUtils.getAllIngredients("").send().coAwait()
         negativeResult.statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
-        negativeResult.bodyAsString() shouldBe "[]"
+        negativeResult.statusMessage() shouldBe WarehouseMessage.ERROR_EMPTY_WAREHOUSE.toString()
     }
 
     @Test
@@ -88,6 +97,6 @@ class RoutesTester : BaseTest() {
         val negativeResult = apiUtils.getAllIngredients("available").send().coAwait()
 
         negativeResult.statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
-        negativeResult.bodyAsString() shouldBe "[]"
+        negativeResult.statusMessage() shouldBe WarehouseMessage.ERROR_EMPTY_WAREHOUSE.toString()
     }
 }
