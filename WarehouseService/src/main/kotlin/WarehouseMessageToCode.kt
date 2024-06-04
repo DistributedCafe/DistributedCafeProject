@@ -12,7 +12,10 @@ object WarehouseMessageToCode {
             WarehouseMessage.ERROR_DB_NOT_AVAILABLE -> {
                 HttpURLConnection.HTTP_INTERNAL_ERROR
             }
-            WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS, WarehouseMessage.ERROR_INGREDIENT_QUANTITY -> {
+            WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS,
+            WarehouseMessage.ERROR_INGREDIENT_QUANTITY,
+            WarehouseMessage.ERROR_WRONG_PARAMETERS,
+            -> {
                 HttpURLConnection.HTTP_BAD_REQUEST
             }
             else -> {

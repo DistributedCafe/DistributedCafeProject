@@ -23,7 +23,7 @@ class StepDefinition : BaseTest() {
         val ingredient = Ingredient(name, quantity.toInt())
         runBlocking {
             actualAnswer =
-                apiUtils.createIngredient(Json.encodeToString(ingredient)).send().coAwait().statusCode().toString()
+                apiUtils.createIngredient("ingredient", Json.encodeToString(ingredient)).send().coAwait().statusCode().toString()
         }
     }
 
@@ -34,7 +34,7 @@ class StepDefinition : BaseTest() {
     ) {
         runBlocking {
             actualAnswer =
-                apiUtils.restock(name, Json.encodeToString(quantity.toInt())).send().coAwait().statusCode().toString()
+                apiUtils.restock(name, "quantity", Json.encodeToString(quantity.toInt())).send().coAwait().statusCode().toString()
         }
     }
 

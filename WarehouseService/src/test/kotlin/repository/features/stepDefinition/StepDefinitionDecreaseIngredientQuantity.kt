@@ -23,7 +23,7 @@ class StepDefinitionDecreaseIngredientQuantity : BaseTest() {
         val decreaseIngredients = Json.encodeToString(listOf(Ingredient(name, quantity.toInt())))
         runBlocking {
             actualAnswer =
-                apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients).send().coAwait().statusCode().toString()
+                apiUtils.updateConsumedIngredientsQuantity("ingredients", decreaseIngredients).send().coAwait().statusCode().toString()
         }
     }
 

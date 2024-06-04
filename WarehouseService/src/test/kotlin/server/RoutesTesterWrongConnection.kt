@@ -25,7 +25,7 @@ class RoutesTesterWrongConnection : BaseTest() {
     suspend fun createIngredientRouteTest() {
         val newIngredient = Json.encodeToString(coffee)
 
-        val response = apiUtils.createIngredient(newIngredient).send().coAwait()
+        val response = apiUtils.createIngredient("ingredient", newIngredient).send().coAwait()
         response.statusCode() shouldBe 500
         response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
     }
@@ -39,7 +39,7 @@ class RoutesTesterWrongConnection : BaseTest() {
         val decreaseIngredients =
             Json.encodeToString(listOf(Ingredient("milk", decreaseMilk), Ingredient("tea", decreaseTea)))
 
-        val response = apiUtils.updateConsumedIngredientsQuantity(decreaseIngredients).send().coAwait()
+        val response = apiUtils.updateConsumedIngredientsQuantity("quantity", decreaseIngredients).send().coAwait()
         response.statusCode() shouldBe 500
         response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
     }
@@ -49,7 +49,7 @@ class RoutesTesterWrongConnection : BaseTest() {
     suspend fun restockRouteTest() {
         val quantity = Json.encodeToString(10)
 
-        val response = apiUtils.restock("tea", quantity).send().coAwait()
+        val response = apiUtils.restock("tea", "quantity", quantity).send().coAwait()
         response.statusCode() shouldBe 500
         response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
     }

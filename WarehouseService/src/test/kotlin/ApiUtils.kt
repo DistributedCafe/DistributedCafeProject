@@ -18,19 +18,26 @@ class ApiUtils(private val port: Int) {
         return client.put(URI).port(port).host("localhost")
     }
 
-    fun createIngredient(ingredient: String): HttpRequest<Buffer> {
-        return initializePost("/warehouse/").addQueryParam("ingredient", ingredient)
+    fun createIngredient(
+        paramName: String,
+        ingredient: String,
+    ): HttpRequest<Buffer> {
+        return initializePost("/warehouse/").addQueryParam(paramName, ingredient)
     }
 
-    fun updateConsumedIngredientsQuantity(quantity: String): HttpRequest<Buffer> {
-        return initializePut("/warehouse/").addQueryParam("ingredients", quantity)
+    fun updateConsumedIngredientsQuantity(
+        paramName: String,
+        quantity: String,
+    ): HttpRequest<Buffer> {
+        return initializePut("/warehouse/").addQueryParam(paramName, quantity)
     }
 
     fun restock(
         ingredient: String,
+        paramName: String,
         quantity: String,
     ): HttpRequest<Buffer> {
-        return initializePut("/warehouse/$ingredient").addQueryParam("quantity", quantity)
+        return initializePut("/warehouse/$ingredient").addQueryParam(paramName, quantity)
     }
 
     fun getAllIngredients(type: String): HttpRequest<Buffer> {
