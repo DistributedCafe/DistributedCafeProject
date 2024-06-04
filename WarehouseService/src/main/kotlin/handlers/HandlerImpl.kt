@@ -82,7 +82,11 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
             } else if (!MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
                 WarehouseMessage.ERROR_DB_NOT_AVAILABLE
             } else {
-                warehouseService.updateConsumedIngredientsQuantity(Json.decodeFromString(params))
+                try {
+                    warehouseService.updateConsumedIngredientsQuantity(Json.decodeFromString(params))
+                } catch (e: Exception) {
+                    WarehouseMessage.ERROR_WRONG_PARAMETERS
+                }
             }
         checkIfError(response, context)
         context.response().setStatusCode(WarehouseMessageToCode.convert(response)).end()
@@ -92,7 +96,7 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
         val ingredientName = context.request().params().get("ingredient")
         val quantity = context.request().params().get("quantity")
         val response =
-            if (ingredientName == null || quantity == null) {
+            if (ingredientName == null || quantity == null || quantity.toIntOrNull() == null) {
                 WarehouseMessage.ERROR_WRONG_PARAMETERS
             } else if (!MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
                 WarehouseMessage.ERROR_DB_NOT_AVAILABLE

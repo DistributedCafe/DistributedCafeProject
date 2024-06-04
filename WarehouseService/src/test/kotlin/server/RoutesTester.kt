@@ -49,6 +49,7 @@ class RoutesTester : BaseTest() {
         val wrongParamName = "ingredient"
         var decreaseIngredients =
             Json.encodeToString(listOf(Ingredient("milk", decrease), Ingredient("tea", decrease)))
+
         apiUtils.updateConsumedIngredientsQuantity(correctParamName, decreaseIngredients)
             .send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_OK
 
@@ -76,6 +77,11 @@ class RoutesTester : BaseTest() {
         response = apiUtils.updateConsumedIngredientsQuantity(wrongParamName, decreaseIngredients).send().coAwait()
         response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
         response.statusMessage() shouldBe WarehouseMessage.ERROR_WRONG_PARAMETERS.toString()
+
+        decreaseIngredients = "[{\"name\":\"milk\",\"quantity\":\"four\"}]"
+        response = apiUtils.updateConsumedIngredientsQuantity(wrongParamName, decreaseIngredients).send().coAwait()
+        response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_WRONG_PARAMETERS.toString()
     }
 
     @Test
@@ -89,6 +95,10 @@ class RoutesTester : BaseTest() {
         response.statusMessage() shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND.toString()
 
         response = apiUtils.restock("coffee", "quantiti", quantity).send().coAwait()
+        response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_WRONG_PARAMETERS.toString()
+
+        response = apiUtils.restock("tea", "quantity", "ten").send().coAwait()
         response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
         response.statusMessage() shouldBe WarehouseMessage.ERROR_WRONG_PARAMETERS.toString()
     }
