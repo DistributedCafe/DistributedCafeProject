@@ -3,6 +3,7 @@ package server
 import ApiUtils
 import BaseTest
 import WarehouseMessage
+import application.UpdateQuantity
 import domain.Ingredient
 import io.kotest.matchers.shouldBe
 import io.vertx.core.Vertx
@@ -37,7 +38,7 @@ class RoutesTesterWrongConnection : BaseTest() {
         val decreaseTea = 4
 
         val decreaseIngredients =
-            Json.encodeToString(listOf(Ingredient("milk", decreaseMilk), Ingredient("tea", decreaseTea)))
+            Json.encodeToString(listOf(UpdateQuantity("milk", decreaseMilk), UpdateQuantity("tea", decreaseTea)))
 
         val response = apiUtils.updateConsumedIngredientsQuantity("quantity", decreaseIngredients).send().coAwait()
         response.statusCode() shouldBe 500

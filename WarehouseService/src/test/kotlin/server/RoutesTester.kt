@@ -4,6 +4,7 @@ import ApiUtils
 import BaseTest
 import MongoInfo
 import WarehouseMessage
+import application.UpdateQuantity
 import com.mongodb.client.model.Filters
 import domain.Ingredient
 import io.kotest.matchers.shouldBe
@@ -50,32 +51,32 @@ class RoutesTester : BaseTest() {
         val correctParamName = "ingredients"
         val wrongParamName = "ingredient"
         var decreaseIngredients =
-            Json.encodeToString(listOf(Ingredient("milk", decrease), Ingredient("tea", decrease)))
+            Json.encodeToString(listOf(UpdateQuantity("milk", decrease), UpdateQuantity("tea", decrease)))
 
         apiUtils.updateConsumedIngredientsQuantity(correctParamName, decreaseIngredients)
             .send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_OK
 
-        decreaseIngredients = Json.encodeToString(listOf(Ingredient("tea", decrease)))
+        decreaseIngredients = Json.encodeToString(listOf(UpdateQuantity("tea", decrease)))
         var response = apiUtils.updateConsumedIngredientsQuantity(correctParamName, decreaseIngredients).send().coAwait()
         response.statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
         response.statusMessage() shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND.toString()
 
-        decreaseIngredients = Json.encodeToString(listOf(Ingredient("milk", decreaseMilk)))
+        decreaseIngredients = Json.encodeToString(listOf(UpdateQuantity("milk", decreaseMilk)))
         response = apiUtils.updateConsumedIngredientsQuantity(correctParamName, decreaseIngredients).send().coAwait()
         response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
         response.statusMessage() shouldBe WarehouseMessage.ERROR_INGREDIENT_QUANTITY.toString()
 
-        decreaseIngredients = Json.encodeToString(listOf(Ingredient("coffee", decrease)))
+        decreaseIngredients = Json.encodeToString(listOf(UpdateQuantity("coffee", decrease)))
         response = apiUtils.updateConsumedIngredientsQuantity(correctParamName, decreaseIngredients).send().coAwait()
         response.statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
         response.statusMessage() shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND.toString()
 
-        decreaseIngredients = Json.encodeToString(listOf(Ingredient("coffee", decrease)))
+        decreaseIngredients = Json.encodeToString(listOf(UpdateQuantity("coffee", decrease)))
         response = apiUtils.updateConsumedIngredientsQuantity(correctParamName, decreaseIngredients).send().coAwait()
         response.statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
         response.statusMessage() shouldBe WarehouseMessage.ERROR_INGREDIENT_NOT_FOUND.toString()
 
-        decreaseIngredients = Json.encodeToString(listOf(Ingredient("milk", decrease)))
+        decreaseIngredients = Json.encodeToString(listOf(UpdateQuantity("milk", decrease)))
         response = apiUtils.updateConsumedIngredientsQuantity(wrongParamName, decreaseIngredients).send().coAwait()
         response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
         response.statusMessage() shouldBe WarehouseMessage.ERROR_WRONG_PARAMETERS.toString()

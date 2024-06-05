@@ -2,7 +2,7 @@ package repository.features.stepDefinition
 
 import ApiUtils
 import BaseTest
-import domain.Ingredient
+import application.UpdateQuantity
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import io.vertx.kotlin.coroutines.coAwait
@@ -21,7 +21,7 @@ class StepDefinitionDecreaseIngredientQuantity : BaseTest() {
         name: String,
         quantity: String,
     ) {
-        val decreaseIngredients = Json.encodeToString(listOf(Ingredient(name, quantity.toInt())))
+        val decreaseIngredients = Json.encodeToString(listOf(UpdateQuantity(name, quantity.toInt())))
         runBlocking {
             val res = apiUtils.updateConsumedIngredientsQuantity("ingredients", decreaseIngredients).send().coAwait()
             actualAnswer =
