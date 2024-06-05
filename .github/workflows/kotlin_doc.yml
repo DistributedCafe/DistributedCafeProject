@@ -15,11 +15,11 @@ jobs:
       - name: Install and Build
         run: |
           chmod +x gradlew
-          ./gradlew dokkaHtmlMultiModule
+          ./gradlew dokkaHtml
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: ./build/dokka/htmlMultiModule
+          folder: ./WarehouseService/build/dokka/html
           branch: report
           target-folder: ./docs/dokka
