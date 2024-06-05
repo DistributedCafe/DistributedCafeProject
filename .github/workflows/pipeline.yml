@@ -1,7 +1,10 @@
 name: Main project workflow
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - develop
 jobs:
   ktlintCheck:
     name: check format kotlin
