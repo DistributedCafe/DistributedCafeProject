@@ -41,7 +41,7 @@ class WarehouseServiceTest : BaseTest() {
             .updateConsumedIngredientsQuantity(decreaseIngredients) shouldBe
             WarehouseServiceResponse(expectedIngredients, WarehouseMessage.OK)
 
-        val updatedIngredients = warehouseService.getAllIngredients().ingredients
+        val updatedIngredients = warehouseService.getAllIngredients().data
         updatedIngredients shouldBe expectedIngredients
     }
 
@@ -54,7 +54,7 @@ class WarehouseServiceTest : BaseTest() {
             .updateConsumedIngredientsQuantity(decreaseIngredients) shouldBe
             WarehouseServiceResponse(null, WarehouseMessage.ERROR_INGREDIENT_QUANTITY)
 
-        val updatedIngredients = warehouseService.getAllIngredients().ingredients
+        val updatedIngredients = warehouseService.getAllIngredients().data
         updatedIngredients shouldBe ingredients
     }
 

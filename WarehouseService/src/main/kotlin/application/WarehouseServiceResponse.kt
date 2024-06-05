@@ -4,10 +4,10 @@ import WarehouseMessage
 
 /**
  * Data class representing the response of the WarehouseService
- * @param ingredients list of ingredients
+ * @param data returned by the query
  * @param response returned by the WarehouseService
  */
 data class WarehouseServiceResponse<Data>(
-    val ingredients: Data?,
+    val data: Data?,
     val response: WarehouseMessage,
 )

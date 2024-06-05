@@ -30,9 +30,11 @@ class RoutesTester : BaseTest() {
         val existingIngredient = Json.encodeToString(milk)
         val correctParamName = "ingredient"
         val wrongParamName = "ingrediente"
-        apiUtils.createIngredient(correctParamName, newIngredient).send().coAwait().statusCode() shouldBe HttpURLConnection.HTTP_OK
+        var response = apiUtils.createIngredient(correctParamName, newIngredient).send().coAwait()
+        response.statusCode() shouldBe HttpURLConnection.HTTP_OK
+        response.bodyAsString() shouldBe newIngredient
 
-        var response = apiUtils.createIngredient(correctParamName, existingIngredient).send().coAwait()
+        response = apiUtils.createIngredient(correctParamName, existingIngredient).send().coAwait()
         response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
         response.statusMessage() shouldBe WarehouseMessage.ERROR_INGREDIENT_ALREADY_EXISTS.toString()
 

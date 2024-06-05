@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions
 
 class StepDefinitionDecreaseIngredientQuantity : BaseTest() {
     private var actualAnswer: String = ""
+    private var actualMessage: String = ""
     private val apiUtils = ApiUtils(8080)
 
     @When("System decreases the {word} quantity by {word}")
@@ -22,13 +23,19 @@ class StepDefinitionDecreaseIngredientQuantity : BaseTest() {
     ) {
         val decreaseIngredients = Json.encodeToString(listOf(Ingredient(name, quantity.toInt())))
         runBlocking {
+            val res = apiUtils.updateConsumedIngredientsQuantity("ingredients", decreaseIngredients).send().coAwait()
             actualAnswer =
-                apiUtils.updateConsumedIngredientsQuantity("ingredients", decreaseIngredients).send().coAwait().statusCode().toString()
+                res.statusCode().toString()
+            actualMessage = res.statusMessage().toString()
         }
     }
 
-    @Then("System receives {word}")
-    fun managerReceivesResponse(expectedResponse: String) {
+    @Then("System receives {word} and message {word}")
+    fun managerReceivesResponse(
+        expectedResponse: String,
+        expectedMessage: String,
+    ) {
         Assertions.assertEquals(expectedResponse, actualAnswer)
+        Assertions.assertEquals(expectedMessage, actualMessage)
     }
 }
