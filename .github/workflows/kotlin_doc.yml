@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - develop
+permissions:
+  contents: write
 jobs:
   publish:
     runs-on: ubuntu-latest
