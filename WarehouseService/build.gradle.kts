@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.dokka)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.serialization)
     id("jacoco")
 }
 
@@ -17,6 +18,9 @@ dependencies {
     testImplementation(libs.bundles.kotlin.testing)
     testImplementation(libs.bundles.cucumber.testing)
     testImplementation(libs.junit.vintage)
+    implementation(libs.bundles.vertx)
+    implementation(libs.mongodb.driver)
+    implementation(libs.bundles.kotlinx)
 }
 
 tasks.test {
