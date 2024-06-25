@@ -1,7 +1,6 @@
 import express from 'express';
 import { createServer } from 'http';
 import WebSocket, { Server as WebSocketServer } from 'ws';
-import { RequestMessage } from './utils/messages'
 import { check_service } from './check-service';
 
 const app = express();
@@ -10,11 +9,21 @@ const server = createServer(app);
 const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws: WebSocket) => {
+    
     ws.on('error', console.error);
 
-    ws.on('message', (data: RequestMessage) => {
+    ws.on('message', (data: string) => {
         console.log('received: %s', data);
-        check_service(data)
+        check_service(JSON.parse(data), ws)
+        
+    });
+
+    ws.on('open', () => {
+        console.log('socket is open');
+    });
+
+    ws.on('close', () => {
+        console.log('socket has closed');
     });
 });
 
