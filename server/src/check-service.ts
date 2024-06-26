@@ -7,6 +7,12 @@ const http = axios.create({
 	baseURL: 'http://localhost:8080'
 });
 
+/**
+ * This function is used to call the correct microservice and API based on the received RequestMessage. 
+ * It also sends the answer back through the websocket
+	  @param message sent by the client through the websocket
+	@param ws the websocket communication used
+**/
 export function check_service(message: RequestMessage, ws: any) {
 	console.log('received: %s', message);
 	switch (message.client_name) {
