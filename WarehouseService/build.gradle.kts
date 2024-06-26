@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.dokka)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.serialization)
+    id("application")
     id("jacoco")
 }
 
@@ -41,5 +42,10 @@ ktlint {
         include("**/main/kotlin/**/*.kt")
         exclude("**/*.gradle.kts")
     }
+}
+
+
+application {
+    mainClass.set("server.MainInit")
 }
 
