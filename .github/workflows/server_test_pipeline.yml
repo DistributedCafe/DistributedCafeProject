@@ -37,5 +37,5 @@ jobs:
       - name: Run Tests
         working-directory: server
         run: |
-          sleep 60
+          sleep 120
           npm test
