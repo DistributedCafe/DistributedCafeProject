@@ -1,0 +1,21 @@
+
+button{
+    width: auto;
+    height: auto;
+    padding: 2%;
+}
+
+.add-button{
+   width: 100%;
+}
+
+.error{
+    color: red;
+    font-weight: bold;
+}
+
+.errorExplanation{
+    color: red;
+    white-space: pre-wrap;
+    font-size: small;
+}

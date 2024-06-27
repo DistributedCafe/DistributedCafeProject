@@ -5,3 +5,10 @@ table{
 th, td{
     color: black;
 }
+
+.spinner{
+    text-align: center;
+    margin: auto;
+    margin-top: 10%;
+    width: 5%;
+}

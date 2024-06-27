@@ -3,12 +3,10 @@ import {MatTableModule} from '@angular/material/table';
 import { RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../../utils/messages';
 import { Service } from '../../utils/service';
 import { CommonModule } from '@angular/common';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { RestockButtonComponent } from '../restock-button/restock-button.component';
+import { Ingredient } from '../../utils/Ingredient';
 
-//TODO importa da server (?)
-export interface Ingredient {
-  name: string;
-  quantity: number;
-}
 /**
  * @title Basic use of `<table mat-table>`
  */
@@ -18,30 +16,29 @@ export interface Ingredient {
   templateUrl: 'table.component.html',
   standalone: true,
   imports: [MatTableModule,
-    CommonModule
-  ],
+    CommonModule,
+    MatProgressSpinnerModule,
+    RestockButtonComponent],
 })
 export class TableComponent {
-  displayedColumns: string[] = ['name', 'quantity'];
+  displayedColumns: string[] = ['name', 'quantity', 'restock'];
   display = false
   dataSource: Ingredient[] = []
- 
-  constructor(){
-    let ws: WebSocket;
+  ws: WebSocket = new WebSocket('ws://localhost:3000');
+  
+  constructor(){ 
     let ingredients: Ingredient[]
     const initialRequest: RequestMessage = {
       client_name: Service.WAREHOUSE,
 	    client_request: WarehouseServiceMessages.GET_ALL_INGREDIENT,
 	    input: ''
     }
-
-    ws = new WebSocket('ws://localhost:3000');
-    ws.onopen = function() {
+    this.ws.onopen = function() {
       console.log("Websocket opend!")
-      ws.send(JSON.stringify(initialRequest))
+      this.send(JSON.stringify(initialRequest))
     }
 
-    ws.onmessage = function(e){
+    this.ws.onmessage = function(e){
       const data = JSON.parse(e.data) as ResponseMessage
       console.log("message: " + data.message)
       console.log("code: " + data.code)
