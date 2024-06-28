@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { RestockButtonComponent } from '../restock-button/restock-button.component';
 import { Ingredient } from '../../utils/Ingredient';
+import { AddButtonComponent } from '../add-button/add-button.component';
 
 /**
  * @title Basic use of `<table mat-table>`
@@ -18,15 +19,27 @@ import { Ingredient } from '../../utils/Ingredient';
   imports: [MatTableModule,
     CommonModule,
     MatProgressSpinnerModule,
-    RestockButtonComponent],
+    RestockButtonComponent,
+    AddButtonComponent],
 })
 export class TableComponent {
   displayedColumns: string[] = ['name', 'quantity', 'restock'];
   display = false
+  error = false
+  errorMessage = ''
   dataSource: Ingredient[] = []
-  ws: WebSocket = new WebSocket('ws://localhost:3000');
-  
+  ws!: WebSocket; 
+
   constructor(){ 
+    this.ws = new WebSocket('ws://localhost:3000')
+
+    this.ws.onerror = () => {
+      this.errorMessage = "Server not available!"
+      this.error = true
+      this.display = true
+      this.ws.close()
+    }      
+
     let ingredients: Ingredient[]
     const initialRequest: RequestMessage = {
       client_name: Service.WAREHOUSE,
@@ -42,12 +55,21 @@ export class TableComponent {
       const data = JSON.parse(e.data) as ResponseMessage
       console.log("message: " + data.message)
       console.log("code: " + data.code)
-      ingredients = JSON.parse(data.data) as Ingredient []
-      setData(ingredients, true)
+      if(data.code == 200){
+        ingredients = JSON.parse(data.data) as Ingredient[]
+        setData(ingredients)
+      }else{
+        setEmptyWarehouse()
+      }
+      setDisplayTrue()
     }
-    const setData = (ingredients: Ingredient[], display: boolean) =>{
+    const setDisplayTrue = () => {this.display = true}
+    const setEmptyWarehouse = () => {
+      this.error = true
+      this.errorMessage = "Warehouse empty!"
+    }
+    const setData = (ingredients: Ingredient[]) =>{
       this.dataSource = ingredients
-      this.display = display
     }
   }
 }

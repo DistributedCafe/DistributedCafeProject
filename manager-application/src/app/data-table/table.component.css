@@ -12,3 +12,9 @@ th, td{
     margin-top: 10%;
     width: 5%;
 }
+
+.empty{
+    font-weight: bold;
+    margin-top: 30%;
+    font-size: 300%;
+}

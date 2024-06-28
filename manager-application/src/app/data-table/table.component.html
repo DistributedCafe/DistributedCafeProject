@@ -1,7 +1,11 @@
+<add-button [ws]="ws"></add-button>
 <div *ngIf="!display">
   <mat-spinner class="spinner"></mat-spinner>
 </div>
-<div *ngIf="display">
+<div *ngIf="display && error" class="empty">
+  {{errorMessage}}
+</div>
+<div *ngIf="display && !error">
   <table mat-table [dataSource]="dataSource">  
     <!-- Name Column -->
     <ng-container matColumnDef="name">

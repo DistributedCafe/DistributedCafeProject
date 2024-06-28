@@ -7,8 +7,7 @@ import { TableComponent } from '../data-table/table.component';
   standalone: true,
   imports: [
     MatToolbarModule,
-    TableComponent
-  ],
+    TableComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

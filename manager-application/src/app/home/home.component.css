@@ -1,8 +1,15 @@
 .navbar{
     background-color: #ff4081;
-    color:aqua;
+    color: white;
 }
 
 div{
     margin: 2%;
+}
+
+.table{
+    padding-top: 3%;
+    width: 40%;
+    margin:auto;
+    text-align: center;
 }

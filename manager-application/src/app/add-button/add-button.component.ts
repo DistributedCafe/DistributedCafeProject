@@ -16,25 +16,23 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'restock-button',
+  selector: 'add-button',
   standalone: true,
-  imports: [
-    MatButtonModule,
-    MatIconModule],
-  templateUrl: './restock-button.component.html',
-  styleUrl: './restock-button.component.css'
+  imports: [MatButtonModule, 
+    MatIconModule,
+    MatFormFieldModule, 
+    MatInputModule],
+  templateUrl: './add-button.component.html',
+  styleUrl: './add-button.component.css'
 })
-export class RestockButtonComponent {
+export class AddButtonComponent {
+  constructor(public dialog: MatDialog) {} 
   @Input()
   ws!: WebSocket;
-  @Input()
-  ingredient!: Ingredient;
-
-  constructor(public dialog: MatDialog){}
+  
   openDialog() {
     this.dialog.open(Dialog, {
       data: {
-        ingredient: this.ingredient,
         ws: this.ws,
         dialog: this.dialog
       },
@@ -43,64 +41,70 @@ export class RestockButtonComponent {
 }
 
 @Component({
-  selector: 'restock-button-dialog',
+  selector: 'add-button-dialog',
   templateUrl: './dialog.html',
   standalone: true,
-  styleUrl: './restock-button.component.css',
+  styleUrl: './add-button.component.css',
   imports: [MatDialogTitle, 
     MatDialogContent, 
     MatFormFieldModule, 
     MatInputModule,
     MatButtonModule,
     FormsModule,
-    CommonModule],
+    CommonModule, MatIconModule],
 })
 export class Dialog {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, public dialog: MatDialog) {}
-  addQuantity: number = 1
-  showError = false
- 
-   public restockIngredient() {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, public dialog: MatDialog) {} 
+  name: string = ''
+  quantity: number = 1
+
+  public add(){
+    console.log(this.name)
+    console.log(this.quantity)
     const data = this.data
+
+    const openDialog = (msg: ResponseMessage) => {
+      this.dialog.open(ErrorDialog, {data: 
+        msg
+      });
+    }
+
+    const input: Ingredient = {
+      name: this.name,
+      quantity: this.quantity
+    }
+    const request: RequestMessage = {
+      client_name: Service.WAREHOUSE,
+      client_request: WarehouseServiceMessages.CREATE_INGREDIENT,
+      input: JSON.stringify(input)
+    }
     const closeDialog = () => {
       data.dialog.closeAll()
       window.location.reload()
     }
-    const openDialog = (msg: ResponseMessage) => {
-      this.dialog.open(ErrorDialog, msg);
+
+    data.ws.send(JSON.stringify(request))
+
+    data.ws.onmessage = function(e){
+      const res = JSON.parse(e.data) as ResponseMessage
+      if(res.code == 200){
+        console.log(res.message)
+        closeDialog()
+      }else{
+        console.error(res.code)
+        console.error(res.message)
+        data.dialog.closeAll()
+        openDialog(res)
+      }
     }
-    if(this.addQuantity > 0){
-      const input = {
-        "name": data.ingredient.name,
-        "quantity": this.addQuantity
-      }
-      const request: RequestMessage = {
-        client_name: Service.WAREHOUSE,
-        client_request: WarehouseServiceMessages.RESTOCK_INGREDIENT,
-        input: JSON.stringify(input)
-      }
-      data.ws.send(JSON.stringify(request))
-      data.ws.onmessage = function(e){
-        const response = JSON.parse(e.data) as ResponseMessage
-        if(response.code == 200){
-          console.log(response.message)
-          closeDialog()
-        }else{
-          console.error(response.code)
-          console.error(response.message)
-          data.dialog.closeAll()
-          openDialog(response)
-        }
-      }
-    }    
   }
 }
 
 @Component({
-  selector: 'restock-button-error-dialog',
+  selector: 'add-button-error-dialog',
   templateUrl: './error-dialog.html',
   standalone: true,
-  styleUrl: './restock-button.component.css',
+  styleUrl: './add-button.component.css',
   imports: [MatDialogTitle, 
     MatDialogContent, 
     MatFormFieldModule, 
@@ -110,7 +114,9 @@ export class Dialog {
     CommonModule],
 })
 export class ErrorDialog implements OnDestroy {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: ResponseMessage) {} 
+  constructor(@Inject(MAT_DIALOG_DATA) public data: ResponseMessage) {
+    console.log(data.code)
+  } 
   ngOnDestroy(): void {
     window.location.reload()
   }
@@ -118,7 +124,6 @@ export class ErrorDialog implements OnDestroy {
 }
 
 export interface DialogData {
-  ingredient: Ingredient,
   ws: WebSocket,
   dialog: MatDialog
 }
