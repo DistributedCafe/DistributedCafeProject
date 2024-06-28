@@ -31,7 +31,6 @@ class RoutesTester : BaseTest() {
     suspend fun createIngredientRouteTest() {
         val newIngredient = Json.encodeToString(coffee)
         val existingIngredient = Json.encodeToString(milk)
-        val wrongIngredient = Ingredient("butter", -2)
 
         var response = apiUtils.createIngredient(Buffer.buffer(newIngredient)).coAwait()
         response.statusCode() shouldBe HttpURLConnection.HTTP_OK
@@ -53,7 +52,7 @@ class RoutesTester : BaseTest() {
         response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
         response.statusMessage() shouldBe WarehouseMessage.ERROR_WRONG_PARAMETERS.toString()
 
-        response = apiUtils.createIngredient(Buffer.buffer(Json.encodeToString(wrongIngredient))).coAwait()
+        response = apiUtils.createIngredient(Buffer.buffer(Json.encodeToString(butter))).coAwait()
         response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
         response.statusMessage() shouldBe WarehouseMessage.ERROR_WRONG_PARAMETERS.toString()
     }
@@ -108,6 +107,7 @@ class RoutesTester : BaseTest() {
     @Test
     suspend fun restockRouteTest() {
         val quantity = Buffer.buffer(Json.encodeToString(Quantity(10)))
+
         apiUtils.restock("tea", quantity).coAwait().statusCode() shouldBe HttpURLConnection.HTTP_OK
 
         var response = apiUtils.restock("coffee", quantity).coAwait()
@@ -119,6 +119,10 @@ class RoutesTester : BaseTest() {
         response.statusMessage() shouldBe WarehouseMessage.ERROR_WRONG_PARAMETERS.toString()
 
         response = apiUtils.restock("tea", Buffer.buffer("[{\"quantiti\": \"ten\"}]")).coAwait()
+        response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_WRONG_PARAMETERS.toString()
+
+        response = apiUtils.restock("tea", Buffer.buffer(Json.encodeToString(butter))).coAwait()
         response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
         response.statusMessage() shouldBe WarehouseMessage.ERROR_WRONG_PARAMETERS.toString()
     }
