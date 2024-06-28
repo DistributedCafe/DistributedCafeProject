@@ -42,8 +42,12 @@ class WarehouseServiceImpl(mongoInfo: MongoInfo) : WarehouseService {
     }
 
     override suspend fun restock(ingredient: UpdateQuantity): WarehouseServiceResponse<Ingredient> {
-        val repositoryRes = repository.restock(ingredient.name, ingredient.quantity)
-        return WarehouseServiceResponse(repositoryRes.data, repositoryRes.message)
+        return if (ingredient.quantity > 0) {
+            val repositoryRes = repository.restock(ingredient.name, ingredient.quantity)
+            WarehouseServiceResponse(repositoryRes.data, repositoryRes.message)
+        } else {
+            WarehouseServiceResponse(null, WarehouseMessage.ERROR_WRONG_PARAMETERS)
+        }
     }
 
     override suspend fun getAllAvailableIngredients(): WarehouseServiceResponse<List<Ingredient>> {

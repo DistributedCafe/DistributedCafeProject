@@ -31,7 +31,9 @@ interface WarehouseService {
 
     /**
      * @param ingredient information needed to restock
-     * @return the repository response
+     * @return null and WarehouseMessage.ERROR_WRONG_PARAMETERS
+     *      if the quantity passed in the body is less ore equal to 0,
+     *      otherwise it returns the repository response
      */
     suspend fun restock(ingredient: UpdateQuantity): WarehouseServiceResponse<Ingredient>
 
