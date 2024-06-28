@@ -31,6 +31,7 @@ class RoutesTester : BaseTest() {
     suspend fun createIngredientRouteTest() {
         val newIngredient = Json.encodeToString(coffee)
         val existingIngredient = Json.encodeToString(milk)
+        val wrongIngredient = Ingredient("butter", -2)
 
         var response = apiUtils.createIngredient(Buffer.buffer(newIngredient)).coAwait()
         response.statusCode() shouldBe HttpURLConnection.HTTP_OK
@@ -49,6 +50,10 @@ class RoutesTester : BaseTest() {
         response.statusMessage() shouldBe WarehouseMessage.ERROR_WRONG_PARAMETERS.toString()
 
         response = apiUtils.createIngredient(Buffer.buffer("")).coAwait()
+        response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
+        response.statusMessage() shouldBe WarehouseMessage.ERROR_WRONG_PARAMETERS.toString()
+
+        response = apiUtils.createIngredient(Buffer.buffer(Json.encodeToString(wrongIngredient))).coAwait()
         response.statusCode() shouldBe HttpURLConnection.HTTP_BAD_REQUEST
         response.statusMessage() shouldBe WarehouseMessage.ERROR_WRONG_PARAMETERS.toString()
     }
