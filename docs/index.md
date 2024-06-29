@@ -13,3 +13,9 @@ API documentation can be found at this link: [SWAGGER](https://app.swaggerhub.co
 
 ## WarehouseService documentation
 WarehouseService documentation can be found at this link: [WarehouseService documentation](./dokka/index.html)
+
+## Server documentation
+Server documentation can be found at this link: [Server documentation](./typedoc/server/index.html)
+
+## Manager application documentation
+Manager application documentation can be found at this link: [Manager application documentation](./typedoc/manager-application/index.html)
