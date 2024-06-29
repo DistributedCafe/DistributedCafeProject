@@ -3,11 +3,9 @@ import { Service } from './utils/service';
 import axios from 'axios';
 import { fromStringToInput, fromStringToArrayInput } from './string-utils';
 
-console.log("sono vivo")
 const http = axios.create({
 	baseURL: 'http://localhost:8080'
 })
-console.log("sono ancora vivo")
 /**
  * This function is used to call the correct microservice and API based on the received RequestMessage. 
  * It also sends the answer back through the websocket
