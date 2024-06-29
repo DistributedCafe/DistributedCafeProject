@@ -9,7 +9,9 @@ import { Ingredient } from '../../utils/Ingredient';
 import { AddButtonComponent } from '../add-button/add-button.component';
 
 /**
- * @title Basic use of `<table mat-table>`
+ * Component that implements a table displaying the ingredient 
+ * present in the warehouse. If the warehouse is empty or an 
+ * error occurs it shows it.
  */
 @Component({
 	selector: 'dataTable',

@@ -15,6 +15,10 @@ import { Service } from '../../utils/service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+/**
+ * Component that implements a button that manages 
+ * the creation of a new ingredient
+ */
 @Component({
 	selector: 'add-button',
 	standalone: true,
@@ -40,6 +44,12 @@ export class AddButtonComponent {
 	}
 }
 
+/**
+ * Component that implements a dialog containing a 
+ * form to insert all the necessary information 
+ * about the new ingredient and a button that send
+ * a message to the server
+ */
 @Component({
 	selector: 'add-button-dialog',
 	templateUrl: './dialog.html',
@@ -101,6 +111,9 @@ export class Dialog {
 	}
 }
 
+/**
+ * Component that implements a dialog that shows the occurred error
+ */
 @Component({
 	selector: 'add-button-error-dialog',
 	templateUrl: './error-dialog.html',

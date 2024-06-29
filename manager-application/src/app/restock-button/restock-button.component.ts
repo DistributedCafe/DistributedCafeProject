@@ -15,6 +15,10 @@ import { Service } from '../../utils/service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+/**
+ * Component that implements a button that manages 
+ * the restock of an ingredient
+ */
 @Component({
 	selector: 'restock-button',
 	standalone: true,
@@ -43,6 +47,12 @@ export class RestockButtonComponent {
 	}
 }
 
+/**
+ * Component that implements a dialog containing a 
+ * form to insert the quantity to add (greater than 0) 
+ * to the ingredient and a button that send
+ * a message to the server
+ */
 @Component({
 	selector: 'restock-button-dialog',
 	templateUrl: './dialog.html',
@@ -99,6 +109,9 @@ export class Dialog {
 	}
 }
 
+/**
+ * Component that implements a dialog that shows the occurred error
+ */
 @Component({
 	selector: 'restock-button-error-dialog',
 	templateUrl: './error-dialog.html',
