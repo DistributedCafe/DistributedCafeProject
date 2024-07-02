@@ -64,6 +64,6 @@ The front-end applications communicate only with the back-end server via *Web So
 * The customer web application it’s developed using Angular framework
 * The manager web application it’s developed using Angular framework
 * The employee software it’s developed in Java
-* The server // TO BE DEFINED
-* Two microservices are developed using Express framework // TO BE DEFINED
-* One microservice is developed using Kotlin // TO BE DEFINED
+* The server that communicates with the frontends by a websocket connection and with the microservices by their APi it’s developed using Express.js framework
+* The order microservice and the menu microservice are developed using Express.js framework
+* The warehouse microservice is developed using Vert.x and Kotlin
