@@ -4,10 +4,21 @@ import { OrdersMessage } from "../orders-message";
 import * as mongoConnection from "./connection"
 import { toInsertOrder } from './db_utils';
 
+/**
+ * This type represents the Response given by the repository. It consists of the generic data and an OrdersMessage
+ */
 type RepositoryResponse<T> = {data?: T, message: OrdersMessage};
 
 let collection = mongoConnection.getOrdersCollection()
 
+/**
+ * Inserts a pending order into the repository with the provided information
+ * @param customerContact of the ordering customer
+ * @param price of the order
+ * @param type of the order
+ * @param items ordered
+ * @returns a Promise with the repository response and the created Order as data
+ */
 export async function createOrder(customerContact: string, price: number, type: OrderType, items: OrderItem[]): Promise<RepositoryResponse<Order>>{
     
     let ordersCollection = await collection
@@ -21,6 +32,10 @@ export async function createOrder(customerContact: string, price: number, type: 
         
 }
 
+/**
+ * It returs a Promise with the repository response and all the orders in the repository
+ * @returns OrdersMessage.OK if there are orders, OrdersMessage.EMPTY_ORDERS_DB otherwise
+ */
 export async function getAllOrders(): Promise<RepositoryResponse<Order[]>>{
 
     let ordersCollection = await collection

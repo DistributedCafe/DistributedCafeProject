@@ -8,11 +8,14 @@ afterAll(() => {client.closeMongoClient()})
 
 // read
 test('Get All Orders',  async () => {
+
+    // empty repository test
     await db.emptyOrders()
     let value = await repository.getAllOrders()
     expect(value.message).toBe(OrdersMessage.EMPTY_ORDERS_DB)
     expect(value.data?.length).toBe(0)
     
+    // repository with orders test
     await db.fillOrders()
     value = await repository.getAllOrders()
     expect(value.message).toBe(OrdersMessage.OK)
