@@ -3,6 +3,7 @@ import {InsertOrder, Order, OrderState, OrderType} from '../src/domain/order'
 import { OrdersMessage } from '../src/orders-message'
 import * as client from '../src/repository/connection'
 import * as db from '../src/repository/db_utils'
+import { removeIndexOrder } from './test-utils'
 
 afterAll(() => {client.closeMongoClient()})
 
@@ -38,7 +39,3 @@ test('Create Order', async () => {
     }
     
 })
-
-function removeIndexOrder(order: Order): InsertOrder{
-    return db.toInsertOrder(order.customerContact, order.price, order.type, order.state, order.items)
-}
