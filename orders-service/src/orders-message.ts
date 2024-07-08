@@ -4,5 +4,5 @@
 export enum OrdersMessage { 
     OK = "OK",
     EMPTY_ORDERS_DB = "EMPTY_ORDERS_DB",
-    ERROR = "ERROR"
+    ERROR_WRONG_PARAMETERS = "ERROR_WRONG_PARAMETERS"
 }

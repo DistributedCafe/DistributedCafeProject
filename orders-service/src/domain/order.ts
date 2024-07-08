@@ -1,23 +1,24 @@
 /**
  * this interface represents an Order
  */
-export interface Order {
-    _id: string,
-    customerContact: string,
-    price: number,
-    type: OrderType,
-    state: OrderState,
-    items: OrderItem[]
+export interface Order extends InsertOrder{
+    _id: string
 }
 
 /**
- * this interface represents the information needed to create an order, there is no index
+ * this interface represents the information needed to insert an order into the repository
  */
-export interface InsertOrder {
+export interface InsertOrder extends NewOrder {
+    state: OrderState,
+}
+
+/**
+ * this interface represents the information needed to create a new pending order
+ */
+export interface NewOrder {
     customerContact: string,
     price: number,
     type: OrderType,
-    state: OrderState,
     items: OrderItem[]
 }
 
