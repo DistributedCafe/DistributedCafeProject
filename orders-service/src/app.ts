@@ -6,8 +6,8 @@ app.use(express.json())
 app.use('/orders', ordersRouter)
 
 let PORT = 8090
-app.listen(PORT, () => {
+
+export let server = app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
 
-module.exports = app;
