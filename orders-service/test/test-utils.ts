@@ -1,4 +1,4 @@
-import { InsertOrder, Item, Order, OrderItem, OrderState, OrderType } from '../src/domain/order'
+import { Item, Order, OrderItem, OrderState, OrderType } from '../src/domain/order'
 import { getOrdersCollection } from '../src/repository/connection'
 import * as conversion from '../src/repository/order_conversion_utils'
 
@@ -49,6 +49,10 @@ export async function emptyOrders() {
     await collection.insertMany(getTestOrders())
  }
 
+ /**
+  * Utility function to get the last inserted Order
+  * @returns the last inserted Order
+  */
  export async function getLastInsertedOrder(): Promise<Order>{
    let orders = (await getOrdersCollection()).find()
    let last = (await orders.toArray()).pop() as conversion.MongoOrder

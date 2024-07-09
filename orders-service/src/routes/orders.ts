@@ -7,6 +7,9 @@ import * as service from "../application/orders-service"
 
 var router = express.Router();
 
+/**
+ * POST '/orders' API handles the addition of a new Order delegating to the service.
+ */
 router.post('/', async (req: Request, res: Response) => {
   let order = req.body
 
@@ -20,6 +23,9 @@ router.post('/', async (req: Request, res: Response) => {
    
 });
 
+/**
+ * GET '/orders' API handles the retrieval of all the Orders delegating to the service
+ */
 router.get('/', async (req: Request, res: Response) => {
   let service_res = await service.getAllOrders()
   sendResponse(res, service_res.message, service_res.data)
