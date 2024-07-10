@@ -1,7 +1,7 @@
 /**
  * this interface represents an Order
  */
-export interface Order extends InsertOrder{
+export interface Order extends InsertOrder {
     _id: string
 }
 
@@ -25,7 +25,7 @@ export interface NewOrder {
 /**
  * this interface represents the item inside an order, so the item itself in the ordered quantity
  */
-export interface OrderItem { 
+export interface OrderItem {
     item: Item,
     quantity: number
 }
@@ -40,7 +40,7 @@ export interface Item {
 /**
  * this enum represents the three different types of orders
  */
-export enum OrderType { 
+export enum OrderType {
     AT_THE_TABLE = "AT_THE_TABLE",
     TAKE_AWAY = "TAKE_AWAY",
     HOME_DELIVERY = "HOME_DELIVERY"

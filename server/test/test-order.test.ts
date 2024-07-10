@@ -9,10 +9,10 @@ let m: ResponseMessage
 let ws: WebSocket
 let insertedId: string
 
-beforeAll(async () => { 
-    cleanCollection()
-    let res = await addOrder(JSON.stringify(order)) 
-    insertedId = res.insertedId.toString()
+beforeAll(async () => {
+	cleanCollection()
+	let res = await addOrder(JSON.stringify(order))
+	insertedId = res.insertedId.toString()
 })
 
 afterEach(() => { ws.close() })

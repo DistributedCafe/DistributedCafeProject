@@ -7,12 +7,12 @@ import { getLastInsertedOrder } from "./orders-db-connection"
  * @param order that has to be modified
  * @returns the modified order as a string
  */
-export async function addIdandState(order: any){
-    let last = await getLastInsertedOrder()
-    let output = order
-    output["_id"] = last?._id
-    output["state"] = "PENDING"
-    return JSON.stringify(output)
+export async function addIdandState(order: any) {
+	let last = await getLastInsertedOrder()
+	let output = order
+	output["_id"] = last?._id
+	output["state"] = "PENDING"
+	return JSON.stringify(output)
 }
 
 /**
@@ -21,8 +21,8 @@ export async function addIdandState(order: any){
  * @param id of that has to be added
  * @returns the modified order as a string
  */
-export function addId(order: any, id: string){
-    let output = order
-  	output["_id"] = id
-  	return "["+ JSON.stringify(output) + "]"
+export function addId(order: any, id: string) {
+	let output = order
+	output["_id"] = id
+	return "[" + JSON.stringify(output) + "]"
 }

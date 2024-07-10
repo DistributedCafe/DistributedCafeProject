@@ -1,17 +1,17 @@
 import axios from 'axios'
 import * as client from '../src/repository/connection'
-import {server} from '../src/app'
+import { server } from '../src/app'
 import * as db_test from '../test/test-utils'
 import { OrdersMessage } from '../src/orders-message'
-import { removeIndexOrder } from '../src/repository/order_conversion_utils'
+import { removeIndexOrder } from '../src/repository/order-conversion-utils'
 import { assertEquals } from 'typia'
 import { Order, OrderState } from '../src/domain/order'
 
 const http = axios.create({
-	baseURL: 'http://localhost:8090'
+    baseURL: 'http://localhost:8090'
 })
 
-beforeEach(async () => {await db_test.emptyOrders()})
+beforeEach(async () => { await db_test.emptyOrders() })
 
 afterAll(() => {
     client.closeMongoClient()
@@ -19,7 +19,7 @@ afterAll(() => {
 })
 
 test('Get All Orders', async () => {
-    
+
     // empty
     await http.get('/orders').catch((error) => {
         expect(error.response.status).toBe(404)
@@ -43,19 +43,19 @@ test('Add New Order', async () => {
 
     await db_test.fillOrders()
     let json: any = {
-      "customerContact": "c1",
-      "price": 1,
-      "type": "HOME_DELIVERY",
-      "items": [
-        {
-          "item": {
-            "name": "i1"
-          },
-          "quantity": 2
-        },
-      ]
+        "customerContact": "c1",
+        "price": 1,
+        "type": "HOME_DELIVERY",
+        "items": [
+            {
+                "item": {
+                    "name": "i1"
+                },
+                "quantity": 2
+            },
+        ]
     }
-    
+
 
     let res = await http.post('/orders', json)
     expect(res.status).toBe(200)
@@ -71,5 +71,5 @@ test('Add New Order', async () => {
         expect(error.response.data).toStrictEqual({})
 
     })
-      
+
 })

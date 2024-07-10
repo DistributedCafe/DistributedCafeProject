@@ -17,8 +17,8 @@ let insertedId: string
 
 beforeAll(async () => {
 	cleanCollection()
-    let res = await addOrder(JSON.stringify(order)) 
-    insertedId = res.insertedId.toString()
+	let res = await addOrder(JSON.stringify(order))
+	insertedId = res.insertedId.toString()
 })
 
 afterEach(() => {

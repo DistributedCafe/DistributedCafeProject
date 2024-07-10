@@ -5,7 +5,7 @@ import * as repository from "../repository/repository";
 /**
  * This type represents the Response given by the Service. It consists of the generic data and an OrdersMessage
  */
-type ServiceResponse<T> = {data?: T, message: OrdersMessage};
+type ServiceResponse<T> = { data?: T, message: OrdersMessage };
 
 /**
  * Service functionality to add a new order given its information:
@@ -15,7 +15,7 @@ type ServiceResponse<T> = {data?: T, message: OrdersMessage};
  * @param items 
  * @returns a Promise with the Service Response containing the new Order data and an OK message 
  */
-export async function addNewOrder(customerContact: string, price: number, type: OrderType, items: OrderItem[]): Promise<ServiceResponse<Order>>{
+export async function addNewOrder(customerContact: string, price: number, type: OrderType, items: OrderItem[]): Promise<ServiceResponse<Order>> {
     let res = await repository.createOrder(customerContact, price, type, items)
     return { data: res.data, message: res.message }
 
@@ -25,7 +25,7 @@ export async function addNewOrder(customerContact: string, price: number, type: 
  * Service functionality to get all the received orders
  * @returns all the received orders
  */
-export async function getAllOrders(): Promise<ServiceResponse<Order[]>>{
+export async function getAllOrders(): Promise<ServiceResponse<Order[]>> {
     let res = await repository.getAllOrders()
-    return {data: res.data, message: res.message}
+    return { data: res.data, message: res.message }
 }
