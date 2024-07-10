@@ -1,4 +1,4 @@
-import WebSocket, { WebSocketServer } from 'ws';
+import WebSocket from 'ws';
 import { Service } from '../src/utils/service'
 import { RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../src/utils/messages';
 
@@ -92,7 +92,7 @@ function startWebsocket(requestMessage: RequestMessage, code: number, message: s
 function createRequestMessage(request: WarehouseServiceMessages, input: string): RequestMessage {
 	return {
 		client_name: Service.WAREHOUSE,
-		client_request: request,
+		client_request: request.toString(),
 		input: input
 	}
 }

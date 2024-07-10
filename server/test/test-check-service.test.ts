@@ -88,7 +88,7 @@ test('Decrease Ingredients Quantity Test - 200', done => {
 function createRequestMessage(request: WarehouseServiceMessages, input: string): RequestMessage {
 	return {
 		client_name: Service.WAREHOUSE,
-		client_request: request,
+		client_request: request.toString(),
 		input: input
 	}
 }

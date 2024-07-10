@@ -1,10 +1,12 @@
-import { RequestMessage, ResponseMessage, WarehouseServiceMessages } from './utils/messages'
+import { OrdersServiceMessages, RequestMessage, ResponseMessage, WarehouseServiceMessages } from './utils/messages'
 import { Service } from './utils/service';
 import axios from 'axios';
-import { fromStringToInput, fromStringToArrayInput } from './string-utils';
 
 const http = axios.create({
 	baseURL: 'http://localhost:8080'
+})
+const httpOrders = axios.create({
+	baseURL: 'http://localhost:8090'
 })
 /**
  * This function is used to call the correct microservice and API based on the received RequestMessage. 
@@ -22,27 +24,38 @@ export function check_service(message: RequestMessage, ws: any) {
 			// TODO
 			break;
 		default:
-			// TODO
+			orders_api(message.client_request, message.input, ws)
 			break;
 	}
 }
 
-function warehouse_api(message: WarehouseServiceMessages, input: string, ws: WebSocket) {
+function orders_api(message: string, input: string, ws: WebSocket) {
 	switch (message) {
-		case WarehouseServiceMessages.CREATE_INGREDIENT:
-			handleResponse(http.post('/warehouse/', fromStringToInput(input)), ws)
+		case OrdersServiceMessages.CREATE_ORDER.toString():
+			handleResponse(httpOrders.post('/orders/', input), ws)
 			break;
-		case WarehouseServiceMessages.DECREASE_INGREDIENTS_QUANTITY:
-			handleResponse(http.put('/warehouse/', fromStringToArrayInput(input)), ws)
+		default: //get all orders
+			handleResponse(httpOrders.get('/orders/'), ws)
 			break;
-		case WarehouseServiceMessages.GET_ALL_AVAILABLE_INGREDIENT:
+	}
+}
+
+function warehouse_api(message: string, input: string, ws: WebSocket) {
+	switch (message) {
+		case WarehouseServiceMessages.CREATE_INGREDIENT.toString():
+			handleResponse(http.post('/warehouse/', input), ws)
+			break;
+		case WarehouseServiceMessages.DECREASE_INGREDIENTS_QUANTITY.toString():
+			handleResponse(http.put('/warehouse/', input), ws)
+			break;
+		case WarehouseServiceMessages.GET_ALL_AVAILABLE_INGREDIENT.toString():
 			handleResponse(http.get('/warehouse/available'), ws)
 			break;
-		case WarehouseServiceMessages.GET_ALL_INGREDIENT:
+		case WarehouseServiceMessages.GET_ALL_INGREDIENT.toString():
 			handleResponse(http.get('/warehouse/'), ws)
 			break;
 		default: //restock
-			const body = fromStringToInput(input)
+			const body = JSON.parse(input)
 			const quantity = {
 				"quantity": body.quantity
 			}
