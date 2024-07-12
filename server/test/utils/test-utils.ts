@@ -1,6 +1,38 @@
 import { OrdersServiceMessages, ResponseMessage } from "../../src/utils/messages";
 import { Service } from "../../src/utils/service";
-import { addIdandState } from "./json-utils";
+import { getCollection } from "./db-connection";
+import { addIdandState } from "./order-json-utils";
+
+export const milk = {
+	name: "milk",
+	quantity: 95
+}
+
+export const tea = {
+	name: "tea",
+	quantity: 0
+}
+
+export const omelette = {
+	name: "omelette",
+	recipe: [
+		{
+			ingredient_name: "egg",
+			quantity: 2
+		}
+	],
+	price: 3
+}
+export const boiledEgg = {
+	name: "boiled_egg",
+	recipe: [
+		{
+			ingredient_name: "egg",
+			quantity: 1
+		}
+	],
+	price: 1
+}
 
 export const order: any = {
 	"customerContact": "c1",
@@ -24,11 +56,30 @@ export const newOrder = {
 	"items": [
 		{
 			"item": {
-				"name": "i1"
+				"name": "omelette"
 			},
 			"quantity": 2
 		},
 	]
+}
+
+export const newWrongOrder = {
+	"customerContact": "c1",
+	"price": "1",
+	"type": "HOME_DELIVERY",
+	"items": [
+		{
+			"item": {
+				"name": "omelette"
+			},
+			"quantity": 2
+		},
+	]
+}
+
+export const egg = {
+	"name": "egg",
+	"quantity": 20
 }
 
 /**
@@ -42,11 +93,20 @@ export const newOrder = {
 export async function check_order_message(msg: ResponseMessage, code: number, message: string, data: any, request: string) {
 	expect(msg.code).toBe(code);
 	expect(msg.message).toBe(message);
-	if (request == OrdersServiceMessages.CREATE_ORDER.toString()) {
-		expect(JSON.parse(msg.data)).toStrictEqual(JSON.parse(await addIdandState(data)));
+	if (msg.code == 200) {
+		if (request == OrdersServiceMessages.CREATE_ORDER.toString()) {
+			expect(JSON.parse(msg.data)).toStrictEqual(JSON.parse(await addIdandState(data)));
+			//check ingredient db
+			let dbEgg = await (await getCollection("Warehouse", "Ingredient")).findOne({ name: "egg" }, { projection: { _id: 0 } })
+			const qty = egg.quantity - (omelette.recipe[0].quantity * newOrder.items[0].quantity)
+			expect(dbEgg?.quantity).toBe(qty)
+		} else {
+			expect(JSON.parse(msg.data)).toStrictEqual(JSON.parse(data));
+		}
 	} else {
-		expect(JSON.parse(msg.data)).toStrictEqual(JSON.parse(data));
+		expect(msg.data).toBe("")
 	}
+
 }
 
 /**

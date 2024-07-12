@@ -1,4 +1,4 @@
-import { getLastInsertedOrder } from "./orders-db-connection"
+import { getLastInsertedOrder } from "./db-connection"
 
 /**
  * Adds id and state to a given order.

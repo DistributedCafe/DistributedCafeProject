@@ -36,3 +36,11 @@ export enum OrdersServiceMessages {
 	CREATE_ORDER,
 	GET_ALL_ORDERS,
 }
+
+/**
+ * This enum lists the different messages handled by the menu microservice
+ */
+export enum MenuServiceMessages {
+	CREATE_ITEM,
+	GET_ITEM_BY_NAME,
+}

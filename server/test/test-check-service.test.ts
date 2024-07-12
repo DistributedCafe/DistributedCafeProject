@@ -5,13 +5,24 @@ import { check_service } from '../src/check-service';
 import express from 'express';
 import { IncomingMessage, Server, ServerResponse, createServer } from 'http';
 import WebSocket, { Server as WebSocketServer } from 'ws';
-// milk 95, tea 0
+import { add, cleanCollection, closeMongoClient, getCollection } from './utils/db-connection';
+import { milk, tea } from './utils/test-utils';
 
+// milk 95, tea 0
 let m: ResponseMessage
 let ws: WebSocket;
 let wss: WebSocketServer;
 const app = express();
 let server: Server<typeof IncomingMessage, typeof ServerResponse>
+const db_name = "Warehouse"
+const db_collection = "Ingredient"
+
+beforeAll(async () => {
+	(await getCollection(db_name, db_collection)).createIndex({ name: 1 }, { unique: true })
+	await cleanCollection(db_name, db_collection)
+	await add(db_name, db_collection, JSON.stringify(milk))
+	await add(db_name, db_collection, JSON.stringify(tea))
+})
 
 afterEach(() => {
 	ws.close()
@@ -21,6 +32,8 @@ beforeEach(() => {
 	server = createServer(app);
 	wss = new WebSocketServer({ server });
 })
+
+afterAll(() => { closeMongoClient() })
 
 // read
 test('Get all Ingredient Test - 200', done => {
