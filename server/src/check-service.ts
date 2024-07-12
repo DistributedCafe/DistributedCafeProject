@@ -78,38 +78,38 @@ function warehouse_api(message: string, input: string, ws: WebSocket) {
 	}
 }
 
-interface IArray{
+interface IArray {
 	[index: string]: number;
 }
 
 async function calcUsedIngredient(item: string, ingredients: IArray, items: IArray) {
 	let res = await httpMenu.get('/menu/' + item)
-	for(let r of res.data.recipe){
+	for (let r of res.data.recipe) {
 		let ingredient = r.ingredient_name
 		let qty = r.quantity
-		Object.keys(ingredients).includes(ingredient)? 
-		ingredients[ingredient] += items[item] * qty : 
-		ingredients[ingredient] = items[item] * qty
+		Object.keys(ingredients).includes(ingredient) ?
+			ingredients[ingredient] += items[item] * qty :
+			ingredients[ingredient] = items[item] * qty
 	}
 	return ingredients
 }
 
 function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket) {
 	promise.then(async (res) => {
-		if(res.status == 200){
+		if (res.status == 200) {
 			const orederItems = input.items
 			let items = {} as IArray
 			let ingredients = {} as IArray
-			for(let i of orederItems){
+			for (let i of orederItems) {
 				let ingredient: string = i.item.name.toString()
 				let qty: number = i.quantity
-				Object.keys(items).includes(ingredient)? items[ingredient] += qty : items[ingredient] = qty
+				Object.keys(items).includes(ingredient) ? items[ingredient] += qty : items[ingredient] = qty
 			}
-			for(let i of Object.keys(items)){
+			for (let i of Object.keys(items)) {
 				ingredients = await calcUsedIngredient(i, ingredients, items)
 			}
 			let decrease = []
-			for(let i of Object.keys(ingredients)){
+			for (let i of Object.keys(ingredients)) {
 				decrease.push({
 					"name": i,
 					"quantity": ingredients[i]
@@ -144,7 +144,7 @@ function handleResponse(promise: Promise<any>, ws: WebSocket) {
 	});
 }
 
-function createErrorMessage(error: any){
+function createErrorMessage(error: any) {
 	let msg: ResponseMessage
 	if (error.response == undefined) {
 		msg = {
