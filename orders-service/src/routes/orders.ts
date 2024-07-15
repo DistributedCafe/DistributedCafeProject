@@ -5,7 +5,7 @@ import { NewOrder } from "../domain/order"
 import { OrdersMessage } from "../orders-message"
 import * as service from "../application/orders-service"
 
-var router = express.Router();
+const router = express.Router();
 
 /**
  * POST '/orders' API handles the addition of a new Order delegating to the service.

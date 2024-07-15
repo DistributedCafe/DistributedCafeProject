@@ -5,7 +5,7 @@ import { Item } from "../domain/item";
 import { addNewItem, getItemByName } from "../application/menu-service";
 import { MenuMessage } from "../../menu-message";
 
-var router = express.Router();
+const router = express.Router();
 
 
 /**
