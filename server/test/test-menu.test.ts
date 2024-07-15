@@ -2,13 +2,12 @@ import { Service } from '../src/utils/service'
 import { MenuServiceMessages, RequestMessage, ResponseMessage } from '../src/utils/messages';
 import express from 'express';
 import { IncomingMessage, Server, ServerResponse, createServer } from 'http';
-import WebSocket, { Server as WebSocketServer } from 'ws';
+import WebSocket from 'ws';
 import { add, cleanCollection, closeMongoClient, getCollection } from './utils/db-connection';
 import { boiledEgg, createRequestMessage, omelette } from './utils/test-utils';
 
 let m: ResponseMessage
 let ws: WebSocket;
-let wss: WebSocketServer;
 const app = express();
 let server: Server<typeof IncomingMessage, typeof ServerResponse>
 let db_name = "Menu"
@@ -26,7 +25,6 @@ afterEach(() => {
 })
 beforeEach(() => {
 	server = createServer(app);
-	wss = new WebSocketServer({ server });
 })
 
 afterAll(() => { closeMongoClient() })

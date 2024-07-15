@@ -1,4 +1,4 @@
-import { InsertOrder, Order, OrderItem, OrderType } from "../domain/order";
+import { Order, OrderItem, OrderType } from "../domain/order";
 import { OrdersMessage } from "../orders-message";
 import * as repository from "../repository/repository";
 
