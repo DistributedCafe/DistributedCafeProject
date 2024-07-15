@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup
-        uses: DistributedCafe/DistributedCafeProject/.github/setupAction@server-test
+        uses: DistributedCafe/DistributedCafeProject/.github/setupAction@server-add-menu
       
       - name: Gradle (build and coverage)
         run: |
@@ -23,9 +23,32 @@ jobs:
           ./gradlew jacocoTestReport
 
       - name: Coverage server
-        uses: DistributedCafe/DistributedCafeProject/.github/serverTest@server-test
-        with:
-          command: '--coverage'
+        uses: DistributedCafe/DistributedCafeProject/.github/serverTest@server-add-menu
+
+      - name: Kill node 
+        run: killall node
+      
+      - name: Coverage orders-service
+        working-directory: orders-service
+        run: |
+          npm install
+          npx jest --coverage
+        shell: bash
+
+      - name: Coverage menu-service
+        working-directory: menu-service
+        run: |
+          npm install
+          npx jest --coverage
+        shell: bash
+
+      - name: Merge coverage
+        working-directory: ${{ github.workspace }}
+        run: | 
+          mkdir ${{ github.workspace }}/menu-service/final-coverage
+          cd ${{ github.workspace }}/menu-service/final-coverage
+          npx istanbul-merge --out coverage.json ${{ github.workspace }}/menu-service/coverage/coverage-final.json ${{ github.workspace }}/orders-service/coverage/coverage-final.json ${{ github.workspace }}/server/coverage/coverage-final.json
+          npx istanbul report --dir coverage --include ${{ github.workspace }}/menu-service/final-coverage/coverage.json lcov
 
       - name: SonarQube Scan
         run: |

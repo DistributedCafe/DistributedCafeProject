@@ -9,12 +9,10 @@ runs:
     - name: Setup java
       uses: actions/setup-java@v4
       with:
-        java-version: 18
+        java-version: 17
         distribution: 'temurin'
     - name: Start MongoDB
       uses: supercharge/mongodb-github-action@1.11.0
-      with:
-        mongodb-db: 'Warehouse'
     - uses: actions/setup-node@v4
       with:
         node-version: '>=20.10.0'
