@@ -33,13 +33,13 @@ beforeEach(() => {
 afterAll(() => { closeMongoClient() })
 
 // read
-test('Get ingredient by name Test - 200', done => {
+test('Get item by name Test - 200', done => {
 	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_ITEM_BY_NAME.toString(), omelette.name)
 	createConnectionAndCall(requestMessage, 200, 'OK', omelette, done)
 });
 
 // write
-test('Restock Test - 200', done => {
+test('Add new item Test - 200', done => {
 	let requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.CREATE_ITEM.toString(), boiledEgg)
 	createConnectionAndCall(requestMessage, 200, 'OK', boiledEgg, done)
 });

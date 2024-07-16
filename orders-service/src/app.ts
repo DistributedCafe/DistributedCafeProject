@@ -1,8 +1,10 @@
 import express from "express";
 import ordersRouter from './routes/orders';
+import helmet from "helmet";
 
 let app = express()
 app.use(express.json())
+app.use(helmet())
 
 //orders route
 app.use('/orders', ordersRouter)

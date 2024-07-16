@@ -37,7 +37,7 @@ test('Get Item By Name Test - 200', done => {
 
 
 // write
-test('Create Ingredient Test - 200', done => {
+test('Add New Item Test - 200', done => {
 	let requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.CREATE_ITEM.toString(), boiledEgg)
 	startWebsocket(requestMessage, 200, 'OK', boiledEgg, done)
 

@@ -1,8 +1,10 @@
 import express from "express";
 import menuRouter from './routes/menu';
+import helmet from "helmet";
 
 let app = express()
 app.use(express.json())
+app.use(helmet())
 
 //menu route
 app.use('/menu', menuRouter)

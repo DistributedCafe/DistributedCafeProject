@@ -48,13 +48,6 @@ test('Get all Available Ingredient Test - 200', done => {
 	createConnectionAndCall(requestMessage, 200, 'OK', output, done)
 });
 
-test('Get all Available Ingredient Test - 200', done => {
-	const output = JSON.stringify([{ name: "milk", quantity: 95 }])
-	const requestMessage = createRequestMessage(WarehouseServiceMessages.GET_ALL_AVAILABLE_INGREDIENT, '')
-	createConnectionAndCall(requestMessage, 200, 'OK', output, done)
-});
-
-
 // write
 test('Restock Test - 200', done => {
 	let input = JSON.stringify({ name: "milk", quantity: 10 })

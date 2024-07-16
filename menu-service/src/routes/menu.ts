@@ -12,10 +12,8 @@ const router = express.Router();
  * POST '/menu' API handles the addition of a new Item delegating to the service.
  */
 router.post('/', async (req: Request, res: Response) => {
-	let item = req.body
-
 	try {
-		assertEquals<Item>(item)
+		let item = assertEquals<Item>(req.body)
 		let service_res = await addNewItem(item.name, item.price, item.recipe)
 		sendResponse(res, service_res.message, service_res.data)
 	} catch (error) {
