@@ -16,7 +16,7 @@ let db_name = "Menu"
 let db_collection = "Items"
 
 beforeAll(async () => {
-	(await getCollection(db_name, db_collection)).createIndex({ name: 1 }, { unique: true })
+	await (await getCollection(db_name, db_collection)).createIndex({ name: 1 }, { unique: true })
 	await cleanCollection(db_name, db_collection)
 	await add(db_name, db_collection, JSON.stringify(omelette))
 })

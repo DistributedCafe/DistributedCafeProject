@@ -4,7 +4,7 @@ import { check_service } from '../src/check-service';
 import express from 'express';
 import { IncomingMessage, Server, ServerResponse, createServer } from 'http';
 import WebSocket, { Server as WebSocketServer } from 'ws';
-import { add, cleanCollection, closeMongoClient } from './utils/db-connection';
+import { add, cleanCollection, closeMongoClient, getCollection } from './utils/db-connection';
 import { addId } from './utils/order-json-utils';
 import { check_order_message, createRequestMessage, egg, newOrder, omelette, order } from './utils/test-utils';
 
@@ -19,6 +19,10 @@ beforeAll(async () => {
 	await cleanCollection("Orders", "Orders")
 	await cleanCollection("Menu", "Items")
 	await cleanCollection("Warehouse", "Ingredient")
+	let warehause = await getCollection("Warehouse", "Ingredient")
+	await warehause.createIndex({ name: 1 }, { unique: true })
+	let menu = await getCollection("Menu", "Items")
+	await menu.createIndex({ name: 1 }, { unique: true })
 	let res = await add("Orders", "Orders", JSON.stringify(order))
 	await add("Menu", "Items", JSON.stringify(omelette))
 	await add("Warehouse", "Ingredient", JSON.stringify(egg))
