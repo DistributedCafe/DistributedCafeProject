@@ -37,10 +37,10 @@ beforeEach(async () => {
 })
 
 afterEach(() => {
-	if (ws_check_service !== undefined && ws_check_service.OPEN) {
+	if (ws_check_service?.OPEN) {
 		ws_check_service.close()
 	}
-	if (ws_route !== undefined && ws_route.OPEN) {
+	if (ws_route?.OPEN) {
 		ws_route.close()
 	}
 	server.close()
