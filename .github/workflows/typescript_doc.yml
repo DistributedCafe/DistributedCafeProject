@@ -1,16 +1,13 @@
 name: Deploy Typedoc
+
 on:
-  push:
-    branches:
-      - main
-      - develop
-permissions:
-  contents: write
+  workflow_call:
 jobs:
   build-and-deploy:
     strategy:
       matrix:
         dir: ['server', 'manager-application', 'orders-service', 'menu-service']
+      max-parallel: 1
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
