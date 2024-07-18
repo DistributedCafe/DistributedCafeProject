@@ -36,7 +36,7 @@ test('Get Item by name', async () => {
 	const res = await http.get('/menu/omelette')
 	expect(res.status).toBe(200)
 	expect(res.statusText).toBe(MenuMessage.OK)
-	const item = assertEquals<Item>(res.data) as Item
+	const item = assertEquals<Item>(res.data)
 	expect(item).toStrictEqual(omelette)
 
 	// empty
