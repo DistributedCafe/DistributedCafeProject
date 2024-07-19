@@ -146,8 +146,8 @@ test('Update Item', async () => {
 	const item = assertEquals<Item>(res.data)
 	expect(item).toStrictEqual(omelette)
 
-	omelette.name = "omelettes" 
 	// not found
+	omelette.name = "omelettes"
 	await http.put('/menu', scrambledEgg).catch((error) => {
 		expect(error.response.status).toBe(404)
 		expect(error.response.statusText).toBe(MenuMessage.ERROR_ITEM_NOT_FOUND)
