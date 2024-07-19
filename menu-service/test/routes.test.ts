@@ -95,3 +95,62 @@ test('Add new item', async () => {
 
 	})
 })
+
+test('Get All Item', async () => {
+	// ok
+	const res = await http.get('/menu')
+	expect(res.status).toBe(200)
+	expect(res.statusText).toBe(MenuMessage.OK)
+	const item = assertEquals<Item[]>(res.data)
+	expect(item).toStrictEqual([omelette])
+
+	// empty
+	await emptyMenuDb()
+	await http.get('/menu').catch((error) => {
+		expect(error.response.status).toBe(404)
+		expect(error.response.statusText).toBe(MenuMessage.EMPTY_MENU_DB)
+		expect(error.response.data).toStrictEqual("")
+	})
+})
+
+test('Update Item', async () => {
+
+	const omelette = {
+		name: "omelette",
+		recipe: [
+			{
+				ingredient_name: "egg",
+				quantity: 1
+			},
+			{
+				ingredient_name: "salt",
+				quantity: 1
+			}
+		],
+		price: 1
+	}
+	const scrambledEgg = {
+		name: "scrambled_egg",
+		recipe: [
+			{
+				ingredient_name: "egg",
+				quantity: 1
+			}
+		],
+		price: 1
+	}
+	// ok
+	const res = await http.put('/menu', omelette)
+	expect(res.status).toBe(200)
+	expect(res.statusText).toBe(MenuMessage.OK)
+	const item = assertEquals<Item>(res.data)
+	expect(item).toStrictEqual(omelette)
+
+	omelette.name = "omelettes" 
+	// not found
+	await http.put('/menu', scrambledEgg).catch((error) => {
+		expect(error.response.status).toBe(404)
+		expect(error.response.statusText).toBe(MenuMessage.ERROR_ITEM_NOT_FOUND)
+		expect(error.response.data).toStrictEqual("")
+	})
+})
