@@ -2,6 +2,7 @@ import { Item, Order, OrderItem, OrderState, OrderType } from '../src/domain/ord
 import { getOrdersCollection } from '../src/repository/connection'
 import * as conversion from '../src/repository/order-conversion-utils'
 
+
 /**
  * Utility function to empty the database
  */
@@ -29,13 +30,13 @@ export function getTestOrders() {
 
 	let ordersItem = getTestItems()
 
-	let o1 = conversion.toInsertOrder("c1", 1, OrderType.HOME_DELIVERY, OrderState.PENDING, ordersItem)
+	let o1 = conversion.toInsertOrder("c1", 1, OrderType.HOME_DELIVERY, OrderState.PENDING, getTestItems())
 
 	let o2 = conversion.toInsertOrder("c2", 10, OrderType.AT_THE_TABLE, OrderState.COMPLETED, ordersItem)
 
 	let o3 = conversion.toInsertOrder("c3", 1, OrderType.HOME_DELIVERY, OrderState.READY, ordersItem)
-
-	let o4 = conversion.toInsertOrder("c4", 25, OrderType.TAKE_AWAY, OrderState.PENDING, [ordersItem[0]])
+	
+	let o4 = conversion.toInsertOrder("c4", 25, OrderType.TAKE_AWAY, OrderState.PENDING, [getTestItems()[0]])
 
 	return [o1, o2, o3, o4]
 
@@ -47,6 +48,21 @@ export function getTestOrders() {
 export async function fillOrders() {
 	let collection = await getOrdersCollection()
 	await collection.insertMany(getTestOrders())
+}
+
+export async function insertPendingHomeDelivery(){
+	let collection = await getOrdersCollection()
+	await collection.insertOne(conversion.toInsertOrder("c1", 1, OrderType.HOME_DELIVERY, OrderState.PENDING, getTestItems()))
+}
+
+export async function insertPendingTakeAway(){
+	let collection = await getOrdersCollection()
+	await collection.insertOne(conversion.toInsertOrder("c4", 25, OrderType.TAKE_AWAY, OrderState.PENDING, [getTestItems()[0]]))
+}
+
+export async function insertPendingAtTheTable(){
+	let collection = await getOrdersCollection()
+	await collection.insertOne(conversion.toInsertOrder("c1", 1, OrderType.AT_THE_TABLE, OrderState.PENDING, getTestItems()))
 }
 
 /**
