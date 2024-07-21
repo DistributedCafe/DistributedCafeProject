@@ -29,14 +29,20 @@ router.get('/', async (req: Request, res: Response) => {
 	sendResponse(res, service_res.message, service_res.data)
 })
 
+/**
+ * GET 'orders/:orderId' API handles the retrieval of one specific Order delegating to the service
+ */
 router.get('/:orderId', async (req: Request, res: Response) => {
 	let service_res = await service.getOrderById(req.params['orderId'])
 	sendResponse(res, service_res.message, service_res.data)
 })
 
+/**
+ * PUT '/orders' API handles the update of one specific Order delegating to the service
+ */
 router.put('/', async (req: Request, res: Response) => {
 	let order = assertEquals<Order>(req.body)
-	let service_res = await service.updateOrder(order._id, order.state, order.type)
+	let service_res = await service.updateOrder(order._id, order.state)
 	sendResponse(res, service_res.message, service_res.data)
 })
 

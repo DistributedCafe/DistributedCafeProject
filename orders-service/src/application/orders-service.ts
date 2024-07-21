@@ -1,4 +1,3 @@
-import { message } from "typia/lib/protobuf";
 import { Order, OrderItem, OrderState, OrderType } from "../domain/order";
 import { OrdersMessage } from "../orders-message";
 import * as repository from "../repository/repository";
@@ -31,16 +30,29 @@ export async function getAllOrders(): Promise<ServiceResponse<Order[]>> {
 	return { data: res.data, message: res.message }
 }
 
+/**
+ * Service functionality to get a specific order given the id.
+ * @param orderId the id of the order
+ * @returns the repository response.
+ */
 export async function getOrderById(orderId: string): Promise<ServiceResponse<Order>>{
 	let res = await repository.findOrderById(orderId)
 	return {data: res.data, message: res.message}
 }
 
-export async function updateOrder(orderId: string, newState: OrderState, orderType: OrderType) {
+/**
+ * Service functionality to update a specific existing order to a new state.
+ * @param orderId
+ * @param newState 
+ * @returns a ServiceResponse. If the update is not correct due to domain restrictions the message is CHANGE_STATE_NOT_VALID and the data undefined.
+ * It checks with the repository if the order exists, if not returns the repository response. Otherwise it updates the order through the repository and returns
+ * the repository response.
+ */
+export async function updateOrder(orderId: string, newState: OrderState): Promise<ServiceResponse<Order>> {
 	let order = await repository.findOrderById(orderId)
 	if (order.message == OrdersMessage.OK && order.data){
 
-		if(!isChangeStateValid(orderType, order.data.state, newState)){
+		if(!isChangeStateValid(order.data.type, order.data.state, newState)){
 			return {data: undefined, message: OrdersMessage.CHANGE_STATE_NOT_VALID}
 		}
 

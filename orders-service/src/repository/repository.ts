@@ -49,6 +49,12 @@ export async function getAllOrders(): Promise<RepositoryResponse<Order[]>> {
 	}
 }
 
+/**
+ * It finds a specific Order given the id.
+ * @param orderId 
+ * @returns a Promise with the repository response. If the provided id is not valid or does not exist in the database, the message is ORDER_ID_NOT_FOUND
+ * and the data is undefined. Otherwsise, the message is OK and the data is the order
+ */
 export async function findOrderById(orderId: string): Promise<RepositoryResponse<Order>>{
 	if (!ObjectId.isValid(orderId)){
 		return {data: undefined, message: OrdersMessage.ORDER_ID_NOT_FOUND}
@@ -66,6 +72,14 @@ export async function findOrderById(orderId: string): Promise<RepositoryResponse
 	
 }
 
+
+/**
+ * It updates a specific Order to a new state given the id.
+ * @param orderId 
+ * @param newState 
+ * @returns a Promise with the repository response. If the provided id is not valid or the update is not successful, the message is ORDER_ID_NOT_FOUND
+ * and the data is undefined. Otherwsise, the message is OK and the data is the updated order.
+ */
 export async function updateOrder(orderId: string, newState: OrderState): Promise<RepositoryResponse<Order>>{
 	if(!ObjectId.isValid(orderId)){
 		return {data: undefined, message: OrdersMessage.ORDER_ID_NOT_FOUND}

@@ -42,7 +42,6 @@ test('Find Order by Id', async () => {
 	expect(res.message).toBe(OrdersMessage.ORDER_ID_NOT_FOUND)
 	
 	// correct but non existing id 
-	console.log(non_existing_id.length)
 	res = await repository.findOrderById(non_existing_id)
 	expect(res.data).toBe(undefined)
 	expect(res.message).toBe(OrdersMessage.ORDER_ID_NOT_FOUND)

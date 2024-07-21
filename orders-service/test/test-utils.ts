@@ -50,16 +50,26 @@ export async function fillOrders() {
 	await collection.insertMany(getTestOrders())
 }
 
+/**
+ * Utility function to add a PENDING HOME DELIVERY order 
+ */
 export async function insertPendingHomeDelivery(){
 	let collection = await getOrdersCollection()
 	await collection.insertOne(conversion.toInsertOrder("c1", 1, OrderType.HOME_DELIVERY, OrderState.PENDING, getTestItems()))
 }
 
+/**
+ * Utility function to add a PENDING TAKE AWAY order 
+ */
 export async function insertPendingTakeAway(){
 	let collection = await getOrdersCollection()
 	await collection.insertOne(conversion.toInsertOrder("c4", 25, OrderType.TAKE_AWAY, OrderState.PENDING, [getTestItems()[0]]))
 }
 
+
+/**
+ * Utility function to add a PENDING AT THE TABLE order 
+ */
 export async function insertPendingAtTheTable(){
 	let collection = await getOrdersCollection()
 	await collection.insertOne(conversion.toInsertOrder("c1", 1, OrderType.AT_THE_TABLE, OrderState.PENDING, getTestItems()))
