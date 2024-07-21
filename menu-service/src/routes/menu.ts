@@ -1,10 +1,9 @@
 import express, { Request, Response } from "express"
 import { StatusCodes } from 'http-status-codes';
 import { assertEquals } from 'typia'
-import { Item } from "../domain/item";
+import { IngredientInRecipe, Item } from "../domain/item";
 import { addNewItem, getItemByName, getAllMenuItems, updateMenuItem } from "../application/menu-service";
 import { MenuMessage } from "../../menu-message";
-import { updateItem } from "../repository/repository";
 
 const router = express.Router();
 
@@ -67,14 +66,23 @@ router.get('/', async (req: Request, res: Response) => {
  * PUT '/menu' API handles the update of an item delegating to the service
  */
 router.put('/', async (req: Request, res: Response) => {
-	const set = {
-		$set: {
-			recipe: req.body.recipe,
-			price: req.body.price
+
+	try {
+		const recipe = assertEquals<IngredientInRecipe[]>(req.body.recipe)
+		const price = assertEquals<number>(req.body.price)
+		const set = {
+			$set: {
+				recipe: recipe,
+				price: price
+			}
 		}
+		let service_res = await updateMenuItem(req.body.name, set)
+		sendResponse(res, service_res.message, service_res.data)
+	} catch (error) {
+		sendResponse(res, MenuMessage.ERROR_WRONG_PARAMETERS)
 	}
-	let service_res = await updateMenuItem(req.body.name, set)
-	sendResponse(res, service_res.message, service_res.data)
+
+
 })
 
 export default router;

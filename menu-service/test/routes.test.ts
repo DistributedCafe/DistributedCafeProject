@@ -115,7 +115,7 @@ test('Get All Item', async () => {
 
 test('Update Item', async () => {
 
-	const omelette = {
+	let omelette: any = {
 		name: "omelette",
 		recipe: [
 			{
@@ -140,11 +140,45 @@ test('Update Item', async () => {
 		price: 1
 	}
 	// ok
-	const res = await http.put('/menu', omelette)
+	let res = await http.put('/menu', omelette)
 	expect(res.status).toBe(200)
 	expect(res.statusText).toBe(MenuMessage.OK)
 	const item = assertEquals<Item>(res.data)
 	expect(item).toStrictEqual(omelette)
+
+	// wrong parameters - price
+	omelette['price'] = "2"
+	await http.put('/menu', omelette).catch((error) => {
+		expect(error.response.status).toBe(400)
+		expect(error.response.statusText).toBe(MenuMessage.ERROR_WRONG_PARAMETERS)
+		expect(error.response.data).toStrictEqual("")
+	})
+
+	// wrong parameters - recipe (wrong type)
+	omelette['price'] = 2
+	omelette['recipe'] = [
+		{
+			ingredient_name: "egg",
+			quantity: "2"
+		}
+	]
+	await http.put('/menu', omelette).catch((error) => {
+		expect(error.response.status).toBe(400)
+		expect(error.response.statusText).toBe(MenuMessage.ERROR_WRONG_PARAMETERS)
+		expect(error.response.data).toStrictEqual("")
+	})
+
+	// wrong parameters - recipe (wrong recipe)
+	omelette['recipe'] = {
+		ingredient_name: "egg",
+		quantity: "2"
+	}
+
+	await http.put('/menu', omelette).catch((error) => {
+		expect(error.response.status).toBe(400)
+		expect(error.response.statusText).toBe(MenuMessage.ERROR_WRONG_PARAMETERS)
+		expect(error.response.data).toStrictEqual("")
+	})
 
 	// not found
 	omelette.name = "omelettes"
