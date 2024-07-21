@@ -35,17 +35,17 @@ test('Find Order by Id', async () => {
 	//prepare
 	await db_test.emptyOrders()
 	await db_test.fillOrders()
-	
+
 	// wrong id string
 	let res = await repository.findOrderById(wrong_id)
 	expect(res.data).toBe(undefined)
 	expect(res.message).toBe(OrdersMessage.ORDER_ID_NOT_FOUND)
-	
+
 	// correct but non existing id 
 	res = await repository.findOrderById(non_existing_id)
 	expect(res.data).toBe(undefined)
 	expect(res.message).toBe(OrdersMessage.ORDER_ID_NOT_FOUND)
-	
+
 	//existing id 
 	let existingOrder = (await db_test.getLastInsertedOrder())
 	res = await repository.findOrderById(existingOrder._id)
@@ -65,7 +65,7 @@ test('Create Order', async () => {
 
 })
 
-test('Update Order', async() => {
+test('Update Order', async () => {
 	//prepare
 	await db_test.emptyOrders()
 	await db_test.fillOrders()
@@ -86,5 +86,5 @@ test('Update Order', async() => {
 	order = await db_test.getLastInsertedOrder()
 	expect(res.data).toStrictEqual(order)
 	expect(res.message).toBe(OrdersMessage.OK)
-	
+
 })

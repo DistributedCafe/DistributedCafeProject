@@ -57,7 +57,7 @@ function serviceMessageToCode(service_message: string) {
 		case OrdersMessage.OK: {
 			return StatusCodes.OK
 		}
-		case OrdersMessage.EMPTY_ORDERS_DB :
+		case OrdersMessage.EMPTY_ORDERS_DB:
 		case OrdersMessage.ORDER_ID_NOT_FOUND: {
 			return StatusCodes.NOT_FOUND
 		}

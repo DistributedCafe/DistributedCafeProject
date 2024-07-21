@@ -35,7 +35,7 @@ export function getTestOrders() {
 	let o2 = conversion.toInsertOrder("c2", 10, OrderType.AT_THE_TABLE, OrderState.COMPLETED, ordersItem)
 
 	let o3 = conversion.toInsertOrder("c3", 1, OrderType.HOME_DELIVERY, OrderState.READY, ordersItem)
-	
+
 	let o4 = conversion.toInsertOrder("c4", 25, OrderType.TAKE_AWAY, OrderState.PENDING, [getTestItems()[0]])
 
 	return [o1, o2, o3, o4]
@@ -53,7 +53,7 @@ export async function fillOrders() {
 /**
  * Utility function to add a PENDING HOME DELIVERY order 
  */
-export async function insertPendingHomeDelivery(){
+export async function insertPendingHomeDelivery() {
 	let collection = await getOrdersCollection()
 	await collection.insertOne(conversion.toInsertOrder("c1", 1, OrderType.HOME_DELIVERY, OrderState.PENDING, getTestItems()))
 }
@@ -61,7 +61,7 @@ export async function insertPendingHomeDelivery(){
 /**
  * Utility function to add a PENDING TAKE AWAY order 
  */
-export async function insertPendingTakeAway(){
+export async function insertPendingTakeAway() {
 	let collection = await getOrdersCollection()
 	await collection.insertOne(conversion.toInsertOrder("c4", 25, OrderType.TAKE_AWAY, OrderState.PENDING, [getTestItems()[0]]))
 }
@@ -70,7 +70,7 @@ export async function insertPendingTakeAway(){
 /**
  * Utility function to add a PENDING AT THE TABLE order 
  */
-export async function insertPendingAtTheTable(){
+export async function insertPendingAtTheTable() {
 	let collection = await getOrdersCollection()
 	await collection.insertOne(conversion.toInsertOrder("c1", 1, OrderType.AT_THE_TABLE, OrderState.PENDING, getTestItems()))
 }

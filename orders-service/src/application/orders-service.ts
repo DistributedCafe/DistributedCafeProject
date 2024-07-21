@@ -35,9 +35,9 @@ export async function getAllOrders(): Promise<ServiceResponse<Order[]>> {
  * @param orderId the id of the order
  * @returns the repository response.
  */
-export async function getOrderById(orderId: string): Promise<ServiceResponse<Order>>{
+export async function getOrderById(orderId: string): Promise<ServiceResponse<Order>> {
 	let res = await repository.findOrderById(orderId)
-	return {data: res.data, message: res.message}
+	return { data: res.data, message: res.message }
 }
 
 /**
@@ -50,23 +50,23 @@ export async function getOrderById(orderId: string): Promise<ServiceResponse<Ord
  */
 export async function updateOrder(orderId: string, newState: OrderState): Promise<ServiceResponse<Order>> {
 	let order = await repository.findOrderById(orderId)
-	if (order.message == OrdersMessage.OK && order.data){
+	if (order.message == OrdersMessage.OK && order.data) {
 
-		if(!isChangeStateValid(order.data.type, order.data.state, newState)){
-			return {data: undefined, message: OrdersMessage.CHANGE_STATE_NOT_VALID}
+		if (!isChangeStateValid(order.data.type, order.data.state, newState)) {
+			return { data: undefined, message: OrdersMessage.CHANGE_STATE_NOT_VALID }
 		}
 
 		return await repository.updateOrder(orderId, newState)
-		
 
-	}else{
-		return {data: order.data, message: order.message}
+
+	} else {
+		return { data: order.data, message: order.message }
 	}
-	
+
 }
 
-function isChangeStateValid(orderType: OrderType, currentState: OrderState, newState: OrderState): boolean{
-	switch(newState){
+function isChangeStateValid(orderType: OrderType, currentState: OrderState, newState: OrderState): boolean {
+	switch (newState) {
 		case OrderState.PENDING: {
 			return false
 		}

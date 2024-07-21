@@ -41,7 +41,7 @@ test('Get All Orders', async () => {
 test('Get Order By Id', async () => {
 
 	await db_test.fillOrders()
-	
+
 	// 200
 	let order = await db_test.getLastInsertedOrder()
 	let res = await http.get('/orders/' + order._id)
@@ -55,7 +55,7 @@ test('Get Order By Id', async () => {
 		expect(error.response.status).toBe(404)
 		expect(error.response.statusText).toBe(OrdersMessage.ORDER_ID_NOT_FOUND)
 	})
-	
+
 })
 
 test('Add New Order', async () => {
@@ -104,7 +104,7 @@ test('Put Order', async () => {
 	expect(res.status).toBe(200)
 	expect(res.statusText).toBe(OrdersMessage.OK)
 	expect(res.data).toStrictEqual(order)
-	
+
 	order["state"] = OrderState.COMPLETED
 	res = await http.put('/orders', order)
 	expect(res.status).toBe(200)
