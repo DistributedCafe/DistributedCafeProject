@@ -5,7 +5,6 @@ import { assertEquals } from 'typia'
 import { addItem, emptyMenuDb, getLastInsertedItem } from './utils/test-utils'
 import { Item } from '../src/domain/item'
 import { MenuMessage } from '../menu-message'
-import { name } from 'typia/lib/reflect'
 
 const http = axios.create({
 	baseURL: 'http://localhost:8085'
