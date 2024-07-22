@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express"
 import { StatusCodes } from 'http-status-codes';
 import { assertEquals } from 'typia'
-import { NewOrder } from "../domain/order"
+import { NewOrder, Order } from "../domain/order"
 import { OrdersMessage } from "../orders-message"
 import * as service from "../application/orders-service"
 
@@ -29,6 +29,23 @@ router.get('/', async (req: Request, res: Response) => {
 	sendResponse(res, service_res.message, service_res.data)
 })
 
+/**
+ * GET 'orders/:orderId' API handles the retrieval of one specific Order delegating to the service
+ */
+router.get('/:orderId', async (req: Request, res: Response) => {
+	let service_res = await service.getOrderById(req.params['orderId'])
+	sendResponse(res, service_res.message, service_res.data)
+})
+
+/**
+ * PUT '/orders' API handles the update of one specific Order delegating to the service
+ */
+router.put('/', async (req: Request, res: Response) => {
+	let order = assertEquals<Order>(req.body)
+	let service_res = await service.updateOrder(order._id, order.state)
+	sendResponse(res, service_res.message, service_res.data)
+})
+
 function sendResponse(res: Response, message: string, data: any) {
 	res.statusMessage = message
 	res.statusCode = serviceMessageToCode(res.statusMessage)
@@ -40,7 +57,8 @@ function serviceMessageToCode(service_message: string) {
 		case OrdersMessage.OK: {
 			return StatusCodes.OK
 		}
-		case OrdersMessage.EMPTY_ORDERS_DB: {
+		case OrdersMessage.EMPTY_ORDERS_DB:
+		case OrdersMessage.ORDER_ID_NOT_FOUND: {
 			return StatusCodes.NOT_FOUND
 		}
 		default: {

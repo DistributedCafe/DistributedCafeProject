@@ -38,6 +38,26 @@ test('Get All Orders', async () => {
 
 })
 
+test('Get Order By Id', async () => {
+
+	await db_test.fillOrders()
+
+	// 200
+	let order = await db_test.getLastInsertedOrder()
+	let res = await http.get('/orders/' + order._id)
+	expect(res.status).toBe(200)
+	expect(res.statusText).toBe(OrdersMessage.OK)
+	order = await db_test.getLastInsertedOrder()
+	expect(res.data).toStrictEqual(order)
+
+	// 404
+	await http.get('/orders/1').catch((error) => {
+		expect(error.response.status).toBe(404)
+		expect(error.response.statusText).toBe(OrdersMessage.ORDER_ID_NOT_FOUND)
+	})
+
+})
+
 test('Add New Order', async () => {
 
 	await db_test.fillOrders()
@@ -72,3 +92,50 @@ test('Add New Order', async () => {
 	})
 
 })
+
+test('Put Order', async () => {
+
+	// take away 
+	// pending -> ready -> completed ok
+	await db_test.insertPendingTakeAway()
+	let order = await db_test.getLastInsertedOrder()
+	order["state"] = OrderState.READY
+	let res = await http.put('/orders', order)
+	expect(res.status).toBe(200)
+	expect(res.statusText).toBe(OrdersMessage.OK)
+	expect(res.data).toStrictEqual(order)
+
+	order["state"] = OrderState.COMPLETED
+	res = await http.put('/orders', order)
+	expect(res.status).toBe(200)
+	expect(res.statusText).toBe(OrdersMessage.OK)
+	expect(res.data).toStrictEqual(order)
+
+	// 400 --> pending
+	order["state"] = OrderState.PENDING
+	await http.put('/orders', order).catch((error) => {
+		expect(error.response.status).toBe(400)
+		expect(error.response.statusText).toBe(OrdersMessage.CHANGE_STATE_NOT_VALID)
+	})
+
+
+	// 404, wrong id
+	order["_id"] = "1"
+	await http.put('/orders', order).catch((error) => {
+		expect(error.response.status).toBe(404)
+		expect(error.response.statusText).toBe(OrdersMessage.ORDER_ID_NOT_FOUND)
+	})
+
+	// at the table
+	// pending -> completed, 200
+	await db_test.emptyOrders()
+	await db_test.insertPendingAtTheTable()
+	order = await db_test.getLastInsertedOrder()
+	order["state"] = OrderState.COMPLETED
+	res = await http.put('/orders', order)
+	expect(res.status).toBe(200)
+	expect(res.statusText).toBe(OrdersMessage.OK)
+	expect(res.data).toStrictEqual(order)
+
+})
+
