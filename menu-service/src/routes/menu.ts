@@ -2,7 +2,7 @@ import express, { Request, Response } from "express"
 import { StatusCodes } from 'http-status-codes';
 import { assertEquals } from 'typia'
 import { IngredientInRecipe, Item } from "../domain/item";
-import { addNewItem, getItemByName, getAllMenuItems, updateMenuItem } from "../application/menu-service";
+import { addNewItem, getItemByName, getAllMenuItems, updateMenuItem, getAllAvailableMenuItems } from "../application/menu-service";
 import { MenuMessage } from "../../menu-message";
 
 const router = express.Router();
@@ -82,6 +82,21 @@ router.put('/', async (req: Request, res: Response) => {
 		sendResponse(res, MenuMessage.ERROR_WRONG_PARAMETERS)
 	}
 
+
+})
+
+/**
+ * GET '/available/:availableIngredients' API handles the retrieval of an Item 
+ * given the parameter availableIngredients delegating to the service
+ */
+router.get('/available/:availableIngredients', async (req: Request, res: Response) => {
+	try {
+		const availableIng = assertEquals<string[]>(JSON.parse(req.params['availableIngredients']))
+		let service_res = await getAllAvailableMenuItems(availableIng)
+		sendResponse(res, service_res.message, service_res.data)
+	} catch (error) {
+		sendResponse(res, MenuMessage.ERROR_WRONG_PARAMETERS)
+	}
 
 })
 

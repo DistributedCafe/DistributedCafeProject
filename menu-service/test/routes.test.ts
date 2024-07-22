@@ -5,6 +5,7 @@ import { assertEquals } from 'typia'
 import { addItem, emptyMenuDb, getLastInsertedItem } from './utils/test-utils'
 import { Item } from '../src/domain/item'
 import { MenuMessage } from '../menu-message'
+import { name } from 'typia/lib/reflect'
 
 const http = axios.create({
 	baseURL: 'http://localhost:8085'
@@ -31,6 +32,7 @@ afterAll(() => {
 	server.close()
 })
 
+// read
 test('Get Item by name', async () => {
 	// ok
 	const res = await http.get('/menu/omelette')
@@ -49,6 +51,55 @@ test('Get Item by name', async () => {
 
 })
 
+test('Get All Available Items', async () => {
+	const pizza: Item = {
+		name: "pizza",
+		recipe: [
+			{
+				ingredient_name: "tomato",
+				quantity: 2
+			},
+			{
+				ingredient_name: "mozzarella",
+				quantity: 2
+			}
+		],
+		price: 5
+	}
+
+	// ok
+	const ok_ingredient = []
+	ok_ingredient.push("egg")
+	await addItem(pizza)
+	const res = await http.get('/menu/available/' + JSON.stringify(ok_ingredient))
+	expect(res.status).toBe(200)
+	expect(res.statusText).toBe(MenuMessage.OK)
+	const item = assertEquals<Item[]>(res.data)
+	expect(item).toStrictEqual([omelette])
+
+	//wrong parameters
+	const wrong_param_ingredient = []
+	wrong_param_ingredient.push(2)
+	wrong_param_ingredient.push("salt")
+	await http.get('/menu/available/' + JSON.stringify(wrong_param_ingredient)).catch((error) => {
+		expect(error.response.status).toBe(400)
+		expect(error.response.statusText).toBe(MenuMessage.ERROR_WRONG_PARAMETERS)
+		expect(error.response.data).toStrictEqual("")
+	})
+
+	// not found
+	await emptyMenuDb()
+	await addItem(pizza)
+	const not_found_ingredient = []
+	not_found_ingredient.push("salt")
+	await http.get('/menu/available/' + JSON.stringify(not_found_ingredient)).catch((error) => {
+		expect(error.response.status).toBe(404)
+		expect(error.response.statusText).toBe(MenuMessage.EMPTY_MENU_DB)
+		expect(error.response.data).toStrictEqual("")
+	})
+})
+
+// write
 test('Add new item', async () => {
 
 	const friedEgg: Item = {

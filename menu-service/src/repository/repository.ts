@@ -92,3 +92,27 @@ export async function updateItem(name: string, item: any): Promise<RepositoryRes
 		return { message: MenuMessage.ERROR_ITEM_NOT_FOUND };
 	}
 }
+
+/**
+ * It returs a Promise with the repository response and all the items in the repository all recipes 
+ * whose ingredients are contained in the available ingredient list
+ * @param availableIngredients 
+ * @returns MenuMessage.OK if there are items, MenuMessage.EMPTY_MENU_DB otherwise
+ */
+export async function getAllAvailableItems(availableIngredients: string[]): Promise<RepositoryResponse<Item[]>> {
+
+	const items = (await (await collection).find({
+		$expr: {
+			$setIsSubset: [
+				{ $map: { input: "$recipe", as: "recipe", in: "$$recipe.ingredient_name" } },
+				availableIngredients
+			]
+		}
+	}, { projection: { _id: 0 } }).toArray())
+
+	if (items.length > 0) {
+		return { data: items, message: MenuMessage.OK }
+	} else {
+		return { message: MenuMessage.EMPTY_MENU_DB };
+	}
+}

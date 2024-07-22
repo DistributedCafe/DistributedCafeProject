@@ -49,3 +49,13 @@ export async function updateMenuItem(name: string, item: any): Promise<ServiceRe
 	let res = await repository.updateItem(name, item)
 	return { data: res.data, message: res.message }
 }
+
+/**
+ * Service functionality to get all the items whose ingredients are contained in the available ingredient name list
+ * @param availableIngredient 
+ * @returns a Promise with the Service Response containing the searched Item data and the message returned by the repository 
+ */
+export async function getAllAvailableMenuItems(availableIngredient: string[]): Promise<ServiceResponse<Item[]>> {
+	let res = await repository.getAllAvailableItems(availableIngredient)
+	return { data: res.data, message: res.message }
+}
