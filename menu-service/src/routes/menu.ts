@@ -68,6 +68,7 @@ router.get('/', async (req: Request, res: Response) => {
 router.put('/', async (req: Request, res: Response) => {
 
 	try {
+		const name = assertEquals<string>(req.body.name)
 		const recipe = assertEquals<IngredientInRecipe[]>(req.body.recipe)
 		const price = assertEquals<number>(req.body.price)
 		const set = {
@@ -76,7 +77,7 @@ router.put('/', async (req: Request, res: Response) => {
 				price: price
 			}
 		}
-		let service_res = await updateMenuItem(req.body.name, set)
+		let service_res = await updateMenuItem(name, set)
 		sendResponse(res, service_res.message, service_res.data)
 	} catch (error) {
 		sendResponse(res, MenuMessage.ERROR_WRONG_PARAMETERS)
