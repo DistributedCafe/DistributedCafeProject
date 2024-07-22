@@ -32,10 +32,30 @@ export function check_service(message: RequestMessage, ws: any) {
 	}
 }
 
-function menu_api(message: string, input: string, ws: WebSocket) {
+async function menu_api(message: string, input: string, ws: WebSocket) {
 	switch (message) {
 		case MenuServiceMessages.CREATE_ITEM.toString():
 			handleResponse(httpMenu.post('/menu/', input), ws)
+			break;
+		case MenuServiceMessages.GET_ITEMS.toString():
+			handleResponse(httpMenu.get('/menu/'), ws)
+			break;
+		case MenuServiceMessages.UPDATE_ITEM.toString():
+			handleResponse(httpMenu.put('/menu/', input), ws)
+			break;
+		case MenuServiceMessages.GET_AVAILABLE_ITEMS.toString():
+			let names: string[] = []
+			await http.get('/warehouse/available/').then((res) => {
+				const availableIng: any[] = res.data
+
+				availableIng.forEach(e => {
+					names.push(e.name)
+				});
+
+				handleResponse(httpMenu.get('/menu/available/' + JSON.stringify(names)), ws)
+			}).catch((e) => {
+				ws.send(JSON.stringify(createErrorMessage(e)))
+			})
 			break;
 		default: //get item by name
 			handleResponse(httpMenu.get('/menu/' + input), ws)
