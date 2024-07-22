@@ -43,4 +43,7 @@ export enum OrdersServiceMessages {
 export enum MenuServiceMessages {
 	CREATE_ITEM,
 	GET_ITEM_BY_NAME,
+	UPDATE_ITEM,
+	GET_ITEMS,
+	GET_AVAILABLE_ITEMS
 }
