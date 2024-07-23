@@ -59,6 +59,23 @@ test('Get all orders - 200 (check-service)', done => {
 	createConnectionAndCall(requestMessage, 200, "OK", addId(order, insertedId), done)
 })
 
+test('Get order by id - 200', done => {
+	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ORDER_BY_ID.toString(), insertedId)
+	let expected = JSON.stringify(JSON.parse(addId(order, insertedId))[0])
+	startWebsocket(requestMessage, 200, "OK", expected, done)
+})
+
+test('Get order by id - 200 (check-service)', done => {
+	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ORDER_BY_ID.toString(), insertedId)
+	let expected = JSON.stringify(JSON.parse(addId(order, insertedId))[0])
+	createConnectionAndCall(requestMessage, 200, "OK", expected, done)
+})
+
+test('Get order by id - 404 (check-service)', done => {
+	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ORDER_BY_ID.toString(), "1")
+	createConnectionAndCall(requestMessage, 404, "ORDER_ID_NOT_FOUND", undefined, done)
+})
+
 //write
 test('Create Order Test - 200', done => {
 	const newOrder = {
@@ -78,7 +95,7 @@ test('Create Order Test - 200', done => {
 		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER.toString(), newOrder), 200, "OK", newOrder, done)
 });
 
-test('Create Order Test 2 - 200', done => {
+test('Create Order Test (check-service) - 200', done => {
 	const newOrder = {
 		"customerContact": "c2",
 		"price": 1,
@@ -105,6 +122,44 @@ test('Create Order Test - 400', done => {
 test('Create Order Test - 400 (check-service)', done => {
 	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER.toString(), newWrongOrder)
 	createConnectionAndCall(requestMessage, 400, "ERROR_WRONG_PARAMETERS", "", done)
+})
+
+test('Put Order Test - 200', done => {
+	add("Orders", "Orders", JSON.stringify(order)).then((res) => {
+		let id = res.insertedId.toString()
+		let modOrder = { ...order }
+		modOrder["_id"] = id
+		modOrder["state"] = "READY"
+		let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), modOrder)
+		startWebsocket(requestMessage, 200, "OK", JSON.stringify(modOrder), done)
+	})
+
+})
+
+test('Put Order Test - 200 (check-service)', done => {
+	let modOrder = { ...order }
+	modOrder["state"] = "READY"
+	add("Orders", "Orders", JSON.stringify(modOrder)).then((res) => {
+		let id = res.insertedId.toString()
+		modOrder["_id"] = id
+		modOrder["state"] = "COMPLETED"
+		let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), modOrder)
+		createConnectionAndCall(requestMessage, 200, "OK", JSON.stringify(modOrder), done)
+	})
+
+})
+
+test('Put Order Test - 400 (check-service)', done => {
+	let modOrder = { ...order }
+	modOrder["state"] = "COMPLETED"
+	add("Orders", "Orders", JSON.stringify(modOrder)).then((res) => {
+		let id = res.insertedId.toString()
+		modOrder["_id"] = id
+		modOrder["state"] = "PENDING"
+		let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), modOrder)
+		createConnectionAndCall(requestMessage, 400, "CHANGE_STATE_NOT_VALID", undefined, done)
+	})
+
 })
 
 function startWebsocket(requestMessage: RequestMessage, code: number, message: string, data: any, callback: jest.DoneCallback) {
