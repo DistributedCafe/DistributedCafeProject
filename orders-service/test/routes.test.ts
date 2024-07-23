@@ -137,5 +137,16 @@ test('Put Order', async () => {
 	expect(res.statusText).toBe(OrdersMessage.OK)
 	expect(res.data).toStrictEqual(order)
 
+	// wrong format
+	await db_test.emptyOrders()
+	await db_test.insertPendingAtTheTable()
+	order = await db_test.getLastInsertedOrder()
+	let wrong_format: any = {...order}
+	wrong_format["wrong"] = "wrong"
+	await http.put('/orders', wrong_format).catch((error) => {
+		expect(error.response.status).toBe(400)
+		expect(error.response.statusText).toBe(OrdersMessage.ERROR_WRONG_PARAMETERS)
+	})
+	
 })
 
