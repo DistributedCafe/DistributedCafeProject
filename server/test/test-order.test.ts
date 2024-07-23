@@ -125,26 +125,41 @@ test('Create Order Test - 400 (check-service)', done => {
 })
 
 test('Put Order Test - 200', done => {
-	let modOrder = { ...order }
-	modOrder["state"] = "READY"
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), modOrder)
-	let expected = JSON.stringify(JSON.parse(addId(modOrder, insertedId))[0])
-	startWebsocket(requestMessage, 200, "OK", expected, done)
+	add("Orders", "Orders", JSON.stringify(order)).then((res) => {
+		let id = res.insertedId.toString()
+		let modOrder = { ...order }
+		modOrder["_id"] = id
+		modOrder["state"] = "READY"
+		let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), modOrder)
+		startWebsocket(requestMessage, 200, "OK", JSON.stringify(modOrder), done)
+	})
+		
 })
 
 test('Put Order Test - 200 (check-service)', done => {
 	let modOrder = { ...order }
-	modOrder["state"] = "COMPLETED"
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), modOrder)
-	let expected = JSON.stringify(JSON.parse(addId(modOrder, insertedId))[0])
-	createConnectionAndCall(requestMessage, 200, "OK", expected, done)
+	modOrder["state"] = "READY"
+	add("Orders", "Orders", JSON.stringify(modOrder)).then((res) => {
+		let id =  res.insertedId.toString()
+		modOrder["_id"] = id
+		modOrder["state"] = "COMPLETED"
+		let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), modOrder)
+		createConnectionAndCall(requestMessage, 200, "OK", JSON.stringify(modOrder), done)
+	})
+		
 })
 
 test('Put Order Test - 400 (check-service)', done => {
 	let modOrder = { ...order }
-	modOrder["state"] = "PENDING"
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), modOrder)
-	createConnectionAndCall(requestMessage, 400, "CHANGE_STATE_NOT_VALID", undefined, done)
+	modOrder["state"] = "COMPLETED"
+	add("Orders", "Orders", JSON.stringify(modOrder)).then((res) => {
+		let id =  res.insertedId.toString()
+		modOrder["_id"] = id
+		modOrder["state"] = "PENDING"
+		let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), modOrder)
+		createConnectionAndCall(requestMessage, 400, "CHANGE_STATE_NOT_VALID", undefined, done)
+	})
+	
 })
 
 function startWebsocket(requestMessage: RequestMessage, code: number, message: string, data: any, callback: jest.DoneCallback) {
