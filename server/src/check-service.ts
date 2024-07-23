@@ -68,6 +68,12 @@ function orders_api(message: string, input: string, ws: WebSocket) {
 		case OrdersServiceMessages.CREATE_ORDER.toString():
 			handleNewOrder(httpOrders.post('/orders/', input), input, ws)
 			break;
+		case OrdersServiceMessages.GET_ORDER_BY_ID.toString():
+			handleResponse(httpOrders.get('/orders/' + input), ws)
+			break;
+		case OrdersServiceMessages.PUT_ORDER.toString():
+			handleResponse(httpOrders.put('/orders/', input), ws)
+			break;
 		default: //get all orders
 			handleResponse(httpOrders.get('/orders/'), ws)
 			break;

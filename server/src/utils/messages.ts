@@ -35,6 +35,8 @@ export enum WarehouseServiceMessages {
 export enum OrdersServiceMessages {
 	CREATE_ORDER,
 	GET_ALL_ORDERS,
+	PUT_ORDER,
+	GET_ORDER_BY_ID
 }
 
 /**
