@@ -30,13 +30,13 @@ export function getTestOrders() {
 
 	let ordersItem = getTestItems()
 
-	let o1 = conversion.toInsertOrder("c1", 1, OrderType.HOME_DELIVERY, OrderState.PENDING, getTestItems())
+	let o1 = conversion.toInsertOrder("c1@example.com", 1, OrderType.HOME_DELIVERY, OrderState.PENDING, getTestItems())
 
-	let o2 = conversion.toInsertOrder("c2", 10, OrderType.AT_THE_TABLE, OrderState.COMPLETED, ordersItem)
+	let o2 = conversion.toInsertOrder("c2@example.com", 10, OrderType.AT_THE_TABLE, OrderState.COMPLETED, ordersItem)
 
-	let o3 = conversion.toInsertOrder("c3", 1, OrderType.HOME_DELIVERY, OrderState.READY, ordersItem)
+	let o3 = conversion.toInsertOrder("c3@example.com", 1, OrderType.HOME_DELIVERY, OrderState.READY, ordersItem)
 
-	let o4 = conversion.toInsertOrder("c4", 25, OrderType.TAKE_AWAY, OrderState.PENDING, [getTestItems()[0]])
+	let o4 = conversion.toInsertOrder("c4@example.com", 25, OrderType.TAKE_AWAY, OrderState.PENDING, [getTestItems()[0]])
 
 	return [o1, o2, o3, o4]
 
@@ -55,7 +55,7 @@ export async function fillOrders() {
  */
 export async function insertPendingHomeDelivery() {
 	let collection = await getOrdersCollection()
-	await collection.insertOne(conversion.toInsertOrder("c1", 1, OrderType.HOME_DELIVERY, OrderState.PENDING, getTestItems()))
+	await collection.insertOne(conversion.toInsertOrder("c1@example.com", 1, OrderType.HOME_DELIVERY, OrderState.PENDING, getTestItems()))
 }
 
 /**
@@ -63,7 +63,7 @@ export async function insertPendingHomeDelivery() {
  */
 export async function insertPendingTakeAway() {
 	let collection = await getOrdersCollection()
-	await collection.insertOne(conversion.toInsertOrder("c4", 25, OrderType.TAKE_AWAY, OrderState.PENDING, [getTestItems()[0]]))
+	await collection.insertOne(conversion.toInsertOrder("c4@example.com", 25, OrderType.TAKE_AWAY, OrderState.PENDING, [getTestItems()[0]]))
 }
 
 
@@ -72,7 +72,7 @@ export async function insertPendingTakeAway() {
  */
 export async function insertPendingAtTheTable() {
 	let collection = await getOrdersCollection()
-	await collection.insertOne(conversion.toInsertOrder("c1", 1, OrderType.AT_THE_TABLE, OrderState.PENDING, getTestItems()))
+	await collection.insertOne(conversion.toInsertOrder("c1@example.com", 1, OrderType.AT_THE_TABLE, OrderState.PENDING, getTestItems()))
 }
 
 /**

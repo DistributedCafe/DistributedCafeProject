@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express"
 import { StatusCodes } from 'http-status-codes';
 import { assertEquals } from 'typia'
-import { NewOrder, Order } from "../domain/order"
+import { NewOrder, Order, OrderState } from "../domain/order"
 import { OrdersMessage } from "../orders-message"
 import * as service from "../application/orders-service"
 
@@ -43,6 +43,9 @@ router.get('/:orderId', async (req: Request, res: Response) => {
 router.put('/', async (req: Request, res: Response) => {
 	let order = assertEquals<Order>(req.body)
 	let service_res = await service.updateOrder(order._id, order.state)
+	if(service_res.data?.customerContact && service_res.message == OrdersMessage.OK && order.state == OrderState.READY){
+		await service.sendNotifyMail(service_res.data.customerContact)
+	}
 	sendResponse(res, service_res.message, service_res.data)
 })
 

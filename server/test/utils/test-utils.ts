@@ -45,7 +45,7 @@ export const friedEgg = {
 }
 
 export const order: any = {
-	"customerContact": "c1",
+	"customerContact": "c1@example.com",
 	"price": 1,
 	"type": "HOME_DELIVERY",
 	"state": "PENDING",
@@ -60,7 +60,7 @@ export const order: any = {
 }
 
 export const newWrongOrder = {
-	"customerContact": "c1",
+	"customerContact": "c1@example.com",
 	"price": "1",
 	"type": "HOME_DELIVERY",
 	"items": [

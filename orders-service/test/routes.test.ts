@@ -62,7 +62,7 @@ test('Add New Order', async () => {
 
 	await db_test.fillOrders()
 	let json: any = {
-		"customerContact": "c1",
+		"customerContact": "c1@example.com",
 		"price": 1,
 		"type": "HOME_DELIVERY",
 		"items": [

@@ -1,6 +1,7 @@
 import { Order, OrderItem, OrderState, OrderType } from "../domain/order";
 import { OrdersMessage } from "../orders-message";
 import * as repository from "../repository/repository";
+import * as mailSender from "./mail-sender"
 
 /**
  * This type represents the Response given by the Service. It consists of the generic data and an OrdersMessage
@@ -63,6 +64,10 @@ export async function updateOrder(orderId: string, newState: OrderState): Promis
 		return { data: order.data, message: order.message }
 	}
 
+}
+
+export async function sendNotifyMail(customerContact: string) {
+	await mailSender.sendNotifyMail(customerContact)
 }
 
 function isChangeStateValid(orderType: OrderType, currentState: OrderState, newState: OrderState): boolean {

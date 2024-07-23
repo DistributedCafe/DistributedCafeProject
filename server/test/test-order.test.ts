@@ -79,7 +79,7 @@ test('Get order by id - 404 (check-service)', done => {
 //write
 test('Create Order Test - 200', done => {
 	const newOrder = {
-		"customerContact": "c1",
+		"customerContact": "c1@example.com",
 		"price": 1,
 		"type": "HOME_DELIVERY",
 		"items": [
