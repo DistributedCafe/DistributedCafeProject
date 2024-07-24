@@ -16,7 +16,7 @@ export interface InsertOrder extends NewOrder {
  * this interface represents the information needed to create a new pending order
  */
 export interface NewOrder {
-	customerContact: string,
+	customerEmail: string,
 	price: number,
 	type: OrderType,
 	items: OrderItem[]

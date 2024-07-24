@@ -57,7 +57,7 @@ test('Find Order by Id', async () => {
 test('Create Order', async () => {
 	await db_test.emptyOrders()
 	let expectedOrder = conversion.toInsertOrder("user@gmail.com", 10, OrderType.AT_THE_TABLE, OrderState.PENDING, db_test.getTestItems())
-	let res = await repository.createOrder(expectedOrder.customerContact, expectedOrder.price, expectedOrder.type, expectedOrder.items)
+	let res = await repository.createOrder(expectedOrder.customerEmail, expectedOrder.price, expectedOrder.type, expectedOrder.items)
 	expect(res.message).toBe(OrdersMessage.OK)
 	if (res.data != undefined) {
 		expect(conversion.removeIndexOrder(res.data)).toStrictEqual(expectedOrder)

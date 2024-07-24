@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express"
 import { StatusCodes } from 'http-status-codes';
 import { assertEquals } from 'typia'
-import { NewOrder, Order } from "../domain/order"
+import { NewOrder, Order, OrderState } from "../domain/order"
 import { OrdersMessage } from "../orders-message"
 import * as service from "../application/orders-service"
 
@@ -13,7 +13,7 @@ const router = express.Router();
 router.post('/', async (req: Request, res: Response) => {
 	try {
 		const order = assertEquals<NewOrder>(req.body)
-		let service_res = await service.addNewOrder(order.customerContact, order.price, order.type, order.items)
+		let service_res = await service.addNewOrder(order.customerEmail, order.price, order.type, order.items)
 		sendResponse(res, service_res.message, service_res.data)
 	} catch (error) {
 		sendResponse(res, OrdersMessage.ERROR_WRONG_PARAMETERS, {})
@@ -38,12 +38,19 @@ router.get('/:orderId', async (req: Request, res: Response) => {
 })
 
 /**
- * PUT '/orders' API handles the update of one specific Order delegating to the service
+ * PUT '/orders' API handles the update of one specific Order delegating to the service and sending a notify email when needed
  */
 router.put('/', async (req: Request, res: Response) => {
-	let order = assertEquals<Order>(req.body)
-	let service_res = await service.updateOrder(order._id, order.state)
-	sendResponse(res, service_res.message, service_res.data)
+	try {
+		let order = assertEquals<Order>(req.body)
+		let service_res = await service.updateOrder(order._id, order.state)
+		if (service_res.data?.customerEmail && service_res.message == OrdersMessage.OK && order.state == OrderState.READY) {
+			await service.sendNotifyEmail(service_res.data.customerEmail)
+		}
+		sendResponse(res, service_res.message, service_res.data)
+	} catch (error) {
+		sendResponse(res, OrdersMessage.ERROR_WRONG_PARAMETERS, {})
+	}
 })
 
 function sendResponse(res: Response, message: string, data: any) {
