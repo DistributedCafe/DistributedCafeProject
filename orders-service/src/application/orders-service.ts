@@ -1,7 +1,9 @@
+import { validate } from "email-validator";
 import { Order, OrderItem, OrderState, OrderType } from "../domain/order";
 import { OrdersMessage } from "../orders-message";
 import * as repository from "../repository/repository";
 import * as mailSender from "./mail-sender"
+import validator from 'email-validator'
 
 /**
  * This type represents the Response given by the Service. It consists of the generic data and an OrdersMessage
@@ -10,16 +12,19 @@ type ServiceResponse<T> = { data?: T, message: OrdersMessage };
 
 /**
  * Service functionality to add a new order given its information:
- * @param customerContact 
+ * @param customerEmail 
  * @param price 
  * @param type 
  * @param items 
  * @returns a Promise with the Service Response containing the new Order data and an OK message 
  */
-export async function addNewOrder(customerContact: string, price: number, type: OrderType, items: OrderItem[]): Promise<ServiceResponse<Order>> {
-	let res = await repository.createOrder(customerContact, price, type, items)
-	return { data: res.data, message: res.message }
+export async function addNewOrder(customerEmail: string, price: number, type: OrderType, items: OrderItem[]): Promise<ServiceResponse<Order>> {
+	if(validator.validate(customerEmail)){
+		let res = await repository.createOrder(customerEmail, price, type, items)
+		return { data: res.data, message: res.message }
+	}
 
+	return {data: undefined, message: OrdersMessage.ERROR_WRONG_PARAMETERS}
 }
 
 /**
@@ -66,8 +71,8 @@ export async function updateOrder(orderId: string, newState: OrderState): Promis
 
 }
 
-export async function sendNotifyMail(customerContact: string) {
-	await mailSender.sendNotifyMail(customerContact)
+export async function sendNotifyEmail(customerEmail: string) {
+	await mailSender.sendNotifyEmail(customerEmail)
 }
 
 function isChangeStateValid(orderType: OrderType, currentState: OrderState, newState: OrderState): boolean {

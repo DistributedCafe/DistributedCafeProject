@@ -11,11 +11,11 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendNotifyMail(customerContact: string): Promise<SentMessageInfo>{
+export async function sendNotifyEmail(customerEmail: string): Promise<SentMessageInfo>{
 
     const mailOptions = {
         from: "distributedcafe@gmail.com",
-        to: customerContact,
+        to: customerEmail,
         subject: "Distributed Cafe Order Ready",
         text: "Dear customer, your order is ready",
       };

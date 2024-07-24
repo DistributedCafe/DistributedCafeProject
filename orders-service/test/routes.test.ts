@@ -61,8 +61,8 @@ test('Get Order By Id', async () => {
 test('Add New Order', async () => {
 
 	await db_test.fillOrders()
-	let json: any = {
-		"customerContact": "c1@example.com",
+	let json = {
+		"customerEmail": "c1@example.com",
 		"price": 1,
 		"type": "HOME_DELIVERY",
 		"items": [
@@ -83,12 +83,22 @@ test('Add New Order', async () => {
 	expect(res.data).toStrictEqual(last)
 
 	// send wrong format
-	json["state"] = OrderState.PENDING
-	await http.post('/orders', json).catch((error) => {
+	let wrong_format: any = {...json}
+	wrong_format["state"] = OrderState.PENDING
+	await http.post('/orders', wrong_format).catch((error) => {
 		expect(error.response.status).toBe(400)
 		expect(error.response.statusText).toBe(OrdersMessage.ERROR_WRONG_PARAMETERS)
 		expect(error.response.data).toStrictEqual({})
 
+	})
+
+	// send wrong concact
+	let wrong_email: any = {...json}
+	wrong_email["customerEmail"] = "c1"
+	await http.post('/orders', wrong_email).catch((error) => {
+		expect(error.response.status).toBe(400)
+		expect(error.response.statusText).toBe(OrdersMessage.ERROR_WRONG_PARAMETERS)
+		expect(error.response.data).toBe("")
 	})
 
 })

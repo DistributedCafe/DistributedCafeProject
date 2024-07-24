@@ -13,20 +13,20 @@ let collection = mongoConnection.getOrdersCollection()
 
 /**
  * Inserts a pending order into the repository with the provided information
- * @param customerContact of the ordering customer
+ * @param customerEmail of the ordering customer
  * @param price of the order
  * @param type of the order
  * @param items ordered
  * @returns a Promise with the repository response and the created Order as data
  */
-export async function createOrder(customerContact: string, price: number, type: OrderType, items: OrderItem[]): Promise<RepositoryResponse<Order>> {
+export async function createOrder(customerEmail: string, price: number, type: OrderType, items: OrderItem[]): Promise<RepositoryResponse<Order>> {
 
 	let ordersCollection = await collection
 
-	let newOrder = toInsertOrder(customerContact, price, type, OrderState.PENDING, items)
+	let newOrder = toInsertOrder(customerEmail, price, type, OrderState.PENDING, items)
 
 	let promise = await ordersCollection.insertOne(newOrder)
-	let order = fromMongoOrderToOrder(promise.insertedId, customerContact, price, type, OrderState.PENDING, items)
+	let order = fromMongoOrderToOrder(promise.insertedId, customerEmail, price, type, OrderState.PENDING, items)
 
 	return { data: order, message: OrdersMessage.OK };
 
@@ -40,7 +40,7 @@ export async function getAllOrders(): Promise<RepositoryResponse<Order[]>> {
 
 	let ordersCollection = await collection
 	let mongoOrders = await ordersCollection.find().toArray() as MongoOrder[]
-	let orders = mongoOrders.map((o) => fromMongoOrderToOrder(o._id, o.customerContact, o.price, o.type, o.state, o.items))
+	let orders = mongoOrders.map((o) => fromMongoOrderToOrder(o._id, o.customerEmail, o.price, o.type, o.state, o.items))
 
 	if (orders.length > 0) {
 		return { data: orders, message: OrdersMessage.OK }
@@ -67,7 +67,7 @@ export async function findOrderById(orderId: string): Promise<RepositoryResponse
 		return { data: undefined, message: OrdersMessage.ORDER_ID_NOT_FOUND }
 	}
 	let mongoOrder = find.at(0) as MongoOrder
-	let order = fromMongoOrderToOrder(mongoOrder._id, mongoOrder.customerContact, mongoOrder.price, mongoOrder.type, mongoOrder.state, mongoOrder.items)
+	let order = fromMongoOrderToOrder(mongoOrder._id, mongoOrder.customerEmail, mongoOrder.price, mongoOrder.type, mongoOrder.state, mongoOrder.items)
 	return { data: order, message: OrdersMessage.OK }
 
 }

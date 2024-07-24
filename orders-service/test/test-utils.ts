@@ -82,5 +82,5 @@ export async function insertPendingAtTheTable() {
 export async function getLastInsertedOrder(): Promise<Order> {
 	let orders = (await getOrdersCollection()).find()
 	let last = (await orders.toArray()).pop() as conversion.MongoOrder
-	return conversion.fromMongoOrderToOrder(last._id, last.customerContact, last.price, last.type, last.state, last.items)
+	return conversion.fromMongoOrderToOrder(last._id, last.customerEmail, last.price, last.type, last.state, last.items)
 }
