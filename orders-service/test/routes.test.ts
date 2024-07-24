@@ -83,7 +83,7 @@ test('Add New Order', async () => {
 	expect(res.data).toStrictEqual(last)
 
 	// send wrong format
-	let wrong_format: any = {...json}
+	let wrong_format: any = { ...json }
 	wrong_format["state"] = OrderState.PENDING
 	await http.post('/orders', wrong_format).catch((error) => {
 		expect(error.response.status).toBe(400)
@@ -93,7 +93,7 @@ test('Add New Order', async () => {
 	})
 
 	// send wrong concact
-	let wrong_email: any = {...json}
+	let wrong_email: any = { ...json }
 	wrong_email["customerEmail"] = "c1"
 	await http.post('/orders', wrong_email).catch((error) => {
 		expect(error.response.status).toBe(400)
@@ -151,12 +151,12 @@ test('Put Order', async () => {
 	await db_test.emptyOrders()
 	await db_test.insertPendingAtTheTable()
 	order = await db_test.getLastInsertedOrder()
-	let wrong_format: any = {...order}
+	let wrong_format: any = { ...order }
 	wrong_format["wrong"] = "wrong"
 	await http.put('/orders', wrong_format).catch((error) => {
 		expect(error.response.status).toBe(400)
 		expect(error.response.statusText).toBe(OrdersMessage.ERROR_WRONG_PARAMETERS)
 	})
-	
+
 })
 

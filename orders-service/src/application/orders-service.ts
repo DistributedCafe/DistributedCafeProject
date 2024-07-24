@@ -1,8 +1,7 @@
-import { validate } from "email-validator";
 import { Order, OrderItem, OrderState, OrderType } from "../domain/order";
 import { OrdersMessage } from "../orders-message";
 import * as repository from "../repository/repository";
-import * as mailSender from "./mail-sender"
+import * as mailSender from "./email-sender"
 import validator from 'email-validator'
 
 /**
@@ -16,15 +15,15 @@ type ServiceResponse<T> = { data?: T, message: OrdersMessage };
  * @param price 
  * @param type 
  * @param items 
- * @returns a Promise with the Service Response containing the new Order data and an OK message 
+ * @returns a Promise of Service Response. If the customerEmail is not valid the message is ERROR_WRONG_PARAMETERS. Otherwise it contains the new Order data and an OK message.
  */
 export async function addNewOrder(customerEmail: string, price: number, type: OrderType, items: OrderItem[]): Promise<ServiceResponse<Order>> {
-	if(validator.validate(customerEmail)){
+	if (validator.validate(customerEmail)) {
 		let res = await repository.createOrder(customerEmail, price, type, items)
 		return { data: res.data, message: res.message }
 	}
 
-	return {data: undefined, message: OrdersMessage.ERROR_WRONG_PARAMETERS}
+	return { data: undefined, message: OrdersMessage.ERROR_WRONG_PARAMETERS }
 }
 
 /**
@@ -71,6 +70,10 @@ export async function updateOrder(orderId: string, newState: OrderState): Promis
 
 }
 
+/**
+ * Service functionality used to send an email to the customer to notify that the order is ready
+ * @param customerEmail the email to use as the recipient
+ */
 export async function sendNotifyEmail(customerEmail: string) {
 	await mailSender.sendNotifyEmail(customerEmail)
 }
