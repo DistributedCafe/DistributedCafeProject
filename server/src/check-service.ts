@@ -72,7 +72,13 @@ function orders_api(message: string, input: string, ws: WebSocket) {
 			handleResponse(httpOrders.get('/orders/' + input), ws)
 			break;
 		case OrdersServiceMessages.PUT_ORDER.toString():
-			handleResponse(httpOrders.put('/orders/', input), ws)
+			let json = JSON.parse(input)
+			httpOrders.get('/orders/' + json._id).then((res) => {
+				res.data["state"] = json.state
+				httpOrders.put('/orders/', res.data).then(() => {
+					handleResponse(httpOrders.get('/orders/'), ws)
+				}).catch((e) => ws.send(JSON.stringify(createErrorMessage(e))))
+			}).catch((e) => ws.send(JSON.stringify(createErrorMessage(e))))
 			break;
 		default: //get all orders
 			handleResponse(httpOrders.get('/orders/'), ws)
