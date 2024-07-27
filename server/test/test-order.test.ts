@@ -16,22 +16,24 @@ let insertedId: string
 const app = express();
 
 beforeAll(async () => {
-	await cleanCollection("Orders", "Orders")
+	//await cleanCollection("Orders", "Orders")
 	await cleanCollection("Menu", "Items")
-	await cleanCollection("Warehouse", "Ingredient")
+	//await cleanCollection("Warehouse", "Ingredient")
 	let warehouse = await getCollection("Warehouse", "Ingredient")
 	await warehouse.createIndex({ name: 1 }, { unique: true })
 	let menu = await getCollection("Menu", "Items")
 	await menu.createIndex({ name: 1 }, { unique: true })
-	let res = await add("Orders", "Orders", JSON.stringify(order))
-	insertedId = res.insertedId.toString()
 	await add("Menu", "Items", JSON.stringify(omelette))
 })
 
+
 beforeEach(async () => {
+	await cleanCollection("Orders", "Orders")
 	await cleanCollection("Warehouse", "Ingredient")
 	await getCollection("Warehouse", "Ingredient")
 	await add("Warehouse", "Ingredient", JSON.stringify(egg))
+	let res = await add("Orders", "Orders", JSON.stringify(order))
+	insertedId = res.insertedId.toString()
 	server = createServer(app);
 	wss = new WebSocketServer({ server });
 })
@@ -125,41 +127,73 @@ test('Create Order Test - 400 (check-service)', done => {
 })
 
 test('Put Order Test - 200', done => {
-	add("Orders", "Orders", JSON.stringify(order)).then((res) => {
-		let id = res.insertedId.toString()
-		let modOrder = { ...order }
-		modOrder["_id"] = id
-		modOrder["state"] = "READY"
-		let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), modOrder)
-		startWebsocket(requestMessage, 200, "OK", JSON.stringify(modOrder), done)
-	})
-
+	let mod = {
+		"_id": insertedId,
+		"state": "READY"
+	}
+	let expected = { ...order }
+	expected["_id"] = insertedId
+	expected["state"] = "READY"
+	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), JSON.stringify(mod))
+	startWebsocket(requestMessage, 200, "OK", JSON.stringify([expected]), done)
 })
 
 test('Put Order Test - 200 (check-service)', done => {
-	let modOrder = { ...order }
-	modOrder["state"] = "READY"
-	add("Orders", "Orders", JSON.stringify(modOrder)).then((res) => {
-		let id = res.insertedId.toString()
-		modOrder["_id"] = id
-		modOrder["state"] = "COMPLETED"
-		let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), modOrder)
-		createConnectionAndCall(requestMessage, 200, "OK", JSON.stringify(modOrder), done)
+	cleanCollection("Orders", "Orders").then(() => {
+
+		let expected = { ...order }
+		expected["state"] = "READY"
+
+		add("Orders", "Orders", JSON.stringify(expected)).then((res) => {
+			let id = res.insertedId.toString()
+
+			let mod = {
+				"_id": id,
+				"state": "COMPLETED"
+			}
+			expected["_id"] = id
+			expected["state"] = "COMPLETED"
+			let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), JSON.stringify(mod))
+			createConnectionAndCall(requestMessage, 200, "OK", JSON.stringify([expected]), done)
+		})
+
 	})
+
 
 })
 
 test('Put Order Test - 400 (check-service)', done => {
-	let modOrder = { ...order }
-	modOrder["state"] = "COMPLETED"
-	add("Orders", "Orders", JSON.stringify(modOrder)).then((res) => {
-		let id = res.insertedId.toString()
-		modOrder["_id"] = id
-		modOrder["state"] = "PENDING"
-		let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), modOrder)
-		createConnectionAndCall(requestMessage, 400, "CHANGE_STATE_NOT_VALID", undefined, done)
+	cleanCollection("Orders", "Orders").then(() => {
+
+		let modOrder = { ...order }
+		modOrder["state"] = "COMPLETED"
+		add("Orders", "Orders", JSON.stringify(modOrder)).then((res) => {
+			let id = res.insertedId.toString()
+
+			let mod = {
+				"_id": id,
+				"state": "PENDING"
+			}
+
+			modOrder["_id"] = id
+			modOrder["state"] = "PENDING"
+			let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), JSON.stringify(mod))
+			createConnectionAndCall(requestMessage, 400, "CHANGE_STATE_NOT_VALID", undefined, done)
+		})
+
 	})
 
+})
+
+test('Put Order Test - 400 (check-service) - id not found', done => {
+	cleanCollection("Orders", "Orders").then(() => {
+		let mod = {
+			"_id": insertedId,
+			"state": "PENDING"
+		}
+		let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), JSON.stringify(mod))
+		createConnectionAndCall(requestMessage, 404, "ORDER_ID_NOT_FOUND", undefined, done)
+	})
 })
 
 function startWebsocket(requestMessage: RequestMessage, code: number, message: string, data: any, callback: jest.DoneCallback) {
