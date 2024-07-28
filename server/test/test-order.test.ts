@@ -16,9 +16,7 @@ let insertedId: string
 const app = express();
 
 beforeAll(async () => {
-	//await cleanCollection("Orders", "Orders")
 	await cleanCollection("Menu", "Items")
-	//await cleanCollection("Warehouse", "Ingredient")
 	let warehouse = await getCollection("Warehouse", "Ingredient")
 	await warehouse.createIndex({ name: 1 }, { unique: true })
 	let menu = await getCollection("Menu", "Items")
@@ -127,15 +125,26 @@ test('Create Order Test - 400 (check-service)', done => {
 })
 
 test('Put Order Test - 200', done => {
-	let mod = {
-		"_id": insertedId,
-		"state": "READY"
-	}
-	let expected = { ...order }
-	expected["_id"] = insertedId
-	expected["state"] = "READY"
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), JSON.stringify(mod))
-	startWebsocket(requestMessage, 200, "OK", JSON.stringify([expected]), done)
+	cleanCollection("Orders", "Orders").then(() => {
+
+		add("Orders", "Orders", JSON.stringify(order)).then((res) => {
+
+			let id = res.insertedId.toString()
+			let mod = {
+				"_id": id,
+				"state": "READY"
+			}
+
+			let expected = { ...order }
+			expected["_id"] = id
+			expected["state"] = "READY"
+			let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), JSON.stringify(mod))
+			startWebsocket(requestMessage, 200, "OK", JSON.stringify([expected]), done)
+
+		})
+
+	})
+
 })
 
 test('Put Order Test - 200 (check-service)', done => {
