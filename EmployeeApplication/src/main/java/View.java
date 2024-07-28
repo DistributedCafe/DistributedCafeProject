@@ -7,11 +7,17 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 import javax.swing.*;
 
+/**
+ * Main GUI Frame
+ */
 public class View extends JFrame {
 
   JPanel panel;
   JLabel label;
 
+  /**
+   * Main GUI Frame Constructor
+   */
   public View() {
     setTitle("Employee Application");
 
@@ -34,6 +40,11 @@ public class View extends JFrame {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
 
+  /**
+   * It repaints the order panels based on the received data array
+   * @param array the order data
+   * @param ctx the websocket
+   */
   public void addPanels(JsonArray array, AsyncResult<WebSocket> ctx) {
     panel.removeAll();
     var iterator = array.stream().iterator();
@@ -50,6 +61,10 @@ public class View extends JFrame {
     panel.revalidate();
   }
 
+  /**
+   * It repaints the label message based on the received message
+   * @param message to display
+   */
   public void setLabel(String message) {
     label.setText("Recap Order: " + message);
   }

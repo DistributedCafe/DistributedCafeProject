@@ -8,6 +8,9 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
+/**
+ * Graphic Panel Representation for an Order
+ */
 public class OrderCard extends JPanel {
 
   public OrderCard(JsonObject o, AsyncResult<WebSocket> ctx, Color color) {
