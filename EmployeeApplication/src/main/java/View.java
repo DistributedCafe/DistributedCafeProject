@@ -7,17 +7,13 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 import javax.swing.*;
 
-/**
- * Main GUI Frame
- */
+/** Main GUI Frame */
 public class View extends JFrame {
 
-  JPanel panel;
-  JLabel label;
+  private final JPanel panel;
+  private final JLabel label;
 
-  /**
-   * Main GUI Frame Constructor
-   */
+  /** Main GUI Frame Constructor */
   public View() {
     setTitle("Employee Application");
 
@@ -42,6 +38,7 @@ public class View extends JFrame {
 
   /**
    * It repaints the order panels based on the received data array
+   *
    * @param array the order data
    * @param ctx the websocket
    */
@@ -63,6 +60,7 @@ public class View extends JFrame {
 
   /**
    * It repaints the label message based on the received message
+   *
    * @param message to display
    */
   public void setLabel(String message) {

@@ -6,16 +6,22 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 /**
- * This class is in charge of connecting to the server and handling the GUI update when it receives messages from the server
+ * This class is in charge of connecting to the server and handling the GUI update when it receives
+ * messages from the server. When start is called it connects the websocket to the server and
+ * initializes the message handler. The handler updates the GUI when order data arrives, if the
+ * server is not able to provide the data the websocket resends the request. If the connection is
+ * successful it asks all the orders from the server. If the connection is not successful it keeps
+ * trying to reconnect.
  */
 public class WebSocketConnection extends AbstractVerticle {
 
   View view;
 
-    /**
-     * Class Constructor
-     * @param view the Main GUI
-     */
+  /**
+   * Class Constructor
+   *
+   * @param view the Main GUI
+   */
   public WebSocketConnection(View view) {
     this.view = view;
   }
@@ -25,13 +31,6 @@ public class WebSocketConnection extends AbstractVerticle {
     startClient(vertx);
   }
 
-    /**
-     * It connects the websocket to the server and initializes the message handler. The handler updates the GUI when order data arrives, if the server
-     * is not able to provide the data the websocket resends the request.
-     * If the connection is successful it asks all the orders from the server.
-     * If the connection is not successful it keeps trying to reconnect.
-     * @param vertx vertx instance
-     */
   private void startClient(Vertx vertx) {
     var request = new JsonObject();
     request
