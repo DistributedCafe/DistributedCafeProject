@@ -25,3 +25,6 @@ Server documentation can be found at this link: [Server documentation](./typedoc
 
 ## Manager application documentation
 Manager application documentation can be found at this link: [Manager application documentation](./typedoc/manager-application/index.html)
+
+## Employee application documentation
+Employee application documentation can be found at this link: [Employee application documentation](./javadoc/index.html)
