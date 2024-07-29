@@ -34,16 +34,16 @@ export function check_service(message: RequestMessage, ws: any) {
 
 async function menu_api(message: string, input: string, ws: WebSocket) {
 	switch (message) {
-		case MenuServiceMessages.CREATE_ITEM.toString():
+		case MenuServiceMessages.CREATE_ITEM:
 			handleResponse(httpMenu.post('/menu/', input), ws)
 			break;
-		case MenuServiceMessages.GET_ITEMS.toString():
+		case MenuServiceMessages.GET_ITEMS:
 			handleResponse(httpMenu.get('/menu/'), ws)
 			break;
-		case MenuServiceMessages.UPDATE_ITEM.toString():
+		case MenuServiceMessages.UPDATE_ITEM:
 			handleResponse(httpMenu.put('/menu/', input), ws)
 			break;
-		case MenuServiceMessages.GET_AVAILABLE_ITEMS.toString():
+		case MenuServiceMessages.GET_AVAILABLE_ITEMS:
 			let names: string[] = []
 			await http.get('/warehouse/available/').then((res) => {
 				const availableIng: any[] = res.data
@@ -65,13 +65,13 @@ async function menu_api(message: string, input: string, ws: WebSocket) {
 
 function orders_api(message: string, input: string, ws: WebSocket) {
 	switch (message) {
-		case OrdersServiceMessages.CREATE_ORDER.toString():
+		case OrdersServiceMessages.CREATE_ORDER:
 			handleNewOrder(httpOrders.post('/orders/', input), input, ws)
 			break;
-		case OrdersServiceMessages.GET_ORDER_BY_ID.toString():
+		case OrdersServiceMessages.GET_ORDER_BY_ID:
 			handleResponse(httpOrders.get('/orders/' + input), ws)
 			break;
-		case OrdersServiceMessages.PUT_ORDER.toString():
+		case OrdersServiceMessages.PUT_ORDER:
 			let json = JSON.parse(input)
 			httpOrders.get('/orders/' + json._id).then((res) => {
 				res.data["state"] = json.state
@@ -88,16 +88,16 @@ function orders_api(message: string, input: string, ws: WebSocket) {
 
 function warehouse_api(message: string, input: string, ws: WebSocket) {
 	switch (message) {
-		case WarehouseServiceMessages.CREATE_INGREDIENT.toString():
+		case WarehouseServiceMessages.CREATE_INGREDIENT:
 			handleResponse(http.post('/warehouse/', input), ws)
 			break;
-		case WarehouseServiceMessages.DECREASE_INGREDIENTS_QUANTITY.toString():
+		case WarehouseServiceMessages.DECREASE_INGREDIENTS_QUANTITY:
 			handleResponse(http.put('/warehouse/', input), ws)
 			break;
-		case WarehouseServiceMessages.GET_ALL_AVAILABLE_INGREDIENT.toString():
+		case WarehouseServiceMessages.GET_ALL_AVAILABLE_INGREDIENT:
 			handleResponse(http.get('/warehouse/available'), ws)
 			break;
-		case WarehouseServiceMessages.GET_ALL_INGREDIENT.toString():
+		case WarehouseServiceMessages.GET_ALL_INGREDIENT:
 			handleResponse(http.get('/warehouse/'), ws)
 			break;
 		// restock
