@@ -35,7 +35,7 @@ public class WebSocketConnection extends AbstractVerticle {
     var request = new JsonObject();
     request
         .put("client_name", "Orders")
-        .put("client_request", String.valueOf(Message.GET_ALL_ORDERS.value))
+        .put("client_request", Message.GET_ALL_ORDERS)
         .put("input", "");
 
     WebSocketClient client = vertx.createWebSocketClient();

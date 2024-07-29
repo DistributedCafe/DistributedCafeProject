@@ -50,29 +50,29 @@ afterAll(() => { closeMongoClient() })
 
 //read
 test('Get all orders - 200', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ALL_ORDERS.toString(), '')
+	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ALL_ORDERS, '')
 	startWebsocket(requestMessage, 200, "OK", addId(order, insertedId), done)
 });
 
 test('Get all orders - 200 (check-service)', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ALL_ORDERS.toString(), '')
+	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ALL_ORDERS, '')
 	createConnectionAndCall(requestMessage, 200, "OK", addId(order, insertedId), done)
 })
 
 test('Get order by id - 200', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ORDER_BY_ID.toString(), insertedId)
+	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ORDER_BY_ID, insertedId)
 	let expected = JSON.stringify(JSON.parse(addId(order, insertedId))[0])
 	startWebsocket(requestMessage, 200, "OK", expected, done)
 })
 
 test('Get order by id - 200 (check-service)', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ORDER_BY_ID.toString(), insertedId)
+	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ORDER_BY_ID, insertedId)
 	let expected = JSON.stringify(JSON.parse(addId(order, insertedId))[0])
 	createConnectionAndCall(requestMessage, 200, "OK", expected, done)
 })
 
 test('Get order by id - 404 (check-service)', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ORDER_BY_ID.toString(), "1")
+	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ORDER_BY_ID, "1")
 	createConnectionAndCall(requestMessage, 404, "ORDER_ID_NOT_FOUND", undefined, done)
 })
 
@@ -92,7 +92,7 @@ test('Create Order Test - 200', done => {
 		]
 	}
 	startWebsocket(
-		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER.toString(), newOrder), 200, "OK", newOrder, done)
+		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrder), 200, "OK", newOrder, done)
 });
 
 test('Create Order Test (check-service) - 200', done => {
@@ -110,17 +110,17 @@ test('Create Order Test (check-service) - 200', done => {
 		]
 	}
 	createConnectionAndCall(
-		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER.toString(), newOrder), 200, "OK", newOrder, done)
+		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrder), 200, "OK", newOrder, done)
 });
 
 test('Create Order Test - 400', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER.toString(), newWrongOrder)
+	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newWrongOrder)
 	startWebsocket(requestMessage, 400, "ERROR_WRONG_PARAMETERS", "", done)
 
 });
 
 test('Create Order Test - 400 (check-service)', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER.toString(), newWrongOrder)
+	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newWrongOrder)
 	createConnectionAndCall(requestMessage, 400, "ERROR_WRONG_PARAMETERS", "", done)
 })
 
@@ -138,7 +138,7 @@ test('Put Order Test - 200', done => {
 			let expected = { ...order }
 			expected["_id"] = id
 			expected["state"] = "READY"
-			let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), JSON.stringify(mod))
+			let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER, JSON.stringify(mod))
 			startWebsocket(requestMessage, 200, "OK", JSON.stringify([expected]), done)
 
 		})
@@ -162,7 +162,7 @@ test('Put Order Test - 200 (check-service)', done => {
 			}
 			expected["_id"] = id
 			expected["state"] = "COMPLETED"
-			let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), JSON.stringify(mod))
+			let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER, JSON.stringify(mod))
 			createConnectionAndCall(requestMessage, 200, "OK", JSON.stringify([expected]), done)
 		})
 
@@ -186,7 +186,7 @@ test('Put Order Test - 400 (check-service)', done => {
 
 			modOrder["_id"] = id
 			modOrder["state"] = "PENDING"
-			let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), JSON.stringify(mod))
+			let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER, JSON.stringify(mod))
 			createConnectionAndCall(requestMessage, 400, "CHANGE_STATE_NOT_VALID", undefined, done)
 		})
 
@@ -200,7 +200,7 @@ test('Put Order Test - 400 (check-service) - id not found', done => {
 			"_id": insertedId,
 			"state": "PENDING"
 		}
-		let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER.toString(), JSON.stringify(mod))
+		let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER, JSON.stringify(mod))
 		createConnectionAndCall(requestMessage, 404, "ORDER_ID_NOT_FOUND", undefined, done)
 	})
 })

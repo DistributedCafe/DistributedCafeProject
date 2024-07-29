@@ -93,7 +93,7 @@ export async function check_order_message(msg: ResponseMessage, code: number, me
 	expect(msg.code).toBe(code);
 	expect(msg.message).toBe(message);
 	if (msg.code == 200) {
-		if (request == OrdersServiceMessages.CREATE_ORDER.toString()) {
+		if (request == OrdersServiceMessages.CREATE_ORDER) {
 			expect(JSON.parse(msg.data)).toStrictEqual(JSON.parse(await addIdandState(data)));
 			//check ingredient db
 			let dbEgg = await (await getCollection("Warehouse", "Ingredient")).findOne({ name: "egg" }, { projection: { _id: 0 } })

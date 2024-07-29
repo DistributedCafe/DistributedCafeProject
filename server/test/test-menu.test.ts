@@ -42,43 +42,43 @@ beforeEach(() => {
 afterAll(() => { closeMongoClient() })
 
 test('Get all available items Test - 200', done => {
-	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS.toString(), "")
+	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS, "")
 	test_route(requestMessage, 200, 'OK', [omelette], done)
 })
 
 test('Get all available items Test - 200 (check-service)', done => {
-	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS.toString(), "")
+	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS, "")
 	test_check_service(requestMessage, 200, 'OK', [omelette], done)
 })
 
 test('Get item by name Test - 200', done => {
-	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_ITEM_BY_NAME.toString(), omelette.name)
+	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_ITEM_BY_NAME, omelette.name)
 	test_route(requestMessage, 200, 'OK', omelette, done)
 });
 
 test('Get item by name Test - 200 (check-service)', done => {
-	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_ITEM_BY_NAME.toString(), omelette.name)
+	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_ITEM_BY_NAME, omelette.name)
 	test_check_service(requestMessage, 200, 'OK', omelette, done)
 })
 
 test('Get all items Test - 200', done => {
-	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_ITEMS.toString(), "")
+	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_ITEMS, "")
 	test_route(requestMessage, 200, 'OK', [omelette], done)
 })
 
 test('Get all items Test - 200 (check-service)', done => {
-	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_ITEMS.toString(), "")
+	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_ITEMS, "")
 	test_check_service(requestMessage, 200, 'OK', [omelette], done)
 })
 
 test('Add new item Test - 200', done => {
 	test_route(
-		createRequestMessage(Service.MENU, MenuServiceMessages.CREATE_ITEM.toString(), friedEgg), 200, 'OK', friedEgg, done)
+		createRequestMessage(Service.MENU, MenuServiceMessages.CREATE_ITEM, friedEgg), 200, 'OK', friedEgg, done)
 });
 
 test('Add new item Test - 200 (check-service)', done => {
 	test_check_service(
-		createRequestMessage(Service.MENU, MenuServiceMessages.CREATE_ITEM.toString(), boiledEgg), 200, 'OK', boiledEgg, done)
+		createRequestMessage(Service.MENU, MenuServiceMessages.CREATE_ITEM, boiledEgg), 200, 'OK', boiledEgg, done)
 });
 
 test('Update item Test - 200', done => {
@@ -97,7 +97,7 @@ test('Update item Test - 200', done => {
 		price: 4
 	}
 	test_route(
-		createRequestMessage(Service.MENU, MenuServiceMessages.UPDATE_ITEM.toString(), update_omelette), 200, 'OK', update_omelette, done)
+		createRequestMessage(Service.MENU, MenuServiceMessages.UPDATE_ITEM, update_omelette), 200, 'OK', update_omelette, done)
 });
 
 test('Update item Test - 200 (check-service)', done => {
@@ -120,19 +120,19 @@ test('Update item Test - 200 (check-service)', done => {
 		price: 5
 	}
 	test_check_service(
-		createRequestMessage(Service.MENU, MenuServiceMessages.UPDATE_ITEM.toString(), update_omelette), 200, 'OK', update_omelette, done)
+		createRequestMessage(Service.MENU, MenuServiceMessages.UPDATE_ITEM, update_omelette), 200, 'OK', update_omelette, done)
 });
 
 test('Get all available items Test - 404', done => {
 	cleanCollection(db_warehouse_name, db_warehouse_collection).then(() => {
-		const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS.toString(), "")
+		const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS, "")
 		test_route(requestMessage, 404, "ERROR_EMPTY_WAREHOUSE", "", done)
 	})
 })
 
 test('Get all available items Test - 404', done => {
 	cleanCollection(db_warehouse_name, db_warehouse_collection).then(() => {
-		const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS.toString(), "")
+		const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS, "")
 		test_check_service(requestMessage, 404, "ERROR_EMPTY_WAREHOUSE", "", done)
 	})
 })

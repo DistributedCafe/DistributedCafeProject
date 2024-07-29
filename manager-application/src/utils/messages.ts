@@ -19,12 +19,13 @@ export interface ResponseMessage {
 }
 
 /**
- * This enum lists the different messages handled by the warehouse microservice
+ * Different messages handled by the warehouse microservice
  */
-export enum WarehouseServiceMessages {
-	CREATE_INGREDIENT,
-	GET_ALL_INGREDIENT,
-	DECREASE_INGREDIENTS_QUANTITY,
-	GET_ALL_AVAILABLE_INGREDIENT,
-	RESTOCK_INGREDIENT
+export const WarehouseServiceMessages = {
+	CREATE_INGREDIENT: 'CREATE_INGREDIENT',
+	GET_ALL_INGREDIENT: 'GET_ALL_INGREDIENT',
+	DECREASE_INGREDIENTS_QUANTITY: 'DECREASE_INGREDIENTS_QUANTITY',
+	GET_ALL_AVAILABLE_INGREDIENT: 'GET_ALL_AVAILABLE_INGREDIENT',
+	RESTOCK_INGREDIENT: 'RESTOCK_INGREDIENT'
 }
+Object.freeze(WarehouseServiceMessages)

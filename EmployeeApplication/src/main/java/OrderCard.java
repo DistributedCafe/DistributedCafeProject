@@ -39,7 +39,7 @@ public class OrderCard extends JPanel {
           var request = new JsonObject();
           request
               .put("client_name", "Orders")
-              .put("client_request", String.valueOf(Message.PUT_ORDER.value))
+              .put("client_request", Message.PUT_ORDER)
               .put("input", updateOrder.toString());
           ctx.result().write(Buffer.buffer(String.valueOf(request)));
         });
