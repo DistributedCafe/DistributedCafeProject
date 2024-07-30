@@ -1,6 +1,4 @@
 import { Component, Inject, Input, OnDestroy } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -11,49 +9,52 @@ import {
 	MatDialogContent,
 	MatDialogTitle,
 } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Item } from '../../utils/Item';
 import { MenuServiceMessages, RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../../utils/messages';
-import { IngredientInRecipe, Item } from '../../utils/Item';
 import { Service } from '../../utils/service';
-import { DialogData } from '../../utils/DialogData';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Ingredient } from '../../utils/Ingredient';
 import { IArray } from '../../utils/IArray';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { buildRecipe } from '../../utils/recipe';
 import { checkWsConnectionAndSend } from '../../utils/send';
 
+
 @Component({
-	selector: 'app-add-menu-item-button',
+	selector: 'update-menu-item-button',
 	standalone: true,
 	imports: [MatButtonModule,
 		MatIconModule,
-		MatFormFieldModule,
-		CommonModule,
-		MatInputModule],
-	templateUrl: './add-menu-item-button.component.html',
-	styleUrl: './add-menu-item-button.component.css'
+		MatInputModule
+	],
+	templateUrl: './update-menu-item-button.component.html',
+	styleUrl: './update-menu-item-button.component.css'
 })
-export class AddMenuItemButtonComponent {
+export class UpdateMenuItemButtonComponent {
+	@Input()
+	ws!: WebSocket
+	@Input()
+	item!: Item
 
 	constructor(public dialog: MatDialog) { }
-
-	@Input()
-	ws!: WebSocket;
-
 	openDialog() {
 		this.dialog.open(Dialog, {
 			data: {
+				item: this.item,
 				ws: this.ws,
 				dialog: this.dialog
 			},
 		});
 	}
+
 }
 
 @Component({
-	selector: 'add-menu-item-button-dialog',
+	selector: 'update-menu-item-button-dialog',
 	templateUrl: './dialog.html',
 	standalone: true,
-	styleUrl: './add-menu-item-button.component.css',
+	styleUrl: './update-menu-item-button.component.css',
 	imports: [MatDialogTitle,
 		MatDialogContent,
 		MatFormFieldModule,
@@ -61,17 +62,19 @@ export class AddMenuItemButtonComponent {
 		MatButtonModule,
 		FormsModule,
 		CommonModule,
-		MatIconModule,
 		MatCheckboxModule],
 })
 export class Dialog {
 	ingredients: Ingredient[] = Array()
-	name: string = ''
-	price: number = 1
-	errorEmpty = false
-	error = false
-	selectedIngredients: string[] = Array()
 	selectedQuantities = {} as IArray
+	selectedIngredients: string[] = Array()
+	errorEmpty = false
+	price = this.data.item.price
+
+	closeDialog() {
+		this.data.dialog.closeAll()
+		window.location.reload()
+	}
 
 	constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, public dialog: MatDialog) {
 		const initialRequest: RequestMessage = {
@@ -79,10 +82,12 @@ export class Dialog {
 			client_request: WarehouseServiceMessages.GET_ALL_INGREDIENT,
 			input: ''
 		}
+		let ingredient: Ingredient[]
+
 		if (!checkWsConnectionAndSend(initialRequest, this.data.ws)) {
 			this.closeDialog()
 		}
-		let ingredient: Ingredient[]
+
 		this.data.ws.onmessage = function(e) {
 			const data = JSON.parse(e.data) as ResponseMessage
 			if (data.code == 200) {
@@ -103,11 +108,6 @@ export class Dialog {
 		}
 	}
 
-	closeDialog = () => {
-		this.data.dialog.closeAll()
-		window.location.reload()
-	}
-
 	onCheckChange(name: string) {
 		if (this.selectedIngredients.includes(name)) {
 			this.selectedIngredients = this.selectedIngredients.filter(i => i !== name)
@@ -116,61 +116,48 @@ export class Dialog {
 		}
 	}
 
-	public add() {
-		if (this.selectedIngredients.length <= 0) {
-			this.error = true
-		} else {
-			const data = this.data
-
-			const openDialog = (msg: ResponseMessage) => {
-				this.dialog.open(ErrorDialog, {
-					data:
-						msg
-				});
-			}
-
-			const input: Item = {
-				name: this.name,
-				recipe: buildRecipe(this.selectedQuantities, this.selectedIngredients),
-				price: this.price
-			}
-
-			const request: RequestMessage = {
-				client_name: Service.MENU,
-				client_request: MenuServiceMessages.CREATE_ITEM,
-				input: input
-			}
-
-			const closeDialog = () => this.closeDialog()
-
-			if (!checkWsConnectionAndSend(request, data.ws)) {
+	public updateItem() {
+		const data = this.data
+		const closeDialog = () => this.closeDialog()
+		const openDialog = (msg: any) => {
+			this.dialog.open(ErrorDialog, {
+				data:
+					msg
+			});
+		}
+		const input = {
+			name: data.item.name,
+			recipe: buildRecipe(this.selectedQuantities, this.selectedIngredients),
+			price: this.price
+		}
+		const request: RequestMessage = {
+			client_name: Service.MENU,
+			client_request: MenuServiceMessages.UPDATE_ITEM,
+			input: input
+		}
+		if (!checkWsConnectionAndSend(request, data.ws)) {
+			closeDialog()
+		}
+		data.ws.onmessage = function(e) {
+			const response = JSON.parse(e.data) as ResponseMessage
+			if (response.code == 200) {
+				console.log(response.message)
 				closeDialog()
-			}
-
-			data.ws.onmessage = function(e) {
-				const res = JSON.parse(e.data) as ResponseMessage
-				if (res.code == 200) {
-					console.log(res.message)
-					closeDialog()
-				} else {
-					console.error(res.code)
-					console.error(res.message)
-					data.dialog.closeAll()
-					openDialog(res)
-				}
+			} else {
+				console.error(response.code)
+				console.error(response.message)
+				data.dialog.closeAll()
+				openDialog(response)
 			}
 		}
 	}
 }
 
-/**
- * Component that implements a dialog that shows the occurred error
- */
 @Component({
-	selector: 'add-menu-item-button-error-dialog',
+	selector: 'update-menu-item-button-error-dialog',
 	templateUrl: './error-dialog.html',
 	standalone: true,
-	styleUrl: './add-menu-item-button.component.css',
+	styleUrl: './update-menu-item-button.component.css',
 	imports: [MatDialogTitle,
 		MatDialogContent,
 		MatFormFieldModule,
@@ -180,11 +167,17 @@ export class Dialog {
 		CommonModule],
 })
 export class ErrorDialog implements OnDestroy {
-	constructor(@Inject(MAT_DIALOG_DATA) public data: ResponseMessage) {
-		console.log(data.code)
+	constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+		console.log(data)
 	}
 	ngOnDestroy(): void {
 		window.location.reload()
 	}
 	errorMessage: string = this.data.message
+}
+
+export interface DialogData {
+	item: Item,
+	ws: WebSocket,
+	dialog: MatDialog
 }

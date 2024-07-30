@@ -6,18 +6,21 @@ import { MenuServiceMessages, RequestMessage, ResponseMessage } from '../../util
 import { MatTableModule } from '@angular/material/table'
 import { CommonModule } from '@angular/common';
 import { AddMenuItemButtonComponent } from "../add-menu-item-button/add-menu-item-button.component";
+import { UpdateMenuItemButtonComponent } from "../update-menu-item-button/update-menu-item-button.component";
 
 @Component({
 	selector: 'dataTableMenu',
 	standalone: true,
 	imports: [MatProgressSpinnerModule,
 		MatTableModule,
-		CommonModule, AddMenuItemButtonComponent],
+		CommonModule,
+		AddMenuItemButtonComponent,
+		UpdateMenuItemButtonComponent],
 	templateUrl: './data-table-menu.component.html',
 	styleUrl: './data-table-menu.component.css'
 })
 export class DataTableMenuComponent {
-	displayedColumns: string[] = ['name', 'recipe', 'price'];
+	displayedColumns: string[] = ['name', 'recipe', 'price', 'update'];
 	display = false
 	error = false
 	errorMessage = ''
@@ -28,7 +31,6 @@ export class DataTableMenuComponent {
 		this.ws = new WebSocket('ws://localhost:3000')
 
 		this.ws.onerror = () => {
-			console.log("ERRORE")
 			this.errorMessage = "Server not available!"
 			this.error = true
 			this.display = true

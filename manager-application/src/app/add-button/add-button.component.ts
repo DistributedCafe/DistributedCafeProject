@@ -15,6 +15,7 @@ import { Service } from '../../utils/service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DialogData } from '../../utils/DialogData';
+import { checkWsConnectionAndSend } from '../../utils/send';
 
 /**
  * Component that implements a button that manages 
@@ -95,7 +96,9 @@ export class Dialog {
 			window.location.reload()
 		}
 
-		data.ws.send(JSON.stringify(request))
+		if (!checkWsConnectionAndSend(request, data.ws)) {
+			closeDialog()
+		}
 
 		data.ws.onmessage = function(e) {
 			const res = JSON.parse(e.data) as ResponseMessage
