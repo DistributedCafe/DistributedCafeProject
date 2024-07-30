@@ -8,6 +8,11 @@ import { CommonModule } from '@angular/common';
 import { AddMenuItemButtonComponent } from "../add-menu-item-button/add-menu-item-button.component";
 import { UpdateMenuItemButtonComponent } from "../update-menu-item-button/update-menu-item-button.component";
 
+/**
+ * Component that implements a table displaying the items 
+ * present in the menu. If the menu db is empty or an 
+ * error occurs it shows it.
+ */
 @Component({
 	selector: 'dataTableMenu',
 	standalone: true,

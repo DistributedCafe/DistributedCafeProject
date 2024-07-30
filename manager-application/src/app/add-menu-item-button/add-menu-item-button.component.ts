@@ -21,8 +21,12 @@ import { IArray } from '../../utils/IArray';
 import { buildRecipe } from '../../utils/recipe';
 import { checkWsConnectionAndSend } from '../../utils/send';
 
+/**
+ * Component that implements a button that manages 
+ * the creation of a new item
+ */
 @Component({
-	selector: 'app-add-menu-item-button',
+	selector: 'add-menu-item-button',
 	standalone: true,
 	imports: [MatButtonModule,
 		MatIconModule,
@@ -49,6 +53,12 @@ export class AddMenuItemButtonComponent {
 	}
 }
 
+/**
+ * Component that implements a dialog containing a 
+ * form to insert all the necessary information 
+ * about the new item and a button that send
+ * a message to the server
+ */
 @Component({
 	selector: 'add-menu-item-button-dialog',
 	templateUrl: './dialog.html',

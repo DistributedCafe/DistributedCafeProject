@@ -11,7 +11,6 @@ interface ILink {
 }
 
 /**
- * /**
  * Component that implements the main page of the website.
  */
 @Component({

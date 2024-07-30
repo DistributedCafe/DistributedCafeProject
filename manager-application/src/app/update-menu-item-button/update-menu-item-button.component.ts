@@ -20,7 +20,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { buildRecipe } from '../../utils/recipe';
 import { checkWsConnectionAndSend } from '../../utils/send';
 
-
+/**
+ * Component that implements a button that manages 
+ * the update of an item
+ */
 @Component({
 	selector: 'update-menu-item-button',
 	standalone: true,
@@ -50,6 +53,11 @@ export class UpdateMenuItemButtonComponent {
 
 }
 
+/**
+ * Component that implements a dialog containing a 
+ * form to insert the new recipe and price of the 
+ * item and a button that send a message to the server
+ */
 @Component({
 	selector: 'update-menu-item-button-dialog',
 	templateUrl: './dialog.html',
@@ -153,6 +161,9 @@ export class Dialog {
 	}
 }
 
+/**
+ * Component that implements a dialog that shows the occurred error
+ */
 @Component({
 	selector: 'update-menu-item-button-error-dialog',
 	templateUrl: './error-dialog.html',
