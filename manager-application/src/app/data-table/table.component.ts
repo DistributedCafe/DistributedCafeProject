@@ -9,7 +9,7 @@ import { Ingredient } from '../../utils/Ingredient';
 import { AddButtonComponent } from '../add-button/add-button.component';
 
 /**
- * Component that implements a table displaying the ingredient 
+ * Component that implements a table displaying the ingredients 
  * present in the warehouse. If the warehouse is empty or an 
  * error occurs it shows it.
  */

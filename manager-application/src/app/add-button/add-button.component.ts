@@ -14,6 +14,8 @@ import { RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../..
 import { Service } from '../../utils/service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { DialogData } from '../../utils/DialogData';
+import { checkWsConnectionAndSend } from '../../utils/send';
 
 /**
  * Component that implements a button that manages 
@@ -87,14 +89,16 @@ export class Dialog {
 		const request: RequestMessage = {
 			client_name: Service.WAREHOUSE,
 			client_request: WarehouseServiceMessages.CREATE_INGREDIENT,
-			input: JSON.stringify(input)
+			input: input
 		}
 		const closeDialog = () => {
 			data.dialog.closeAll()
 			window.location.reload()
 		}
 
-		data.ws.send(JSON.stringify(request))
+		if (!checkWsConnectionAndSend(request, data.ws)) {
+			closeDialog()
+		}
 
 		data.ws.onmessage = function(e) {
 			const res = JSON.parse(e.data) as ResponseMessage
@@ -135,9 +139,4 @@ export class ErrorDialog implements OnDestroy {
 		window.location.reload()
 	}
 	errorMessage: string = this.data.message
-}
-
-export interface DialogData {
-	ws: WebSocket,
-	dialog: MatDialog
 }

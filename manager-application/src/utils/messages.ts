@@ -6,7 +6,7 @@ import { Service } from './service';
 export interface RequestMessage {
 	client_name: Service
 	client_request: string
-	input: string
+	input: any
 }
 
 /**
@@ -17,6 +17,18 @@ export interface ResponseMessage {
 	code: number,
 	data: string
 }
+
+/**
+ * Different messages handled by the menu microservice
+ */
+export const MenuServiceMessages = {
+	CREATE_ITEM: 'CREATE_ITEM',
+	GET_ITEM_BY_NAME: 'GET_ITEM_BY_NAME',
+	UPDATE_ITEM: 'UPDATE_ITEM',
+	GET_ITEMS: 'GET_ITEMS',
+	GET_AVAILABLE_ITEMS: 'GET_AVAILABLE_ITEMS'
+}
+Object.freeze(MenuServiceMessages)
 
 /**
  * Different messages handled by the warehouse microservice
