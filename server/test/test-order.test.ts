@@ -1,19 +1,25 @@
-import WebSocket, { WebSocketServer } from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
 import { Service } from '../src/utils/service'
 import { OrdersServiceMessages, RequestMessage } from '../src/utils/messages';
 import { add, cleanCollection, closeMongoClient, getCollection } from './utils/db-connection';
 import { check_order_message, createRequestMessage, egg, newWrongOrder, omelette, order, orderItemQuantity } from './utils/test-utils';
-import { addId } from './utils/order-json-utils';
+import { addId, addIdandState } from './utils/order-json-utils';
 import express from "express"
 import { IncomingMessage, Server, ServerResponse, createServer } from 'http';
-import { check_service } from '../src/check-service';
+import { check_service } from '../src/check-service'
 
 let ws_route: WebSocket
-let ws_check_service: WebSocket;
-let wss: WebSocketServer;
+let ws_check_service: WebSocket
+let wss: WebSocketServer
 let server: Server<typeof IncomingMessage, typeof ServerResponse>
 let insertedId: string
-const app = express();
+const app = express()
+const managerWsMsg = "Manager frontend web socket"
+const orderWsMsg = "New order web socket"
+const milk = {
+	name: "milk",
+	quantity: 0
+}
 
 beforeAll(async () => {
 	await cleanCollection("Menu", "Items")
@@ -32,8 +38,8 @@ beforeEach(async () => {
 	await add("Warehouse", "Ingredient", JSON.stringify(egg))
 	let res = await add("Orders", "Orders", JSON.stringify(order))
 	insertedId = res.insertedId.toString()
-	server = createServer(app);
-	wss = new WebSocketServer({ server });
+	server = createServer(app)
+	wss = new WebSocketServer({ server })
 })
 
 afterEach(() => {
@@ -96,21 +102,23 @@ test('Create Order Test - 200', done => {
 });
 
 test('Create Order Test (check-service) - 200', done => {
-	const newOrder = {
-		"customerEmail": "c2@example.com",
-		"price": 1,
-		"type": "TAKE_AWAY",
-		"items": [
-			{
-				"item": {
-					"name": "omelette"
+	add("Warehouse", "Ingredient", JSON.stringify(milk)).then(() => {
+		const newOrder = {
+			"customerEmail": "c2@example.com",
+			"price": 1,
+			"type": "TAKE_AWAY",
+			"items": [
+				{
+					"item": {
+						"name": "omelette"
+					},
+					"quantity": orderItemQuantity
 				},
-				"quantity": orderItemQuantity
-			},
-		]
-	}
-	createConnectionAndCall(
-		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrder), 200, "OK", newOrder, done)
+			]
+		}
+		createConnectionAndCallNewOrder(
+			createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrder), 200, "OK", newOrder, done)
+	})
 });
 
 test('Create Order Test - 400', done => {
@@ -231,6 +239,59 @@ function createConnectionAndCall(requestMessage: RequestMessage, code: number, m
 
 	ws_check_service = new WebSocket('ws://localhost:8081');
 	ws_check_service.on('open', () => {
-		check_service(requestMessage, ws_check_service)
+		const managerWsArray = Array()
+		check_service(requestMessage, ws_check_service, managerWsArray)
+	})
+}
+
+export interface IArray {
+	[index: string]: WebSocket;
+}
+
+function createConnectionAndCallNewOrder(requestMessage: RequestMessage, code: number, message: string, data: any, callback: jest.DoneCallback) {
+	let connections: Map<WebSocket, string> = new Map()
+	let wsArray = {} as IArray
+
+	wss.on('connection', (ws: WebSocket) => {
+		ws.on('error', console.error);
+
+		ws.on('message', async (msg: string) => {
+			if (msg == managerWsMsg) {
+				wsArray[managerWsMsg] = ws
+			} else if (msg == orderWsMsg) {
+				wsArray[orderWsMsg] = ws
+			} else {
+				connections.set(ws, msg)
+				if (connections.size == 2) {
+					const orederRes = JSON.parse(connections.get(wsArray[orderWsMsg])!)
+					const managerRes = JSON.parse(connections.get(wsArray[managerWsMsg])!)
+
+					expect(wsArray[managerWsMsg]).toBe(ws)
+					expect(wsArray[orderWsMsg] == ws).toBeFalsy
+					expect(orederRes.code).toBe(code)
+					expect(orederRes.message).toBe(message)
+					expect(JSON.parse(orederRes.data)).toStrictEqual(JSON.parse(await addIdandState(data)))
+					expect(managerRes.message).toBe("NEW_MISSING_INGREDIENTS")
+					expect(JSON.parse(managerRes.data)).toStrictEqual([milk])
+					console.log("ciao")
+					wsManager.close()
+					callback()
+				}
+			}
+		});
+	});
+	server.listen(8081, () => console.log('listening on port :8081'));
+
+	ws_check_service = new WebSocket('ws://localhost:8081');
+	ws_check_service.on('open', () => {
+		let managerWsArray = Array()
+		managerWsArray.push(wsManager)
+		check_service(requestMessage, ws_check_service, managerWsArray)
+		ws_check_service.send(orderWsMsg)
+	})
+
+	const wsManager = new WebSocket('ws://localhost:8081')
+	wsManager.on('open', () => {
+		wsManager.send(managerWsMsg)
 	})
 }

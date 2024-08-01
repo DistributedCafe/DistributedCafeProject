@@ -116,6 +116,7 @@ function createConnectionAndCall(requestMessage: RequestMessage, code: number, m
 
 	ws = new WebSocket('ws://localhost:8081');
 	ws.on('open', () => {
-		check_service(requestMessage, ws)
+		const managerWs = Array()
+		check_service(requestMessage, ws, managerWs)
 	})
 }

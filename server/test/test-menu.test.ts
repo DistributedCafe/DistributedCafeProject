@@ -151,7 +151,8 @@ function test_check_service(requestMessage: RequestMessage, code: number, messag
 	server.listen(8081, () => console.log('listening on port :8081'));
 
 	ws_check_service = new WebSocket('ws://localhost:8081');
-	ws_check_service.on('open', () => check_service(requestMessage, ws_check_service))
+	const managerWs = Array()
+	ws_check_service.on('open', () => check_service(requestMessage, ws_check_service, managerWs))
 }
 
 function check(res: ResponseMessage, code: number, message: string, output: any) {

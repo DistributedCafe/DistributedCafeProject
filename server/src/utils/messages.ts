@@ -52,3 +52,15 @@ export const MenuServiceMessages = {
 	GET_AVAILABLE_ITEMS: 'GET_AVAILABLE_ITEMS'
 }
 Object.freeze(MenuServiceMessages)
+
+export const Frontend = {
+	MANAGER: 'MANAGER',
+	EMPLOYEE: 'EMPLOYEE',
+	CUSTOMER: 'CUSTOMER',
+}
+Object.freeze(Frontend)
+
+export interface MissingIngredientNotification {
+	message: string,
+	data: string
+}

@@ -1,4 +1,4 @@
-import { MenuServiceMessages, OrdersServiceMessages, RequestMessage, ResponseMessage, WarehouseServiceMessages } from './utils/messages'
+import { MenuServiceMessages, MissingIngredientNotification, OrdersServiceMessages, RequestMessage, ResponseMessage, WarehouseServiceMessages } from './utils/messages'
 import { Service } from './utils/service';
 import axios from 'axios';
 
@@ -15,19 +15,19 @@ const httpMenu = axios.create({
  * This function is used to call the correct microservice and API based on the received RequestMessage. 
  * It also sends the answer back through the websocket
 	  @param message sent by the client through the websocket
-	@param ws the websocket communication used
+	@param currentWs the websocket communication used
 **/
-export function check_service(message: RequestMessage, ws: any) {
+export function check_service(message: RequestMessage, currentWs: any, managerWs: WebSocket[]) {
 	console.log('received: %s', message);
 	switch (message.client_name) {
 		case Service.WAREHOUSE:
-			warehouse_api(message.client_request, message.input, ws)
+			warehouse_api(message.client_request, message.input, currentWs)
 			break;
 		case Service.MENU:
-			menu_api(message.client_request, message.input, ws)
+			menu_api(message.client_request, message.input, currentWs)
 			break;
 		default:
-			orders_api(message.client_request, message.input, ws)
+			orders_api(message.client_request, message.input, currentWs, managerWs)
 			break;
 	}
 }
@@ -63,10 +63,10 @@ async function menu_api(message: string, input: string, ws: WebSocket) {
 	}
 }
 
-function orders_api(message: string, input: string, ws: WebSocket) {
+function orders_api(message: string, input: string, ws: WebSocket, managerWs: WebSocket[]) {
 	switch (message) {
 		case OrdersServiceMessages.CREATE_ORDER:
-			handleNewOrder(httpOrders.post('/orders/', input), input, ws)
+			handleNewOrder(httpOrders.post('/orders/', input), input, ws, managerWs)
 			break;
 		case OrdersServiceMessages.GET_ORDER_BY_ID:
 			handleResponse(httpOrders.get('/orders/' + input), ws)
@@ -126,7 +126,7 @@ async function calcUsedIngredient(item: string, ingredients: IArray, items: IArr
 	return ingredients
 }
 
-function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket) {
+function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket, managerWs: WebSocket[]) {
 	promise.then(async (res) => {
 		if (res.status == 200) {
 			const orederItems = input.items
@@ -147,13 +147,32 @@ function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket) {
 					"quantity": ingredients[i]
 				})
 			}
-			http.put('/warehouse/', decrease).then((e) => {
+			http.put('/warehouse/', decrease).then(() => {
 				const msg: ResponseMessage = {
 					message: res.statusText,
 					code: res.status,
 					data: JSON.stringify(res.data)
 				}
 				ws.send(JSON.stringify(msg))
+				http.get('/warehouse/').then((resWarehouse) => {
+					http.get('/warehouse/available/').then((resAvailable) => {
+						const ingredients = resWarehouse.data
+						let availableIngredientsnames = Array()
+						resAvailable.data.forEach((i: any) => {
+							availableIngredientsnames.push(i.name)
+						})
+						let missingIngredients = ingredients.filter((i: any) => !availableIngredientsnames.includes(i.name))
+						if (missingIngredients.length > 0) {
+							const notification: MissingIngredientNotification = {
+								message: "NEW_MISSING_INGREDIENTS",
+								data: JSON.stringify(missingIngredients)
+							}
+							managerWs.forEach(ws => {
+								ws.send(JSON.stringify(notification))
+							})
+						}
+					})
+				})
 			})
 		}
 	}).catch((error) => {
