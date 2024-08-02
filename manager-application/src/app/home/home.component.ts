@@ -5,9 +5,8 @@ import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { MenuComponent } from "../menu/menu.component";
 import { WarehouseComponent } from "../warehouse/warehouse.component";
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Service } from '../../utils/service';
 import { Frontend, Log, MissingIngredientNotification } from '../../utils/messages';
-import { equals, is } from 'typia';
+import { equals } from 'typia';
 
 interface ILink {
 	path: string;
