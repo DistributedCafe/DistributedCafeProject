@@ -75,7 +75,7 @@ export const newWrongOrder = {
 
 export const egg = {
 	"name": "egg",
-	"quantity": 20
+	"quantity": 4
 }
 
 export const orderItemQuantity = 2
@@ -89,7 +89,7 @@ export const orderItemQuantity = 2
  * @param request request of the client
  */
 export async function check_order_message(msg: ResponseMessage, code: number, message: string, data: any, request: string) {
-	console.log(msg.message)
+	console.log("--> " + msg.message)
 	expect(msg.code).toBe(code);
 	expect(msg.message).toBe(message);
 	if (msg.code == 200) {

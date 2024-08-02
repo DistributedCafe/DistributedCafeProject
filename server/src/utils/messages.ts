@@ -52,3 +52,29 @@ export const MenuServiceMessages = {
 	GET_AVAILABLE_ITEMS: 'GET_AVAILABLE_ITEMS'
 }
 Object.freeze(MenuServiceMessages)
+
+
+/**
+ * Different messages sent to log a frontend connection
+ */
+export const Frontend = {
+	MANAGER: 'MANAGER',
+	EMPLOYEE: 'EMPLOYEE',
+	CUSTOMER: 'CUSTOMER',
+}
+Object.freeze(Frontend)
+
+/**
+ * This interface represents the notification sent when an element is missing in the warehouse
+ */
+export interface MissingIngredientNotification {
+	message: string,
+	data: string
+}
+
+/**
+ * This interface represents the first message sent by a frontend
+ */
+export interface Log {
+	message: string
+}
