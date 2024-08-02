@@ -41,3 +41,28 @@ export const WarehouseServiceMessages = {
 	RESTOCK_INGREDIENT: 'RESTOCK_INGREDIENT'
 }
 Object.freeze(WarehouseServiceMessages)
+
+/**
+ * This interface represents the first message sent by a frontend
+ */
+export interface Log {
+	message: string
+}
+
+/**
+ * This interface represents the notification sent when an element is missing in the warehouse
+ */
+export interface MissingIngredientNotification {
+	message: string,
+	data: string
+}
+
+/**
+ * Different messages sent to log a frontend connection
+ */
+export const Frontend = {
+	MANAGER: 'MANAGER',
+	EMPLOYEE: 'EMPLOYEE',
+	CUSTOMER: 'CUSTOMER',
+}
+Object.freeze(Frontend)

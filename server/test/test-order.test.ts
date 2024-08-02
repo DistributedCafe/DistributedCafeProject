@@ -273,7 +273,6 @@ function createConnectionAndCallNewOrder(requestMessage: RequestMessage, code: n
 					expect(JSON.parse(orederRes.data)).toStrictEqual(JSON.parse(await addIdandState(data)))
 					expect(managerRes.message).toBe("NEW_MISSING_INGREDIENTS")
 					expect(JSON.parse(managerRes.data)).toStrictEqual([milk])
-					console.log("ciao")
 					wsManager.close()
 					callback()
 				}

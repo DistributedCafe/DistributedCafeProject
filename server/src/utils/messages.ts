@@ -53,6 +53,10 @@ export const MenuServiceMessages = {
 }
 Object.freeze(MenuServiceMessages)
 
+
+/**
+ * Different messages sent to log a frontend connection
+ */
 export const Frontend = {
 	MANAGER: 'MANAGER',
 	EMPLOYEE: 'EMPLOYEE',
@@ -60,7 +64,17 @@ export const Frontend = {
 }
 Object.freeze(Frontend)
 
+/**
+ * This interface represents the notification sent when an element is missing in the warehouse
+ */
 export interface MissingIngredientNotification {
 	message: string,
 	data: string
+}
+
+/**
+ * This interface represents the first message sent by a frontend
+ */
+export interface Log {
+	message: string
 }
