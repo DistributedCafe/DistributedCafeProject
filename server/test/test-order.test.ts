@@ -16,10 +16,6 @@ let insertedId: string
 const app = express()
 const managerWsMsg = "Manager frontend web socket"
 const orderWsMsg = "New order web socket"
-const milk = {
-	name: "milk",
-	quantity: 0
-}
 
 beforeAll(async () => {
 	await cleanCollection("Menu", "Items")
@@ -99,33 +95,31 @@ test('Create Order Test - 200', done => {
 	}
 	startWebsocket(
 		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrder), 200, "OK", newOrder, done)
-});
+})
 
 test('Create Order Test (check-service) - 200', done => {
-	add("Warehouse", "Ingredient", JSON.stringify(milk)).then(() => {
-		const newOrder = {
-			"customerEmail": "c2@example.com",
-			"price": 1,
-			"type": "TAKE_AWAY",
-			"items": [
-				{
-					"item": {
-						"name": "omelette"
-					},
-					"quantity": orderItemQuantity
+	const newOrder = {
+		"customerEmail": "c2@example.com",
+		"price": 1,
+		"type": "TAKE_AWAY",
+		"items": [
+			{
+				"item": {
+					"name": "omelette"
 				},
-			]
-		}
-		createConnectionAndCallNewOrder(
-			createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrder), 200, "OK", newOrder, done)
-	})
-});
+				"quantity": orderItemQuantity
+			},
+		]
+	}
+	createConnectionAndCallNewOrder(
+		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrder), 200, "OK", newOrder, done)
+})
 
 test('Create Order Test - 400', done => {
 	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newWrongOrder)
 	startWebsocket(requestMessage, 400, "ERROR_WRONG_PARAMETERS", "", done)
 
-});
+})
 
 test('Create Order Test - 400 (check-service)', done => {
 	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newWrongOrder)
@@ -272,7 +266,7 @@ function createConnectionAndCallNewOrder(requestMessage: RequestMessage, code: n
 					expect(orederRes.message).toBe(message)
 					expect(JSON.parse(orederRes.data)).toStrictEqual(JSON.parse(await addIdandState(data)))
 					expect(managerRes.message).toBe("NEW_MISSING_INGREDIENTS")
-					expect(JSON.parse(managerRes.data)).toStrictEqual([milk])
+					expect(JSON.parse(managerRes.data)).toStrictEqual([egg])
 					wsManager.close()
 					callback()
 				}

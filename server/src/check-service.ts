@@ -147,21 +147,27 @@ function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket, manage
 					"quantity": ingredients[i]
 				})
 			}
-			http.put('/warehouse/', decrease).then(() => {
-				const msg: ResponseMessage = {
-					message: res.statusText,
-					code: res.status,
-					data: JSON.stringify(res.data)
-				}
-				ws.send(JSON.stringify(msg))
-				http.get('/warehouse/').then((resWarehouse) => {
-					http.get('/warehouse/available/').then((resAvailable) => {
-						const ingredients = resWarehouse.data
+			http.get('/warehouse/available').then((checkMissingIngredient) => {
+				const oldAvailable = checkMissingIngredient.data
+
+				http.put('/warehouse/', decrease).then(() => {
+					const msg: ResponseMessage = {
+						message: res.statusText,
+						code: res.status,
+						data: JSON.stringify(res.data)
+					}
+					ws.send(JSON.stringify(msg))
+
+					http.get('/warehouse/').then((resAvailable) => {
 						let availableIngredientsnames = Array()
 						resAvailable.data.forEach((i: any) => {
-							availableIngredientsnames.push(i.name)
+							if (i.quantity > 0) {
+								availableIngredientsnames.push(i.name)
+							}
 						})
-						let missingIngredients = ingredients.filter((i: any) => !availableIngredientsnames.includes(i.name))
+
+						let missingIngredients = oldAvailable.filter((i: any) => !availableIngredientsnames.includes(i.name))
+
 						if (missingIngredients.length > 0) {
 							const notification: MissingIngredientNotification = {
 								message: "NEW_MISSING_INGREDIENTS",
