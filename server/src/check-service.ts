@@ -33,6 +33,7 @@ export function check_service(message: RequestMessage, currentWs: any, managerWs
 }
 
 async function menu_api(message: string, input: string, ws: WebSocket) {
+	let names: string[] = []
 	switch (message) {
 		case MenuServiceMessages.CREATE_ITEM:
 			handleResponse(httpMenu.post('/menu/', input), ws)
@@ -44,7 +45,6 @@ async function menu_api(message: string, input: string, ws: WebSocket) {
 			handleResponse(httpMenu.put('/menu/', input), ws)
 			break;
 		case MenuServiceMessages.GET_AVAILABLE_ITEMS:
-			let names: string[] = []
 			await http.get('/warehouse/available/').then((res) => {
 				const availableIng: any[] = res.data
 
@@ -72,9 +72,8 @@ function orders_api(message: string, input: string, ws: WebSocket, managerWs: We
 			handleResponse(httpOrders.get('/orders/' + input), ws)
 			break;
 		case OrdersServiceMessages.PUT_ORDER:
-			let json = JSON.parse(input)
-			httpOrders.get('/orders/' + json._id).then((res) => {
-				res.data["state"] = json.state
+			httpOrders.get('/orders/' + JSON.parse(input)._id).then((res) => {
+				res.data["state"] = JSON.parse(input).state
 				httpOrders.put('/orders/', res.data).then(() => {
 					handleResponse(httpOrders.get('/orders/'), ws)
 				}).catch((e) => ws.send(JSON.stringify(createErrorMessage(e))))
@@ -157,27 +156,7 @@ function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket, manage
 						data: JSON.stringify(res.data)
 					}
 					ws.send(JSON.stringify(msg))
-
-					http.get('/warehouse/').then((resAvailable) => {
-						let availableIngredientsnames = Array()
-						resAvailable.data.forEach((i: any) => {
-							if (i.quantity > 0) {
-								availableIngredientsnames.push(i.name)
-							}
-						})
-
-						let missingIngredients = oldAvailable.filter((i: any) => !availableIngredientsnames.includes(i.name))
-
-						if (missingIngredients.length > 0) {
-							const notification: MissingIngredientNotification = {
-								message: "NEW_MISSING_INGREDIENTS",
-								data: JSON.stringify(missingIngredients)
-							}
-							managerWs.forEach(ws => {
-								ws.send(JSON.stringify(notification))
-							})
-						}
-					})
+					checkAndNotify(oldAvailable, managerWs)
 				})
 			})
 		}
@@ -217,4 +196,27 @@ function createErrorMessage(error: any) {
 		}
 	}
 	return msg
+}
+
+function checkAndNotify(oldAvailableIngredients: any, managerWs: WebSocket[]) {
+	http.get('/warehouse/').then((resAvailable) => {
+		let availableIngredientsnames = Array()
+		resAvailable.data.forEach((i: any) => {
+			if (i.quantity > 0) {
+				availableIngredientsnames.push(i.name)
+			}
+		})
+
+		let missingIngredients = oldAvailableIngredients.filter((i: any) => !availableIngredientsnames.includes(i.name))
+
+		if (missingIngredients.length > 0) {
+			const notification: MissingIngredientNotification = {
+				message: "NEW_MISSING_INGREDIENTS",
+				data: JSON.stringify(missingIngredients)
+			}
+			managerWs.forEach(ws => {
+				ws.send(JSON.stringify(notification))
+			})
+		}
+	})
 }
