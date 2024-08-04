@@ -10,6 +10,7 @@ import { check_service } from '../src/check-service'
 
 let ws_route: WebSocket
 let ws_check_service: WebSocket
+let wsManager: WebSocket
 let wss: WebSocketServer
 let server: Server<typeof IncomingMessage, typeof ServerResponse>
 let insertedId: string
@@ -44,6 +45,9 @@ afterEach(() => {
 	}
 	if (ws_route?.OPEN) {
 		ws_route.close()
+	}
+	if (wsManager?.OPEN) {
+		wsManager.close()
 	}
 	server.close()
 })
@@ -267,7 +271,6 @@ function createConnectionAndCallNewOrder(requestMessage: RequestMessage, code: n
 					expect(JSON.parse(orederRes.data)).toStrictEqual(JSON.parse(await addIdandState(data)))
 					expect(managerRes.message).toBe("NEW_MISSING_INGREDIENTS")
 					expect(JSON.parse(managerRes.data)).toStrictEqual([egg])
-					wsManager.close()
 					callback()
 				}
 			}
@@ -283,7 +286,7 @@ function createConnectionAndCallNewOrder(requestMessage: RequestMessage, code: n
 		ws_check_service.send(orderWsMsg)
 	})
 
-	const wsManager = new WebSocket('ws://localhost:8081')
+	wsManager = new WebSocket('ws://localhost:8081')
 	wsManager.on('open', () => {
 		wsManager.send(managerWsMsg)
 	})
