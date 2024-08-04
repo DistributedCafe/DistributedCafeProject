@@ -46,7 +46,7 @@ afterEach(() => {
 	if (ws_route?.OPEN) {
 		ws_route.close()
 	}
-	if(wsManager?.OPEN){
+	if (wsManager?.OPEN) {
 		wsManager.close()
 	}
 	server.close()
