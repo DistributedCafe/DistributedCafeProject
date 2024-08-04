@@ -9,7 +9,7 @@ import { getLastInsertedOrder } from "./db-connection"
  */
 export async function addIdandState(order: any) {
 	let last = await getLastInsertedOrder()
-	let output = order
+	let output = { ...order }
 	output["_id"] = last?._id
 	output["state"] = "PENDING"
 	return JSON.stringify(output)
