@@ -11,3 +11,18 @@
     margin-left: 5%;
     margin-top: 2%;
 }
+
+.spinner{
+    text-align: center;
+    margin: auto;
+    margin-top: 10%;
+    width: 5%;
+}
+
+.empty{
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10%;
+    font-size: 300%;
+    line-height: 150%;
+}

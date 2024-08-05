@@ -7,3 +7,9 @@
 .page{
     padding-bottom: 2%;
 }
+
+.cart{
+    margin-left: 80%;
+    background-color: white !important;
+    color: #ff4081 !important;
+}
