@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Item } from '../../utils/Item';
+import { beautifyDbName } from '../../utils/utils';
 
 @Component({
   selector: 'item-card',
@@ -21,15 +22,16 @@ import { Item } from '../../utils/Item';
   styleUrl: './item-card.component.css'
 })
 export class ItemCardComponent {
+  beautifyDbName(name: string) {
+    return beautifyDbName(name)
+  }
 
   @Input()
   item!: Item
 
   quantity = 1
 
-  beautifyDbName(name: string) {
-    return name.replaceAll("_", " ")
-  }
+
 
   idItemAdded(cart: any[]) {
     let isPresent = false
@@ -44,7 +46,8 @@ export class ItemCardComponent {
   onClick() {
     let newOrderItem = {
       "name": this.item.name,
-      "quantity": this.quantity
+      "quantity": this.quantity,
+      "price": this.item.price
     }
 
     let cart: any[] = Array()

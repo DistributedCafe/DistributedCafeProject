@@ -1,0 +1,9 @@
+.title, .recap{
+    margin-left: 2%;
+    width: 50%;
+}
+
+.title{
+    margin-top: 2%;
+    margin-bottom: 2%;
+}

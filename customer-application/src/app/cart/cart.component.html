@@ -1,1 +1,9 @@
-<p>cart works!</p>
+<h4 class="title">Order recap</h4>
+<h5>Total: {{totalAmount(order)}}</h5>
+<div class="recap">
+    @for (item of order; track $index) {
+        <p>
+            <cart-card [orderItem]="item"></cart-card>
+        </p>
+    }
+</div>
