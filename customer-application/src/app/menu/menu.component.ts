@@ -26,8 +26,6 @@ export class MenuComponent {
   constructor() {
     this.ws = new WebSocket('ws://localhost:3000')
 
-    // TODO CONTROLLI
-
     const request: RequestMessage = {
       client_name: Service.MENU,
       client_request: MenuServiceMessages.GET_AVAILABLE_ITEMS,

@@ -30,4 +30,39 @@ export class ItemCardComponent {
   beautifyDbName(name: string) {
     return name.replaceAll("_", " ")
   }
+
+  idItemAdded(cart: any[]) {
+    let isPresent = false
+    cart.forEach((i: any) => {
+      if (i.name == this.item.name) {
+        isPresent = true
+      }
+    })
+    return isPresent
+  }
+
+  onClick() {
+    let newOrderItem = {
+      "name": this.item.name,
+      "quantity": this.quantity
+    }
+
+    let cart: any[] = Array()
+    if (localStorage.getItem("cart") != null) {
+      cart = JSON.parse(localStorage.getItem("cart")!)
+    }
+
+    if (!this.idItemAdded(cart)) {
+      cart.push(newOrderItem)
+    } else {
+      cart.forEach((item: any) => {
+        if (item.name == this.item.name) {
+          item.quantity = item.quantity + this.quantity
+        }
+      })
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart))
+    //console.log("--> " + localStorage.getItem("cart")!)    
+  }
 }

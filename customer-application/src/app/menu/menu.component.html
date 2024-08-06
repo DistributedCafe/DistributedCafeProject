@@ -4,6 +4,9 @@
   </div>
 <div *ngIf="display && error" class="empty">
     {{errorMsg}}
+    <p>
+        <img src="assets/cooking_mama.gif">
+    </p>
 </div>
 <div class="cards">
     @for (item of items; track $index) {
