@@ -13,3 +13,8 @@ button{
 .content{
     margin-top: 2%;
 }
+
+.error{
+    color: red;
+    font-weight: bold;
+}

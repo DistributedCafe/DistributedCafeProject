@@ -28,10 +28,8 @@ export class ItemCardComponent {
 
   @Input()
   item!: Item
-
+  error = false
   quantity = 1
-
-
 
   idItemAdded(cart: any[]) {
     let isPresent = false
@@ -44,28 +42,32 @@ export class ItemCardComponent {
   }
 
   onClick() {
-    let newOrderItem = {
-      "name": this.item.name,
-      "quantity": this.quantity,
-      "price": this.item.price
-    }
+    if (this.quantity > 0) {
+      this.error = false
+      let newOrderItem = {
+        "name": this.item.name,
+        "quantity": this.quantity,
+        "price": this.item.price
+      }
 
-    let cart: any[] = Array()
-    if (localStorage.getItem("cart") != null) {
-      cart = JSON.parse(localStorage.getItem("cart")!)
-    }
+      let cart: any[] = Array()
+      if (localStorage.getItem("cart") != null) {
+        cart = JSON.parse(localStorage.getItem("cart")!)
+      }
 
-    if (!this.idItemAdded(cart)) {
-      cart.push(newOrderItem)
+      if (!this.idItemAdded(cart)) {
+        cart.push(newOrderItem)
+      } else {
+        cart.forEach((item: any) => {
+          if (item.name == this.item.name) {
+            item.quantity = item.quantity + this.quantity
+          }
+        })
+      }
+
+      localStorage.setItem("cart", JSON.stringify(cart))
     } else {
-      cart.forEach((item: any) => {
-        if (item.name == this.item.name) {
-          item.quantity = item.quantity + this.quantity
-        }
-      })
+      this.error = true
     }
-
-    localStorage.setItem("cart", JSON.stringify(cart))
-    //console.log("--> " + localStorage.getItem("cart")!)    
   }
 }
