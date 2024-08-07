@@ -29,3 +29,15 @@ export const MenuServiceMessages = {
   GET_AVAILABLE_ITEMS: 'GET_AVAILABLE_ITEMS'
 }
 Object.freeze(MenuServiceMessages)
+
+/**
+ * Different messages handled by the orders microservice
+ */
+export const OrdersServiceMessages = {
+  CREATE_ORDER: 'CREATE_ORDER',
+  GET_ALL_ORDERS: 'GET_ALL_ORDERS',
+  PUT_ORDER: 'PUT_ORDER',
+  GET_ORDER_BY_ID: 'GET_ORDER_BY_ID'
+}
+Object.freeze(OrdersServiceMessages)
+

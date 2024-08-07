@@ -10,6 +10,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { CommonModule } from '@angular/common';
 import validator from 'email-validator'
 import { NewOrder, OrderType } from '../../utils/order';
+import { OrdersServiceMessages, RequestMessage } from '../../utils/message';
+import { Service } from '../../utils/service';
 
 @Component({
   selector: 'cart',
@@ -34,6 +36,7 @@ export class CartComponent {
   errorEmail = false
   errorType = false
   errorEmptyCart = false
+  ws!: WebSocket
 
   totalAmount(cart: any[]) {
     let total = 0
@@ -54,11 +57,30 @@ export class CartComponent {
   orderTypes = [OrderType.AT_THE_TABLE, OrderType.HOME_DELIVERY, OrderType.TAKE_AWAY]
 
   constructor(private router: Router) {
+    this.ws = new WebSocket('ws://localhost:3000')
+
+    this.ws.onmessage = (e) => {
+      console.log(e.data)
+    }
+
     let cart = localStorage.getItem("cart")
     console.log(cart)
     if (cart != null) {
       this.order = JSON.parse(cart)
     }
+  }
+
+  formatOrder() {
+    let newOrder = Array()
+    this.order.forEach((item: any) => {
+      newOrder.push({
+        item: {
+          name: item.name
+        },
+        quantity: item.quantity
+      })
+    })
+    return newOrder
   }
 
   sendOrder() {
@@ -72,9 +94,14 @@ export class CartComponent {
             customerEmail: this.email,
             price: this.totalAmount(this.order),
             type: this.type,
-            items: this.order
+            items: this.formatOrder()
           }
-          console.log(JSON.stringify(order))
+          const req: RequestMessage = {
+            client_name: Service.ORDERS,
+            client_request: OrdersServiceMessages.CREATE_ORDER,
+            input: order
+          }
+          this.ws.send(JSON.stringify(req))
         } else {
           this.errorEmptyCart = true
         }

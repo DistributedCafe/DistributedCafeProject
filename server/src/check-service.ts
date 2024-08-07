@@ -66,7 +66,11 @@ async function menu_api(message: string, input: string, ws: WebSocket) {
 function orders_api(message: string, input: string, ws: WebSocket, managerWs: WebSocket[]) {
 	switch (message) {
 		case OrdersServiceMessages.CREATE_ORDER:
-			handleNewOrder(httpOrders.post('/orders/', input), input, ws, managerWs)
+			check_order(input).then((res) => {
+				if (res) {
+					handleNewOrder(httpOrders.post('/orders/', input), input, ws, managerWs)
+				}
+			})
 			break;
 		case OrdersServiceMessages.GET_ORDER_BY_ID:
 			handleResponse(httpOrders.get('/orders/' + input), ws)
@@ -125,17 +129,52 @@ async function calcUsedIngredient(item: string, ingredients: IArray, items: IArr
 	return ingredients
 }
 
+function calcItemNumber(orderItem: any[]) {
+	let items = {} as IArray
+	orderItem.forEach((i: any) => {
+		let item: string = i.item.name.toString()
+		let qty: number = i.quantity
+		items[item] = Object.keys(items).includes(item) ? items[item] + qty : qty
+	})
+	return items
+}
+
+function getNames(array: any[]) {
+	let names = Array()
+	array.forEach((i: any) => {
+		names.push(i.name)
+	})
+	return names
+}
+
+function getQuantity(array: any[], name: string) {
+	return array.filter((i: any) => { return i.name == name })[0].quantity
+}
+
+async function check_order(input: any): Promise<boolean> {
+	let isAvailable = false
+	await http.get('/warehouse/available/').then(async (res) => {
+		const availableIngredients = res.data
+		let ingredients = {} as IArray
+		const itemNumbers = calcItemNumber(input.items)
+		for (let item of Object.keys(itemNumbers)) {
+			ingredients = await calcUsedIngredient(item, ingredients, itemNumbers)
+		}
+		isAvailable = Object.keys(ingredients).filter((name) => {
+			return getNames(availableIngredients).includes(name) && (ingredients[name] <= getQuantity(availableIngredients, name))
+		}).length == input.items.length
+	}).catch((e) => {
+		isAvailable = false
+	})
+	return isAvailable
+}
+
 function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket, managerWs: WebSocket[]) {
 	promise.then(async (res) => {
 		if (res.status == 200) {
-			const orederItems = input.items
-			let items = {} as IArray
+			const orderItems = input.items
 			let ingredients = {} as IArray
-			for (let i of orederItems) {
-				let ingredient: string = i.item.name.toString()
-				let qty: number = i.quantity
-				items[ingredient] = Object.keys(items).includes(ingredient) ? items[ingredient] + qty : qty
-			}
+			const items = calcItemNumber(orderItems)
 			for (let i of Object.keys(items)) {
 				ingredients = await calcUsedIngredient(i, ingredients, items)
 			}
