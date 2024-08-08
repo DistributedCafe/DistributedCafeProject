@@ -44,3 +44,17 @@ button{
     color: red;
     font-weight: bold;
 }
+
+.bigger-error{
+    color: red;
+    font-weight: bold;
+    font-size: larger;
+}
+
+.empty{
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10%;
+    font-size: 300%;
+    line-height: 150%;
+}

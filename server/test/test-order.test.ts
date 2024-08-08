@@ -1,8 +1,8 @@
 import { WebSocket, WebSocketServer } from 'ws';
 import { Service } from '../src/utils/service'
 import { OrdersServiceMessages, RequestMessage } from '../src/utils/messages';
-import { add, cleanCollection, closeMongoClient, getCollection } from './utils/db-connection';
-import { check_order_message, createRequestMessage, egg, newWrongOrder, omelette, order, orderItemQuantity } from './utils/test-utils';
+import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection';
+import { blackCoffee, check_order_message, coffee, createRequestMessage, egg, newOrderCoffee, newOrderOmelette, newWrongOrder, omelette, order } from './utils/test-utils';
 import { addId, addIdandState } from './utils/order-json-utils';
 import express from "express"
 import { IncomingMessage, Server, ServerResponse, createServer } from 'http';
@@ -19,21 +19,21 @@ const managerWsMsg = "Manager frontend web socket"
 const orderWsMsg = "New order web socket"
 
 beforeAll(async () => {
-	await cleanCollection("Menu", "Items")
-	let warehouse = await getCollection("Warehouse", "Ingredient")
+	await cleanCollection(DbNames.MENU, DbCollections.MENU)
+	let warehouse = await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
 	await warehouse.createIndex({ name: 1 }, { unique: true })
-	let menu = await getCollection("Menu", "Items")
+	let menu = await getCollection(DbNames.MENU, DbCollections.MENU)
 	await menu.createIndex({ name: 1 }, { unique: true })
-	await add("Menu", "Items", JSON.stringify(omelette))
+	await add(DbNames.MENU, DbCollections.MENU, JSON.stringify(omelette))
 })
 
 
 beforeEach(async () => {
-	await cleanCollection("Orders", "Orders")
-	await cleanCollection("Warehouse", "Ingredient")
-	await getCollection("Warehouse", "Ingredient")
-	await add("Warehouse", "Ingredient", JSON.stringify(egg))
-	let res = await add("Orders", "Orders", JSON.stringify(order))
+	await cleanCollection(DbNames.ORDERS, DbCollections.ORDERS)
+	await cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
+	await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
+	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(egg))
+	let res = await add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(order))
 	insertedId = res.insertedId.toString()
 	server = createServer(app)
 	wss = new WebSocketServer({ server })
@@ -84,56 +84,47 @@ test('Get order by id - 404 (check-service)', done => {
 
 //write
 test('Create Order Test - 200', done => {
-	const newOrder = {
-		"customerEmail": "c1@example.com",
-		"price": 1,
-		"type": "HOME_DELIVERY",
-		"items": [
-			{
-				"item": {
-					"name": "omelette"
-				},
-				"quantity": orderItemQuantity
-			},
-		]
-	}
 	startWebsocket(
-		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrder), 200, "OK", newOrder, done)
+		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrderOmelette), 200, "OK", newOrderOmelette, done)
+})
+
+test('Create Order Test (check-service) - 200 and missing ingredient notification', done => {
+
+	createConnectionAndCallNewOrder(
+		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrderOmelette), 200, "OK", newOrderOmelette, done)
 })
 
 test('Create Order Test (check-service) - 200', done => {
-	const newOrder = {
-		"customerEmail": "c2@example.com",
-		"price": 1,
-		"type": "TAKE_AWAY",
-		"items": [
-			{
-				"item": {
-					"name": "omelette"
-				},
-				"quantity": orderItemQuantity
-			},
-		]
-	}
-	createConnectionAndCallNewOrder(
-		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrder), 200, "OK", newOrder, done)
+	add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(coffee)).then(() => {
+		add(DbNames.MENU, DbCollections.MENU, JSON.stringify(blackCoffee)).then(() => {
+			createConnectionAndCall(
+				createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrderOmelette), 200, "OK", newOrderOmelette, done)
+		})
+	})
 })
 
-test('Create Order Test - 400', done => {
+test('Create Order Test - 400 - Missing Ingredients', done => {
+	cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE).then(() => {
+		createConnectionAndCall(
+			createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrderOmelette), 400, "ERROR_MISSING_INGREDIENTS", newOrderOmelette, done)
+	})
+})
+
+test('Create Order Test - 400 - Wrong parameters', done => {
 	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newWrongOrder)
 	startWebsocket(requestMessage, 400, "ERROR_WRONG_PARAMETERS", "", done)
 
 })
 
-test('Create Order Test - 400 (check-service)', done => {
+test('Create Order Test - 400 - Wrong parameters (check-service)', done => {
 	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newWrongOrder)
 	createConnectionAndCall(requestMessage, 400, "ERROR_WRONG_PARAMETERS", "", done)
 })
 
 test('Put Order Test - 200', done => {
-	cleanCollection("Orders", "Orders").then(() => {
+	cleanCollection(DbNames.ORDERS, DbCollections.ORDERS).then(() => {
 
-		add("Orders", "Orders", JSON.stringify(order)).then((res) => {
+		add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(order)).then((res) => {
 
 			let id = res.insertedId.toString()
 			let mod = {
@@ -154,12 +145,12 @@ test('Put Order Test - 200', done => {
 })
 
 test('Put Order Test - 200 (check-service)', done => {
-	cleanCollection("Orders", "Orders").then(() => {
+	cleanCollection(DbNames.ORDERS, DbCollections.ORDERS).then(() => {
 
 		let expected = { ...order }
 		expected["state"] = "READY"
 
-		add("Orders", "Orders", JSON.stringify(expected)).then((res) => {
+		add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(expected)).then((res) => {
 			let id = res.insertedId.toString()
 
 			let mod = {
@@ -178,11 +169,11 @@ test('Put Order Test - 200 (check-service)', done => {
 })
 
 test('Put Order Test - 400 (check-service)', done => {
-	cleanCollection("Orders", "Orders").then(() => {
+	cleanCollection(DbNames.ORDERS, DbCollections.ORDERS).then(() => {
 
 		let modOrder = { ...order }
 		modOrder["state"] = "COMPLETED"
-		add("Orders", "Orders", JSON.stringify(modOrder)).then((res) => {
+		add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(modOrder)).then((res) => {
 			let id = res.insertedId.toString()
 
 			let mod = {
@@ -201,7 +192,7 @@ test('Put Order Test - 400 (check-service)', done => {
 })
 
 test('Put Order Test - 400 (check-service) - id not found', done => {
-	cleanCollection("Orders", "Orders").then(() => {
+	cleanCollection(DbNames.ORDERS, DbCollections.ORDERS).then(() => {
 		let mod = {
 			"_id": insertedId,
 			"state": "PENDING"

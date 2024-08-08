@@ -12,6 +12,7 @@ import validator from 'email-validator'
 import { NewOrder, OrderType } from '../../utils/order';
 import { OrdersServiceMessages, RequestMessage } from '../../utils/message';
 import { Service } from '../../utils/service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'cart',
@@ -36,6 +37,10 @@ export class CartComponent {
   errorEmail = false
   errorType = false
   errorEmptyCart = false
+  errorNewOrder = false
+  error = false
+  errorMsg = ""
+  apiError = ""
   ws!: WebSocket
 
   totalAmount(cart: any[]) {
@@ -56,15 +61,38 @@ export class CartComponent {
 
   orderTypes = [OrderType.AT_THE_TABLE, OrderType.HOME_DELIVERY, OrderType.TAKE_AWAY]
 
-  constructor(private router: Router) {
+  cleanCart() {
+    localStorage.clear()
+    window.location.reload()
+  }
+
+  constructor(private router: Router, notification: MatSnackBar) {
     this.ws = new WebSocket('ws://localhost:3000')
 
+    this.ws.onerror = () => {
+      this.error = true
+      this.errorMsg = "Server not available!"
+      this.ws.close()
+    }
+
     this.ws.onmessage = (e) => {
-      console.log(e.data)
+      const data = JSON.parse(e.data)
+      if (data.code == 200) {
+        this.errorNewOrder = false
+        notification.open("Order successfully created", "OK").afterDismissed().subscribe(() => {
+          this.cleanCart()
+        })
+      } else if (data.code == 500) {
+        this.error = true
+        this.errorMsg = "Microservice not available!"
+      }
+      else {
+        this.apiError = data.message
+        this.errorNewOrder = true
+      }
     }
 
     let cart = localStorage.getItem("cart")
-    console.log(cart)
     if (cart != null) {
       this.order = JSON.parse(cart)
     }

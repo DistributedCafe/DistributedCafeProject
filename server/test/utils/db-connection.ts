@@ -1,6 +1,26 @@
 import * as mongoDB from "mongodb"
 
 /**
+ * Names of the dbs
+ */
+export const DbNames = {
+	WAREHOUSE: "Warehouse",
+	MENU: "Menu",
+	ORDERS: "Orders"
+}
+Object.freeze(DbNames)
+
+/**
+ * Names of the collections of the dbs
+ */
+export const DbCollections = {
+	WAREHOUSE: "Ingredient",
+	MENU: "Items",
+	ORDERS: "Orders"
+}
+Object.freeze(DbCollections)
+
+/**
  * Mongo Client
  */
 const DB_CONN_STRING = "mongodb://localhost:27017"
@@ -47,7 +67,7 @@ export async function cleanCollection(db_name: string, collection_name: string) 
  * @returns the last inserted Item
  */
 export async function getLastInsertedItem() {
-	let menuItems = (await client.db("Menu").collection("Items")).find({}, { projection: { _id: 0 } })
+	let menuItems = (await client.db(DbNames.MENU).collection(DbCollections.MENU)).find({}, { projection: { _id: 0 } })
 	let last = (await menuItems.toArray()).pop()
 	return last!
 }
@@ -59,7 +79,7 @@ export async function getLastInsertedItem() {
 export async function getLastInsertedOrder() {
 	await client.connect()
 
-	let orders = (await client.db("Orders").collection("Orders")).find()
+	let orders = (await client.db(DbNames.ORDERS).collection(DbCollections.ORDERS)).find()
 	let last = (await orders.toArray()).pop()
 	return last
 }

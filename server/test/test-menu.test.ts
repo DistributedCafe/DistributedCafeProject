@@ -4,7 +4,7 @@ import { check_service } from '../src/check-service';
 import express from 'express';
 import { IncomingMessage, Server, ServerResponse, createServer } from 'http';
 import WebSocket, { Server as WebSocketServer } from 'ws';
-import { add, cleanCollection, closeMongoClient, getCollection } from './utils/db-connection';
+import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection';
 import { boiledEgg, createRequestMessage, egg, friedEgg, omelette } from './utils/test-utils';
 
 let ws_check_service: WebSocket
@@ -12,17 +12,13 @@ let ws_route: WebSocket
 let wss: WebSocketServer
 const app = express()
 let server: Server<typeof IncomingMessage, typeof ServerResponse>
-let db_name = "Menu"
-let db_collection = "Items"
-let db_warehouse_name = "Warehouse"
-let db_warehouse_collection = "Ingredient"
 
 beforeAll(async () => {
-	await (await getCollection(db_name, db_collection)).createIndex({ name: 1 }, { unique: true })
-	await cleanCollection(db_name, db_collection)
-	await cleanCollection(db_warehouse_name, db_warehouse_collection)
-	await add(db_name, db_collection, JSON.stringify(omelette))
-	await add(db_warehouse_name, db_warehouse_collection, JSON.stringify(egg))
+	await (await getCollection(DbNames.MENU, DbCollections.MENU)).createIndex({ name: 1 }, { unique: true })
+	await cleanCollection(DbNames.MENU, DbCollections.MENU)
+	await cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
+	await add(DbNames.MENU, DbCollections.MENU, JSON.stringify(omelette))
+	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(egg))
 })
 
 afterEach(() => {
@@ -124,14 +120,14 @@ test('Update item Test - 200 (check-service)', done => {
 });
 
 test('Get all available items Test - 404', done => {
-	cleanCollection(db_warehouse_name, db_warehouse_collection).then(() => {
+	cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE).then(() => {
 		const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS, "")
 		test_route(requestMessage, 404, "ERROR_EMPTY_WAREHOUSE", "", done)
 	})
 })
 
 test('Get all available items Test - 404', done => {
-	cleanCollection(db_warehouse_name, db_warehouse_collection).then(() => {
+	cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE).then(() => {
 		const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS, "")
 		test_check_service(requestMessage, 404, "ERROR_EMPTY_WAREHOUSE", "", done)
 	})

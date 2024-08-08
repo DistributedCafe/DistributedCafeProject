@@ -1,7 +1,13 @@
 <button mat-raised-button (click)="navigateMenu()">
     <mat-icon>arrow_back</mat-icon>
     Back to the menu</button>
-<div class="box">   
+<div *ngIf="error" class="empty">
+    {{errorMsg}}
+    <p>
+        <img src="assets/cooking_mama.gif">
+    </p>
+</div>
+<div class="box" *ngIf="!error">   
     <div class="recap">
         <div>
             <h4>Order recap</h4>
@@ -9,6 +15,10 @@
             <div class="send-order">
                 <h5>Total: {{totalAmount(order)}}</h5>
                 <button mat-raised-button (click)="sendOrder()" class="order-button">Send order</button>
+            </div>
+            <div *ngIf="errorNewOrder">
+                <p class="bigger-error" >It was impossible to complete the operation!</p>
+            <p class="error">(error: {{apiError}})</p>
             </div>
         </div>
         <div>
