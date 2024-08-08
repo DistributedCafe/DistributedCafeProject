@@ -7,6 +7,9 @@ export interface Item {
   price: number;
 }
 
+/**
+ * This interface represents an ingredient of the recipe
+ */
 export interface IngredientInRecipe {
   ingredient_name: string,
   quantity: number

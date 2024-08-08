@@ -6,6 +6,9 @@ import { Service } from '../../utils/service';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+/**
+ * Component that implements the menu page.
+ */
 @Component({
   selector: 'app-menu',
   standalone: true,

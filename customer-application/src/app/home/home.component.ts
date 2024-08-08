@@ -4,6 +4,9 @@ import { Router, RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
+/**
+ * Component that implements the home page.
+ */
 @Component({
   selector: 'home',
   standalone: true,

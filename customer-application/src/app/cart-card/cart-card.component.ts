@@ -8,6 +8,9 @@ import { beautifyDbName } from '../../utils/utils';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
+/**
+ * Component that implements the card of a cart item.
+ */
 @Component({
   selector: 'cart-card',
   standalone: true,

@@ -14,6 +14,9 @@ import { OrdersServiceMessages, RequestMessage } from '../../utils/message';
 import { Service } from '../../utils/service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+/**
+ * Component that implements the cart page.
+ */
 @Component({
   selector: 'cart',
   standalone: true,

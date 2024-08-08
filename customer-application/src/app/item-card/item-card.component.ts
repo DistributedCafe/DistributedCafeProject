@@ -8,6 +8,9 @@ import { CommonModule } from '@angular/common';
 import { Item } from '../../utils/Item';
 import { beautifyDbName } from '../../utils/utils';
 
+/**
+ * Component that implements the card of a menu item.
+ */
 @Component({
   selector: 'item-card',
   standalone: true,
