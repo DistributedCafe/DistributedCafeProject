@@ -54,7 +54,7 @@ async function menu_api(message: string, input: string, ws: WebSocket) {
 
 				handleResponse(httpMenu.get('/menu/available/' + JSON.stringify(names)), ws)
 			}).catch((e) => {
-				ws.send(JSON.stringify(createErrorMessage(e)))
+				ws.send(JSON.stringify(checkErrorMessage(e)))
 			})
 			break;
 		default: //get item by name
@@ -66,7 +66,18 @@ async function menu_api(message: string, input: string, ws: WebSocket) {
 function orders_api(message: string, input: string, ws: WebSocket, managerWs: WebSocket[]) {
 	switch (message) {
 		case OrdersServiceMessages.CREATE_ORDER:
-			handleNewOrder(httpOrders.post('/orders/', input), input, ws, managerWs)
+			check_order(input).then((res) => {
+				switch (res) {
+					case 200:
+						handleNewOrder(httpOrders.post('/orders/', input), input, ws, managerWs)
+						break
+					case 500:
+						ws.send(JSON.stringify(createErrorMessage(res, "ERROR_MICROSERVICE_NOT_AVAILABLE")))
+						break
+					default:
+						ws.send(JSON.stringify(createErrorMessage(400, "ERROR_MISSING_INGREDIENTS")))
+				}
+			})
 			break;
 		case OrdersServiceMessages.GET_ORDER_BY_ID:
 			handleResponse(httpOrders.get('/orders/' + input), ws)
@@ -76,8 +87,8 @@ function orders_api(message: string, input: string, ws: WebSocket, managerWs: We
 				res.data["state"] = JSON.parse(input).state
 				httpOrders.put('/orders/', res.data).then(() => {
 					handleResponse(httpOrders.get('/orders/'), ws)
-				}).catch((e) => ws.send(JSON.stringify(createErrorMessage(e))))
-			}).catch((e) => ws.send(JSON.stringify(createErrorMessage(e))))
+				}).catch((e) => ws.send(JSON.stringify(checkErrorMessage(e))))
+			}).catch((e) => ws.send(JSON.stringify(checkErrorMessage(e))))
 			break;
 		default: //get all orders
 			handleResponse(httpOrders.get('/orders/'), ws)
@@ -125,17 +136,52 @@ async function calcUsedIngredient(item: string, ingredients: IArray, items: IArr
 	return ingredients
 }
 
+function calcItemNumber(orderItem: any[]) {
+	let items = {} as IArray
+	orderItem.forEach((i: any) => {
+		let item: string = i.item.name.toString()
+		let qty: number = i.quantity
+		items[item] = Object.keys(items).includes(item) ? items[item] + qty : qty
+	})
+	return items
+}
+
+function getNames(array: any[]) {
+	let names = Array()
+	array.forEach((i: any) => {
+		names.push(i.name)
+	})
+	return names
+}
+
+function getQuantity(array: any[], name: string) {
+	return array.filter((i: any) => { return i.name == name })[0].quantity
+}
+
+async function check_order(input: any): Promise<number> {
+	let response = 500
+	await http.get('/warehouse/available/').then(async (res) => {
+		const availableIngredients = res.data
+		let ingredients = {} as IArray
+		const itemNumbers = calcItemNumber(input.items)
+		for (let item of Object.keys(itemNumbers)) {
+			ingredients = await calcUsedIngredient(item, ingredients, itemNumbers)
+		}
+		response = (Object.keys(ingredients).filter((name) => {
+			return getNames(availableIngredients).includes(name) && (ingredients[name] <= getQuantity(availableIngredients, name))
+		}).length == Object.keys(ingredients).length) ? 200 : 400
+	}).catch((e) => {
+		response = e.response == undefined ? 500 : e.response.status
+	})
+	return response
+}
+
 function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket, managerWs: WebSocket[]) {
 	promise.then(async (res) => {
 		if (res.status == 200) {
-			const orederItems = input.items
-			let items = {} as IArray
+			const orderItems = input.items
 			let ingredients = {} as IArray
-			for (let i of orederItems) {
-				let ingredient: string = i.item.name.toString()
-				let qty: number = i.quantity
-				items[ingredient] = Object.keys(items).includes(ingredient) ? items[ingredient] + qty : qty
-			}
+			const items = calcItemNumber(orderItems)
 			for (let i of Object.keys(items)) {
 				ingredients = await calcUsedIngredient(i, ingredients, items)
 			}
@@ -161,7 +207,7 @@ function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket, manage
 			})
 		}
 	}).catch((error) => {
-		const msg = createErrorMessage(error)
+		const msg = checkErrorMessage(error)
 		ws.send(JSON.stringify(msg))
 	});
 }
@@ -175,27 +221,22 @@ function handleResponse(promise: Promise<any>, ws: WebSocket) {
 		}
 		ws.send(JSON.stringify(msg))
 	}).catch((error) => {
-		const msg = createErrorMessage(error)
+		const msg = checkErrorMessage(error)
 		ws.send(JSON.stringify(msg))
 	});
 }
 
-function createErrorMessage(error: any) {
-	let msg: ResponseMessage
-	if (error.response == undefined) {
-		msg = {
-			message: "ERROR_SERVER_NOT_AVAILABLE",
-			code: 500,
-			data: ""
-		}
-	} else {
-		msg = {
-			message: error.response.statusText,
-			code: error.response.status,
-			data: ""
-		}
+function createErrorMessage(code: number, msg: string) {
+	return {
+		code: code,
+		message: msg,
+		data: ""
 	}
-	return msg
+}
+
+function checkErrorMessage(error: any) {
+	return error.response == undefined ? createErrorMessage(500, "ERROR_SERVER_NOT_AVAILABLE") :
+		createErrorMessage(error.response.status, error.response.statusText)
 }
 
 function checkAndNotify(oldAvailableIngredients: any, managerWs: WebSocket[]) {

@@ -1,7 +1,37 @@
 import { OrdersServiceMessages, ResponseMessage } from "../../src/utils/messages";
 import { Service } from "../../src/utils/service";
-import { getCollection } from "./db-connection";
+import { DbCollections, DbNames, getCollection } from "./db-connection";
 import { addIdandState } from "./order-json-utils";
+
+const orderItemQuantity = 2
+
+export const newOrderOmelette = {
+	"customerEmail": "c2@example.com",
+	"price": 1,
+	"type": "TAKE_AWAY",
+	"items": [
+		{
+			"item": {
+				"name": "omelette"
+			},
+			"quantity": orderItemQuantity
+		},
+	]
+}
+
+export const newOrderCoffee = {
+	"customerEmail": "c3@example.com",
+	"price": 1,
+	"type": "HOME_DELIVERY",
+	"items": [
+		{
+			"item": {
+				"name": "black_coffee"
+			},
+			"quantity": orderItemQuantity
+		},
+	]
+}
 
 export const milk = {
 	name: "milk",
@@ -23,6 +53,18 @@ export const omelette = {
 	],
 	price: 3
 }
+
+export const blackCoffee = {
+	name: "black_coffee",
+	recipe: [
+		{
+			ingredient_name: "coffee",
+			quantity: 1
+		}
+	],
+	price: 1
+}
+
 export const boiledEgg = {
 	name: "boiled_egg",
 	recipe: [
@@ -78,7 +120,11 @@ export const egg = {
 	"quantity": 4
 }
 
-export const orderItemQuantity = 2
+
+export const coffee = {
+	"name": "coffee",
+	"quantity": 20
+}
 
 /**
  * Check that the responce message is correct
@@ -96,7 +142,7 @@ export async function check_order_message(msg: ResponseMessage, code: number, me
 		if (request == OrdersServiceMessages.CREATE_ORDER) {
 			expect(JSON.parse(msg.data)).toStrictEqual(JSON.parse(await addIdandState(data)));
 			//check ingredient db
-			let dbEgg = await (await getCollection("Warehouse", "Ingredient")).findOne({ name: "egg" }, { projection: { _id: 0 } })
+			let dbEgg = await (await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)).findOne({ name: "egg" }, { projection: { _id: 0 } })
 			const qty = egg.quantity - (omelette.recipe[0].quantity * orderItemQuantity)
 			expect(dbEgg?.quantity).toBe(qty)
 		} else {

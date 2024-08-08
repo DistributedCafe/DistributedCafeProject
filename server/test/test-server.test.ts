@@ -1,21 +1,19 @@
 import WebSocket from 'ws';
 import { Service } from '../src/utils/service'
 import { RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../src/utils/messages';
-import { add, cleanCollection, closeMongoClient, getCollection } from './utils/db-connection';
+import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection';
 import { milk, tea } from './utils/test-utils';
 
 // milk 95, tea 0
 
 let m: ResponseMessage
 let ws: WebSocket;
-const db_name = "Warehouse"
-const db_collection = "Ingredient"
 
 beforeAll(async () => {
-	await (await getCollection(db_name, db_collection)).createIndex({ name: 1 }, { unique: true })
-	await cleanCollection(db_name, db_collection)
-	await add(db_name, db_collection, JSON.stringify(milk))
-	await add(db_name, db_collection, JSON.stringify(tea))
+	await (await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)).createIndex({ name: 1 }, { unique: true })
+	await cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
+	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(milk))
+	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(tea))
 })
 
 afterEach(() => { ws.close() })
