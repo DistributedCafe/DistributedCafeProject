@@ -1,8 +1,8 @@
 import { WebSocket, WebSocketServer } from 'ws';
 import { Service } from '../src/utils/service'
-import { OrdersServiceMessages, RequestMessage } from '../src/utils/messages';
+import { OrdersServiceMessages, RequestMessage, ResponseMessage } from '../src/utils/messages';
 import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection';
-import { blackCoffee, check_order_message, coffee, createRequestMessage, egg, newOrderCoffee, newOrderOmelette, newWrongOrder, omelette, order } from './utils/test-utils';
+import { ApiResponse, blackCoffee, CHANGE_STATE_NOT_VALID, check_order_message, closeWsIfOpened, coffee, createRequestMessage, createResponseMessage, egg, ERROR_MISSING_INGREDIENTS, ERROR_WRONG_PARAMETERS, newOrderOmelette, newWrongOrder, OK, omelette, order, ORDER_ID_NOT_FOUND, OrderStates } from './utils/test-utils';
 import { addId, addIdandState } from './utils/order-json-utils';
 import express from "express"
 import { IncomingMessage, Server, ServerResponse, createServer } from 'http';
@@ -20,10 +20,8 @@ const orderWsMsg = "New order web socket"
 
 beforeAll(async () => {
 	await cleanCollection(DbNames.MENU, DbCollections.MENU)
-	let warehouse = await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
-	await warehouse.createIndex({ name: 1 }, { unique: true })
-	let menu = await getCollection(DbNames.MENU, DbCollections.MENU)
-	await menu.createIndex({ name: 1 }, { unique: true })
+	await (await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)).createIndex({ name: 1 }, { unique: true })
+	await (await getCollection(DbNames.MENU, DbCollections.MENU)).createIndex({ name: 1 }, { unique: true })
 	await add(DbNames.MENU, DbCollections.MENU, JSON.stringify(omelette))
 })
 
@@ -33,196 +31,156 @@ beforeEach(async () => {
 	await cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
 	await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
 	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(egg))
-	let res = await add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(order))
-	insertedId = res.insertedId.toString()
+	insertedId = (await add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(order))).insertedId.toString()
 	server = createServer(app)
 	wss = new WebSocketServer({ server })
 })
 
 afterEach(() => {
-	if (ws_check_service?.OPEN) {
-		ws_check_service.close()
-	}
-	if (ws_route?.OPEN) {
-		ws_route.close()
-	}
-	if (wsManager?.OPEN) {
-		wsManager.close()
-	}
+	closeWsIfOpened(ws_check_service)
+	closeWsIfOpened(ws_route)
+	closeWsIfOpened(wsManager)
 	server.close()
 })
 
 afterAll(() => { closeMongoClient() })
 
+const testCheckService = (action: string, input: any, expectedResponse: ResponseMessage, callback: jest.DoneCallback) => {
+	createConnectionAndCall(createRequestMessage(Service.ORDERS, action, input), expectedResponse, callback)
+}
+
+function testApi(action: string, input: any, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
+	startWebsocket(createRequestMessage(Service.ORDERS, action, input),
+		expectedResponse, callback)
+}
 //read
 test('Get all orders - 200', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ALL_ORDERS, '')
-	startWebsocket(requestMessage, 200, "OK", addId(order, insertedId), done)
-});
+	testApi(OrdersServiceMessages.GET_ALL_ORDERS, '', createResponseMessage(OK, [addId(order, insertedId)]), done)
+})
 
 test('Get all orders - 200 (check-service)', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ALL_ORDERS, '')
-	createConnectionAndCall(requestMessage, 200, "OK", addId(order, insertedId), done)
+	testCheckService(OrdersServiceMessages.GET_ALL_ORDERS, "",
+		createResponseMessage(OK, [addId(order, insertedId)]), done)
 })
 
 test('Get order by id - 200', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ORDER_BY_ID, insertedId)
-	let expected = JSON.stringify(JSON.parse(addId(order, insertedId))[0])
-	startWebsocket(requestMessage, 200, "OK", expected, done)
+	testApi(OrdersServiceMessages.GET_ORDER_BY_ID, insertedId, createResponseMessage(OK, addId(order, insertedId)), done)
 })
 
 test('Get order by id - 200 (check-service)', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ORDER_BY_ID, insertedId)
-	let expected = JSON.stringify(JSON.parse(addId(order, insertedId))[0])
-	createConnectionAndCall(requestMessage, 200, "OK", expected, done)
+	testCheckService(OrdersServiceMessages.GET_ORDER_BY_ID, insertedId,
+		createResponseMessage(OK, addId(order, insertedId)), done)
 })
 
 test('Get order by id - 404 (check-service)', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.GET_ORDER_BY_ID, "1")
-	createConnectionAndCall(requestMessage, 404, "ORDER_ID_NOT_FOUND", undefined, done)
+	testCheckService(OrdersServiceMessages.GET_ORDER_BY_ID, "1",
+		createResponseMessage(ORDER_ID_NOT_FOUND, undefined), done)
 })
 
 //write
 test('Create Order Test - 200', done => {
-	startWebsocket(
-		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrderOmelette), 200, "OK", newOrderOmelette, done)
+	testApi(OrdersServiceMessages.CREATE_ORDER, newOrderOmelette, createResponseMessage(OK, newOrderOmelette), done)
 })
 
 test('Create Order Test (check-service) - 200 and missing ingredient notification', done => {
-
-	createConnectionAndCallNewOrder(
-		createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrderOmelette), 200, "OK", newOrderOmelette, done)
+	createConnectionAndCallNewOrder(createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrderOmelette),
+		createResponseMessage(OK, newOrderOmelette), done)
 })
 
 test('Create Order Test (check-service) - 200', done => {
 	add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(coffee)).then(() => {
 		add(DbNames.MENU, DbCollections.MENU, JSON.stringify(blackCoffee)).then(() => {
-			createConnectionAndCall(
-				createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrderOmelette), 200, "OK", newOrderOmelette, done)
+			testCheckService(OrdersServiceMessages.CREATE_ORDER, newOrderOmelette,
+				createResponseMessage(OK, newOrderOmelette), done)
 		})
 	})
 })
 
-test('Create Order Test - 400 - Missing Ingredients', done => {
+test('Create Order Test (check-service) - 400 - Missing Ingredients', done => {
 	cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE).then(() => {
-		createConnectionAndCall(
-			createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrderOmelette), 400, "ERROR_MISSING_INGREDIENTS", newOrderOmelette, done)
+		testCheckService(OrdersServiceMessages.CREATE_ORDER, newOrderOmelette,
+			createResponseMessage(ERROR_MISSING_INGREDIENTS, ""), done)
 	})
 })
 
 test('Create Order Test - 400 - Wrong parameters', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newWrongOrder)
-	startWebsocket(requestMessage, 400, "ERROR_WRONG_PARAMETERS", "", done)
+	testApi(OrdersServiceMessages.CREATE_ORDER, newWrongOrder, createResponseMessage(ERROR_WRONG_PARAMETERS, ""), done)
 
 })
 
 test('Create Order Test - 400 - Wrong parameters (check-service)', done => {
-	let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newWrongOrder)
-	createConnectionAndCall(requestMessage, 400, "ERROR_WRONG_PARAMETERS", "", done)
+	testCheckService(OrdersServiceMessages.CREATE_ORDER, newWrongOrder,
+		createResponseMessage(ERROR_WRONG_PARAMETERS, ""), done)
 })
 
 test('Put Order Test - 200', done => {
-	cleanCollection(DbNames.ORDERS, DbCollections.ORDERS).then(() => {
-
-		add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(order)).then((res) => {
-
-			let id = res.insertedId.toString()
-			let mod = {
-				"_id": id,
-				"state": "READY"
-			}
-
-			let expected = { ...order }
-			expected["_id"] = id
-			expected["state"] = "READY"
-			let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER, JSON.stringify(mod))
-			startWebsocket(requestMessage, 200, "OK", JSON.stringify([expected]), done)
-
-		})
-
-	})
-
+	testPutOrder(OrderStates.PENDING, OrderStates.READY, OK, testApi, done)
 })
 
-test('Put Order Test - 200 (check-service)', done => {
+function testPutOrder(initState: string, finalState: string, apiResponse: ApiResponse, test: (action: string, input: any, expectedResponse: ResponseMessage, callback: jest.DoneCallback) => void, callback: jest.DoneCallback) {
 	cleanCollection(DbNames.ORDERS, DbCollections.ORDERS).then(() => {
-
-		let expected = { ...order }
-		expected["state"] = "READY"
-
-		add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(expected)).then((res) => {
+		let newOrder = { ...order }
+		newOrder["state"] = initState
+		add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(newOrder)).then((res) => {
 			let id = res.insertedId.toString()
-
-			let mod = {
+			let update = {
 				"_id": id,
-				"state": "COMPLETED"
+				"state": finalState
 			}
-			expected["_id"] = id
-			expected["state"] = "COMPLETED"
-			let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER, JSON.stringify(mod))
-			createConnectionAndCall(requestMessage, 200, "OK", JSON.stringify([expected]), done)
+			let expectedData
+			if (apiResponse.code == 200) {
+				newOrder["_id"] = id
+				newOrder["state"] = finalState
+				expectedData = [newOrder]
+			} else {
+				expectedData = undefined
+			}
+			test(OrdersServiceMessages.PUT_ORDER, JSON.stringify(update),
+				createResponseMessage(apiResponse, expectedData), callback)
 		})
-
 	})
+}
 
-
+test('Put Order Test - 200 (check-service)', done => {
+	testPutOrder(OrderStates.READY, OrderStates.COMPLETED, OK, testCheckService, done)
 })
 
 test('Put Order Test - 400 (check-service)', done => {
-	cleanCollection(DbNames.ORDERS, DbCollections.ORDERS).then(() => {
-
-		let modOrder = { ...order }
-		modOrder["state"] = "COMPLETED"
-		add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(modOrder)).then((res) => {
-			let id = res.insertedId.toString()
-
-			let mod = {
-				"_id": id,
-				"state": "PENDING"
-			}
-
-			modOrder["_id"] = id
-			modOrder["state"] = "PENDING"
-			let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER, JSON.stringify(mod))
-			createConnectionAndCall(requestMessage, 400, "CHANGE_STATE_NOT_VALID", undefined, done)
-		})
-
-	})
-
+	testPutOrder(OrderStates.COMPLETED, OrderStates.PENDING, CHANGE_STATE_NOT_VALID, testCheckService, done)
 })
 
-test('Put Order Test - 400 (check-service) - id not found', done => {
+test('Put Order Test - 404 (check-service) - id not found', done => {
 	cleanCollection(DbNames.ORDERS, DbCollections.ORDERS).then(() => {
-		let mod = {
-			"_id": insertedId,
-			"state": "PENDING"
+		let update = {
+			"_id": "1",
+			"state": OrderStates.PENDING
 		}
-		let requestMessage = createRequestMessage(Service.ORDERS, OrdersServiceMessages.PUT_ORDER, JSON.stringify(mod))
-		createConnectionAndCall(requestMessage, 404, "ORDER_ID_NOT_FOUND", undefined, done)
+
+		testCheckService(OrdersServiceMessages.PUT_ORDER, JSON.stringify(update),
+			createResponseMessage(ORDER_ID_NOT_FOUND, undefined), done)
 	})
 })
 
-function startWebsocket(requestMessage: RequestMessage, code: number, message: string, data: any, callback: jest.DoneCallback) {
-	ws_route = new WebSocket('ws://localhost:3000');
-	ws_route.on('message', async (msg: string) => {
-		await check_order_message(JSON.parse(msg), code, message, data, requestMessage.client_request)
+function onMessage(ws: WebSocket, expectedResponse: ResponseMessage, request: string, callback: jest.DoneCallback) {
+	ws.on('message', async (msg: string) => {
+		await check_order_message(JSON.parse(msg), expectedResponse, request)
 		callback()
 	});
+}
+
+function startWebsocket(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
+	ws_route = new WebSocket('ws://localhost:3000');
+	onMessage(ws_route, expectedResponse, requestMessage.client_request, callback)
 
 	ws_route.on('open', () => {
 		ws_route.send(JSON.stringify(requestMessage))
 	});
 }
 
-function createConnectionAndCall(requestMessage: RequestMessage, code: number, message: string, data: any, callback: jest.DoneCallback) {
+function createConnectionAndCall(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
 	wss.on('connection', (ws) => {
 		ws.on('error', console.error);
-
-		ws.on('message', async (msg: string) => {
-			await check_order_message(JSON.parse(msg), code, message, data, requestMessage.client_request)
-			callback()
-		});
-
+		onMessage(ws, expectedResponse, requestMessage.client_request, callback)
 	});
 	server.listen(8081, () => console.log('listening on port :8081'));
 
@@ -233,11 +191,11 @@ function createConnectionAndCall(requestMessage: RequestMessage, code: number, m
 	})
 }
 
-export interface IArray {
+interface IArray {
 	[index: string]: WebSocket;
 }
 
-function createConnectionAndCallNewOrder(requestMessage: RequestMessage, code: number, message: string, data: any, callback: jest.DoneCallback) {
+function createConnectionAndCallNewOrder(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
 	let connections: Map<WebSocket, string> = new Map()
 	let wsArray = {} as IArray
 
@@ -257,9 +215,10 @@ function createConnectionAndCallNewOrder(requestMessage: RequestMessage, code: n
 
 					expect(wsArray[managerWsMsg]).toBe(ws)
 					expect(wsArray[orderWsMsg] == ws).toBeFalsy
-					expect(orederRes.code).toBe(code)
-					expect(orederRes.message).toBe(message)
-					expect(JSON.parse(orederRes.data)).toStrictEqual(JSON.parse(await addIdandState(data)))
+
+					// server
+					expectedResponse.data = await addIdandState(expectedResponse.data)
+					check_order_message(orederRes, expectedResponse, OrdersServiceMessages.CREATE_ORDER)
 					expect(managerRes.message).toBe("NEW_MISSING_INGREDIENTS")
 					expect(JSON.parse(managerRes.data)).toStrictEqual([egg])
 					callback()

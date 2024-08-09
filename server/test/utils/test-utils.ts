@@ -2,6 +2,7 @@ import { OrdersServiceMessages, ResponseMessage } from "../../src/utils/messages
 import { Service } from "../../src/utils/service";
 import { DbCollections, DbNames, getCollection } from "./db-connection";
 import { addIdandState } from "./order-json-utils";
+import { WebSocket } from 'ws';
 
 const orderItemQuantity = 2
 
@@ -13,20 +14,6 @@ export const newOrderOmelette = {
 		{
 			"item": {
 				"name": "omelette"
-			},
-			"quantity": orderItemQuantity
-		},
-	]
-}
-
-export const newOrderCoffee = {
-	"customerEmail": "c3@example.com",
-	"price": 1,
-	"type": "HOME_DELIVERY",
-	"items": [
-		{
-			"item": {
-				"name": "black_coffee"
 			},
 			"quantity": orderItemQuantity
 		},
@@ -127,32 +114,32 @@ export const coffee = {
 }
 
 /**
- * Check that the responce message is correct
+ * Check that the response message is correct
  * @param msg that has to be checked
- * @param code correct code
- * @param message correct message
- * @param data correct data. Id and state are added to data if the request was to create a new order
+ * @param expectedResponse correct response
  * @param request request of the client
  */
-export async function check_order_message(msg: ResponseMessage, code: number, message: string, data: any, request: string) {
-	console.log("--> " + msg.message)
-	expect(msg.code).toBe(code);
-	expect(msg.message).toBe(message);
+export async function check_order_message(msg: ResponseMessage, expectedResponse: ResponseMessage, request: string) {
+	console.log("--> " + expectedResponse.message)
+	const expectedData = expectedResponse.data
+	expect(msg.code).toBe(expectedResponse.code);
+	expect(msg.message).toBe(expectedResponse.message);
 	if (msg.code == 200) {
 		if (request == OrdersServiceMessages.CREATE_ORDER) {
-			expect(JSON.parse(msg.data)).toStrictEqual(JSON.parse(await addIdandState(data)));
+			expect(JSON.parse(msg.data)).toStrictEqual(await addIdandState(expectedData));
 			//check ingredient db
 			let dbEgg = await (await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)).findOne({ name: "egg" }, { projection: { _id: 0 } })
 			const qty = egg.quantity - (omelette.recipe[0].quantity * orderItemQuantity)
 			expect(dbEgg?.quantity).toBe(qty)
 		} else {
-			expect(JSON.parse(msg.data)).toStrictEqual(JSON.parse(data));
+			expect(JSON.parse(msg.data)).toStrictEqual(expectedData);
 		}
 	} else {
 		expect(msg.data).toBe("")
 	}
 
 }
+
 
 /**
  * Create a request message
@@ -167,4 +154,65 @@ export function createRequestMessage(client: Service, request: string, input: an
 		client_request: request,
 		input: input
 	}
+}
+
+/**
+ * Create a response message
+ * @param code
+ * @param msg 
+ * @param data 
+ * @returns a response message
+ */
+export function createResponseMessage(response: ApiResponse, data: any): ResponseMessage {
+	return {
+		code: response.code,
+		message: response.message,
+		data: data
+	}
+}
+
+/**
+ * Check if a web socket is open and closes it if it is
+ * @param ws web socket that have to be close
+ */
+export function closeWsIfOpened(ws: WebSocket) {
+	if (ws?.OPEN) {
+		ws.close()
+	}
+}
+
+export const OrderStates = {
+	PENDING: "PENDING",
+	READY: "READY",
+	COMPLETED: "COMPLETED"
+}
+
+export interface ApiResponse {
+	code: number,
+	message: string
+}
+
+export const OK: ApiResponse = {
+	code: 200,
+	message: "OK"
+}
+
+export const CHANGE_STATE_NOT_VALID: ApiResponse = {
+	code: 400,
+	message: "CHANGE_STATE_NOT_VALID"
+}
+
+export const ORDER_ID_NOT_FOUND: ApiResponse = {
+	code: 404,
+	message: "ORDER_ID_NOT_FOUND"
+}
+
+export const ERROR_MISSING_INGREDIENTS: ApiResponse = {
+	code: 400,
+	message: "ERROR_MISSING_INGREDIENTS"
+}
+
+export const ERROR_WRONG_PARAMETERS: ApiResponse = {
+	code: 400,
+	message: "ERROR_WRONG_PARAMETERS"
 }
