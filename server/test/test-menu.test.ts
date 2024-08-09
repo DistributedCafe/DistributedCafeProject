@@ -5,7 +5,8 @@ import express from 'express';
 import { IncomingMessage, Server, ServerResponse, createServer } from 'http';
 import WebSocket, { Server as WebSocketServer } from 'ws';
 import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection';
-import { boiledEgg, createRequestMessage, egg, friedEgg, omelette } from './utils/test-utils';
+import { createRequestMessage } from './utils/test-utils';
+import { boiledEgg, egg, friedEgg, omelette } from './utils/test-data';
 
 let ws_check_service: WebSocket
 let ws_route: WebSocket

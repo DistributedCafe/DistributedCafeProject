@@ -1,117 +1,66 @@
-import { OrdersServiceMessages, ResponseMessage } from "../../src/utils/messages";
+import { createServer, IncomingMessage, Server, ServerResponse } from "http";
+import { OrdersServiceMessages, RequestMessage, ResponseMessage } from "../../src/utils/messages";
 import { Service } from "../../src/utils/service";
 import { ApiResponse } from "./api-response";
 import { DbCollections, DbNames, getCollection } from "./db-connection";
 import { addIdandState } from "./order-json-utils";
-import { WebSocket } from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
+import { check_service } from "../../src/check-service";
+import express from "express"
+import { egg, omelette, orderItemQuantity } from "./test-data";
 
-const orderItemQuantity = 2
+const app = express()
+export let ws_route: WebSocket
+export let ws_check_service: WebSocket
+export let wss: WebSocketServer
+export let server: Server<typeof IncomingMessage, typeof ServerResponse>
 
-export const newOrderOmelette = {
-	"customerEmail": "c2@example.com",
-	"price": 1,
-	"type": "TAKE_AWAY",
-	"items": [
-		{
-			"item": {
-				"name": "omelette"
-			},
-			"quantity": orderItemQuantity
-		},
-	]
+export function initializeServer() {
+	server = createServer(app)
+	wss = new WebSocketServer({ server })
 }
 
-export const milk = {
-	name: "milk",
-	quantity: 95
+export function closeWs() {
+	closeWsIfOpened(ws_check_service)
+	closeWsIfOpened(ws_route)
 }
 
-export const tea = {
-	name: "tea",
-	quantity: 0
+export function openWsRoute(address: string) {
+	ws_route = new WebSocket(address);
 }
 
-export const omelette = {
-	name: "omelette",
-	recipe: [
-		{
-			ingredient_name: "egg",
-			quantity: 2
-		}
-	],
-	price: 3
+export function openWsCheckService(address: string) {
+	ws_check_service = new WebSocket(address);
 }
 
-export const blackCoffee = {
-	name: "black_coffee",
-	recipe: [
-		{
-			ingredient_name: "coffee",
-			quantity: 1
-		}
-	],
-	price: 1
+function onMessage(ws: WebSocket, expectedResponse: ResponseMessage, request: string, callback: jest.DoneCallback) {
+	ws.on('message', async (msg: string) => {
+		await check_order_message(JSON.parse(msg), expectedResponse, request)
+		callback()
+	});
 }
 
-export const boiledEgg = {
-	name: "boiled_egg",
-	recipe: [
-		{
-			ingredient_name: "egg",
-			quantity: 1
-		}
-	],
-	price: 1
-}
-export const friedEgg = {
-	name: "fried_egg",
-	recipe: [
-		{
-			ingredient_name: "egg",
-			quantity: 1
-		}
-	],
-	price: 1
+export function startWebsocket(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
+	openWsRoute('ws://localhost:3000')
+	onMessage(ws_route, expectedResponse, requestMessage.client_request, callback)
+
+	ws_route.on('open', () => {
+		ws_route.send(JSON.stringify(requestMessage))
+	});
 }
 
-export const order: any = {
-	"customerEmail": "c1@example.com",
-	"price": 1,
-	"type": "HOME_DELIVERY",
-	"state": "PENDING",
-	"items": [
-		{
-			"item": {
-				"name": "i1"
-			},
-			"quantity": 2
-		},
-	]
-}
+export function createConnectionAndCall(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
+	wss.on('connection', (ws) => {
+		ws.on('error', console.error);
+		onMessage(ws, expectedResponse, requestMessage.client_request, callback)
+	});
+	server.listen(8081, () => console.log('listening on port :8081'));
 
-export const newWrongOrder = {
-	"customerEmail": "c1@example.com",
-	"price": "1",
-	"type": "HOME_DELIVERY",
-	"items": [
-		{
-			"item": {
-				"name": "omelette"
-			},
-			"quantity": 2
-		},
-	]
-}
-
-export const egg = {
-	"name": "egg",
-	"quantity": 4
-}
-
-
-export const coffee = {
-	"name": "coffee",
-	"quantity": 20
+	openWsCheckService('ws://localhost:8081')
+	ws_check_service.on('open', () => {
+		const managerWsArray = Array()
+		check_service(requestMessage, ws_check_service, managerWsArray)
+	})
 }
 
 /**
@@ -185,3 +134,4 @@ export const OrderStates = {
 	READY: "READY",
 	COMPLETED: "COMPLETED"
 }
+

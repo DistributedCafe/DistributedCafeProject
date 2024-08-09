@@ -1,21 +1,18 @@
-import { WebSocket, WebSocketServer } from 'ws';
+import { WebSocket } from 'ws'
 import { Service } from '../src/utils/service'
-import { OrdersServiceMessages, RequestMessage, ResponseMessage } from '../src/utils/messages';
-import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection';
-import { blackCoffee, check_order_message, closeWsIfOpened, coffee, createRequestMessage, createResponseMessage, egg, newOrderOmelette, newWrongOrder, omelette, order, OrderStates } from './utils/test-utils';
-import { addId, addIdandState } from './utils/order-json-utils';
-import express from "express"
-import { IncomingMessage, Server, ServerResponse, createServer } from 'http';
+import { OrdersServiceMessages, RequestMessage, ResponseMessage } from '../src/utils/messages'
+import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection'
+import {
+	check_order_message, closeWs, closeWsIfOpened, createConnectionAndCall,
+	createRequestMessage, createResponseMessage, initializeServer, openWsCheckService, OrderStates, server, startWebsocket, ws_check_service, wss
+} from './utils/test-utils'
+import { addId, addIdandState } from './utils/order-json-utils'
 import { check_service } from '../src/check-service'
-import { ApiResponse, CHANGE_STATE_NOT_VALID, ERROR_MISSING_INGREDIENTS, ERROR_WRONG_PARAMETERS, OK, ORDER_ID_NOT_FOUND } from './utils/api-response';
+import { ApiResponse, CHANGE_STATE_NOT_VALID, ERROR_MISSING_INGREDIENTS, ERROR_WRONG_PARAMETERS, OK, ORDER_ID_NOT_FOUND } from './utils/api-response'
+import { blackCoffee, coffee, egg, newOrderOmelette, newWrongOrder, omelette, order } from './utils/test-data'
 
-let ws_route: WebSocket
-let ws_check_service: WebSocket
 let wsManager: WebSocket
-let wss: WebSocketServer
-let server: Server<typeof IncomingMessage, typeof ServerResponse>
 let insertedId: string
-const app = express()
 const managerWsMsg = "Manager frontend web socket"
 const orderWsMsg = "New order web socket"
 
@@ -33,13 +30,11 @@ beforeEach(async () => {
 	await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
 	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(egg))
 	insertedId = (await add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(order))).insertedId.toString()
-	server = createServer(app)
-	wss = new WebSocketServer({ server })
+	initializeServer()
 })
 
 afterEach(() => {
-	closeWsIfOpened(ws_check_service)
-	closeWsIfOpened(ws_route)
+	closeWs()
 	closeWsIfOpened(wsManager)
 	server.close()
 })
@@ -162,38 +157,8 @@ test('Put Order Test - 404 (check-service) - id not found', done => {
 	})
 })
 
-function onMessage(ws: WebSocket, expectedResponse: ResponseMessage, request: string, callback: jest.DoneCallback) {
-	ws.on('message', async (msg: string) => {
-		await check_order_message(JSON.parse(msg), expectedResponse, request)
-		callback()
-	});
-}
-
-function startWebsocket(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
-	ws_route = new WebSocket('ws://localhost:3000');
-	onMessage(ws_route, expectedResponse, requestMessage.client_request, callback)
-
-	ws_route.on('open', () => {
-		ws_route.send(JSON.stringify(requestMessage))
-	});
-}
-
-function createConnectionAndCall(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
-	wss.on('connection', (ws) => {
-		ws.on('error', console.error);
-		onMessage(ws, expectedResponse, requestMessage.client_request, callback)
-	});
-	server.listen(8081, () => console.log('listening on port :8081'));
-
-	ws_check_service = new WebSocket('ws://localhost:8081');
-	ws_check_service.on('open', () => {
-		const managerWsArray = Array()
-		check_service(requestMessage, ws_check_service, managerWsArray)
-	})
-}
-
 interface IArray {
-	[index: string]: WebSocket;
+	[index: string]: WebSocket
 }
 
 function createConnectionAndCallNewOrder(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
@@ -201,7 +166,7 @@ function createConnectionAndCallNewOrder(requestMessage: RequestMessage, expecte
 	let wsArray = {} as IArray
 
 	wss.on('connection', (ws: WebSocket) => {
-		ws.on('error', console.error);
+		ws.on('error', console.error)
 
 		ws.on('message', async (msg: string) => {
 			if (msg == managerWsMsg) {
@@ -225,11 +190,11 @@ function createConnectionAndCallNewOrder(requestMessage: RequestMessage, expecte
 					callback()
 				}
 			}
-		});
-	});
-	server.listen(8081, () => console.log('listening on port :8081'));
+		})
+	})
+	server.listen(8081, () => console.log('listening on port :8081'))
 
-	ws_check_service = new WebSocket('ws://localhost:8081');
+	openWsCheckService('ws://localhost:8081')
 	ws_check_service.on('open', () => {
 		let managerWsArray = Array()
 		managerWsArray.push(wsManager)
