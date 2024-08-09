@@ -1,5 +1,6 @@
 import { OrdersServiceMessages, ResponseMessage } from "../../src/utils/messages";
 import { Service } from "../../src/utils/service";
+import { ApiResponse } from "./api-response";
 import { DbCollections, DbNames, getCollection } from "./db-connection";
 import { addIdandState } from "./order-json-utils";
 import { WebSocket } from 'ws';
@@ -117,10 +118,10 @@ export const coffee = {
  * Check that the response message is correct
  * @param msg that has to be checked
  * @param expectedResponse correct response
- * @param request request of the client
+ * @param request request of the client (if needed)
  */
-export async function check_order_message(msg: ResponseMessage, expectedResponse: ResponseMessage, request: string) {
-	console.log("--> " + expectedResponse.message)
+export async function check_order_message(msg: ResponseMessage, expectedResponse: ResponseMessage, request?: string) {
+	console.log("MESSAGE: " + msg.message)
 	const expectedData = expectedResponse.data
 	expect(msg.code).toBe(expectedResponse.code);
 	expect(msg.message).toBe(expectedResponse.message);
@@ -137,9 +138,7 @@ export async function check_order_message(msg: ResponseMessage, expectedResponse
 	} else {
 		expect(msg.data).toBe("")
 	}
-
 }
-
 
 /**
  * Create a request message
@@ -185,34 +184,4 @@ export const OrderStates = {
 	PENDING: "PENDING",
 	READY: "READY",
 	COMPLETED: "COMPLETED"
-}
-
-export interface ApiResponse {
-	code: number,
-	message: string
-}
-
-export const OK: ApiResponse = {
-	code: 200,
-	message: "OK"
-}
-
-export const CHANGE_STATE_NOT_VALID: ApiResponse = {
-	code: 400,
-	message: "CHANGE_STATE_NOT_VALID"
-}
-
-export const ORDER_ID_NOT_FOUND: ApiResponse = {
-	code: 404,
-	message: "ORDER_ID_NOT_FOUND"
-}
-
-export const ERROR_MISSING_INGREDIENTS: ApiResponse = {
-	code: 400,
-	message: "ERROR_MISSING_INGREDIENTS"
-}
-
-export const ERROR_WRONG_PARAMETERS: ApiResponse = {
-	code: 400,
-	message: "ERROR_WRONG_PARAMETERS"
 }
