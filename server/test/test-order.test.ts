@@ -4,7 +4,8 @@ import { OrdersServiceMessages, RequestMessage, ResponseMessage } from '../src/u
 import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection'
 import {
 	check_order_message, closeWs, closeWsIfOpened, createConnectionAndCall,
-	createRequestMessage, createResponseMessage, initializeServer, openWsCheckService, OrderStates, server, startWebsocket, ws_check_service, wss
+	createRequestMessage, createResponseMessage, initializeServer, openWsCheckService,
+	OrderStates, server, startWebsocket, ws_check_service, wss
 } from './utils/test-utils'
 import { addId, addIdandState } from './utils/order-json-utils'
 import { check_service } from '../src/check-service'
@@ -41,7 +42,7 @@ afterEach(() => {
 
 afterAll(() => { closeMongoClient() })
 
-const testCheckService = (action: string, input: any, expectedResponse: ResponseMessage, callback: jest.DoneCallback) => {
+function testCheckService(action: string, input: any, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
 	createConnectionAndCall(createRequestMessage(Service.ORDERS, action, input), expectedResponse, callback)
 }
 

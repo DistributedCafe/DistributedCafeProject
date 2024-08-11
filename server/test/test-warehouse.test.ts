@@ -3,7 +3,7 @@ import { ResponseMessage, WarehouseServiceMessages } from '../src/utils/messages
 import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection';
 import {
 	closeWs, createConnectionAndCall, createRequestMessage, createResponseMessage,
-	initializeServer, server, startWebsocket,
+	initializeServer, server, startWebsocket
 } from './utils/test-utils';
 import { ERROR_INGREDIENT_ALREADY_EXISTS, ERROR_INGREDIENT_NOT_FOUND, ERROR_INGREDIENT_QUANTITY, OK } from './utils/api-response';
 import { coffee, milk, tea } from './utils/test-data';
@@ -130,35 +130,3 @@ test('Decrease Ingredients Quantity Test - 200', done => {
 	testApi(WarehouseServiceMessages.DECREASE_INGREDIENTS_QUANTITY, input,
 		createResponseMessage(OK, output), done)
 })
-
-/*function createConnectionAndCall(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
-	wss.on('connection', (ws) => {
-		ws.on('error', console.error);
-
-		ws.on('message', (msg: string) => {
-			check_order_message(JSON.parse(msg), expectedResponse)
-			callback()
-		});
-
-	});
-	server.listen(8081, () => console.log('listening on port :8081'));
-
-	ws = new WebSocket('ws://localhost:8081');
-	ws.on('open', () => {
-		const managerWs = Array()
-		check_service(requestMessage, ws, managerWs)
-	})
-}
-
-function startWebsocket(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
-	ws = new WebSocket('ws://localhost:3000')
-
-	ws.on('message', (msg: string) => {
-		check_order_message(JSON.parse(msg), expectedResponse)
-		callback()
-	})
-
-	ws.on('open', () => {
-		ws.send(JSON.stringify(requestMessage))
-	})
-}*/

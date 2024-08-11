@@ -43,3 +43,8 @@ export const ERROR_INGREDIENT_QUANTITY: ApiResponse = {
 	code: 400,
 	message: "ERROR_INGREDIENT_QUANTITY"
 }
+
+export const ERROR_EMPTY_WAREHOUSE: ApiResponse = {
+	code: 404,
+	message: "ERROR_EMPTY_WAREHOUSE"
+}

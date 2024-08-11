@@ -1,81 +1,79 @@
 import { Service } from '../src/utils/service'
-import { MenuServiceMessages, RequestMessage, ResponseMessage } from '../src/utils/messages';
-import { check_service } from '../src/check-service';
-import express from 'express';
-import { IncomingMessage, Server, ServerResponse, createServer } from 'http';
-import WebSocket, { Server as WebSocketServer } from 'ws';
+import { MenuServiceMessages, ResponseMessage } from '../src/utils/messages';
 import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection';
-import { createRequestMessage } from './utils/test-utils';
+import {
+	closeWs, createConnectionAndCall, createRequestMessage,
+	createResponseMessage, initializeServer, server, startWebsocket
+} from './utils/test-utils';
 import { boiledEgg, egg, friedEgg, omelette } from './utils/test-data';
-
-let ws_check_service: WebSocket
-let ws_route: WebSocket
-let wss: WebSocketServer
-const app = express()
-let server: Server<typeof IncomingMessage, typeof ServerResponse>
+import { ERROR_EMPTY_WAREHOUSE, OK } from './utils/api-response';
 
 beforeAll(async () => {
 	await (await getCollection(DbNames.MENU, DbCollections.MENU)).createIndex({ name: 1 }, { unique: true })
+})
+
+beforeEach(async () => {
 	await cleanCollection(DbNames.MENU, DbCollections.MENU)
 	await cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
 	await add(DbNames.MENU, DbCollections.MENU, JSON.stringify(omelette))
 	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(egg))
+	initializeServer()
 })
 
 afterEach(() => {
-	if (ws_check_service?.OPEN) {
-		ws_check_service.close()
-	}
-	if (ws_route?.OPEN) {
-		ws_route.close()
-	}
+	closeWs()
 	server.close()
-})
-beforeEach(() => {
-	server = createServer(app);
-	wss = new WebSocketServer({ server });
 })
 
 afterAll(() => { closeMongoClient() })
 
+const testCheckService = (action: string, input: any, expectedResponse: ResponseMessage, callback: jest.DoneCallback) => {
+	createConnectionAndCall(createRequestMessage(Service.MENU, action, input), expectedResponse, callback)
+}
+
+function testApi(action: string, input: any, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
+	startWebsocket(createRequestMessage(Service.MENU, action, input),
+		expectedResponse, callback)
+}
+
 test('Get all available items Test - 200', done => {
-	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS, "")
-	test_route(requestMessage, 200, 'OK', [omelette], done)
+	testApi(MenuServiceMessages.GET_AVAILABLE_ITEMS, "",
+		createResponseMessage(OK, [omelette]), done)
 })
 
 test('Get all available items Test - 200 (check-service)', done => {
-	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS, "")
-	test_check_service(requestMessage, 200, 'OK', [omelette], done)
+	testCheckService(MenuServiceMessages.GET_AVAILABLE_ITEMS, "",
+		createResponseMessage(OK, [omelette]), done)
 })
 
 test('Get item by name Test - 200', done => {
-	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_ITEM_BY_NAME, omelette.name)
-	test_route(requestMessage, 200, 'OK', omelette, done)
+	testApi(MenuServiceMessages.GET_ITEM_BY_NAME, omelette.name,
+		createResponseMessage(OK, omelette), done)
 });
 
 test('Get item by name Test - 200 (check-service)', done => {
-	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_ITEM_BY_NAME, omelette.name)
-	test_check_service(requestMessage, 200, 'OK', omelette, done)
+	testCheckService(MenuServiceMessages.GET_ITEM_BY_NAME, omelette.name,
+		createResponseMessage(OK, omelette), done)
 })
 
 test('Get all items Test - 200', done => {
-	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_ITEMS, "")
-	test_route(requestMessage, 200, 'OK', [omelette], done)
+	testApi(MenuServiceMessages.GET_ITEMS, "",
+		createResponseMessage(OK, [omelette]), done)
 })
 
 test('Get all items Test - 200 (check-service)', done => {
-	const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_ITEMS, "")
-	test_check_service(requestMessage, 200, 'OK', [omelette], done)
+	testCheckService(MenuServiceMessages.GET_ITEMS, "",
+		createResponseMessage(OK, [omelette]), done)
 })
 
 test('Add new item Test - 200', done => {
-	test_route(
-		createRequestMessage(Service.MENU, MenuServiceMessages.CREATE_ITEM, friedEgg), 200, 'OK', friedEgg, done)
+	testApi(MenuServiceMessages.CREATE_ITEM, friedEgg,
+		createResponseMessage(OK, friedEgg), done)
 });
 
 test('Add new item Test - 200 (check-service)', done => {
-	test_check_service(
-		createRequestMessage(Service.MENU, MenuServiceMessages.CREATE_ITEM, boiledEgg), 200, 'OK', boiledEgg, done)
+	testCheckService(MenuServiceMessages.CREATE_ITEM, boiledEgg,
+		createResponseMessage(OK, boiledEgg), done)
 });
 
 test('Update item Test - 200', done => {
@@ -93,8 +91,9 @@ test('Update item Test - 200', done => {
 		],
 		price: 4
 	}
-	test_route(
-		createRequestMessage(Service.MENU, MenuServiceMessages.UPDATE_ITEM, update_omelette), 200, 'OK', update_omelette, done)
+
+	testApi(MenuServiceMessages.UPDATE_ITEM, update_omelette,
+		createResponseMessage(OK, update_omelette), done)
 });
 
 test('Update item Test - 200 (check-service)', done => {
@@ -116,25 +115,25 @@ test('Update item Test - 200 (check-service)', done => {
 		],
 		price: 5
 	}
-	test_check_service(
-		createRequestMessage(Service.MENU, MenuServiceMessages.UPDATE_ITEM, update_omelette), 200, 'OK', update_omelette, done)
+	testCheckService(MenuServiceMessages.UPDATE_ITEM, update_omelette,
+		createResponseMessage(OK, update_omelette), done)
 });
 
 test('Get all available items Test - 404', done => {
 	cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE).then(() => {
-		const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS, "")
-		test_route(requestMessage, 404, "ERROR_EMPTY_WAREHOUSE", "", done)
+		testApi(MenuServiceMessages.GET_AVAILABLE_ITEMS, "",
+			createResponseMessage(ERROR_EMPTY_WAREHOUSE, ""), done)
 	})
 })
 
-test('Get all available items Test - 404', done => {
+test('Get all available items Test (check-service) - 404', done => {
 	cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE).then(() => {
-		const requestMessage = createRequestMessage(Service.MENU, MenuServiceMessages.GET_AVAILABLE_ITEMS, "")
-		test_check_service(requestMessage, 404, "ERROR_EMPTY_WAREHOUSE", "", done)
+		testCheckService(MenuServiceMessages.GET_AVAILABLE_ITEMS, "",
+			createResponseMessage(ERROR_EMPTY_WAREHOUSE, ""), done)
 	})
 })
 
-function test_check_service(requestMessage: RequestMessage, code: number, message: string, output: any, callback: jest.DoneCallback) {
+/*function test_check_service(requestMessage: RequestMessage, code: number, message: string, output: any, callback: jest.DoneCallback) {
 	wss.on('connection', (ws) => {
 		ws.on('error', console.error);
 
@@ -172,4 +171,4 @@ function test_route(requestMessage: RequestMessage, code: number, message: strin
 	});
 
 	ws_route.on('open', () => ws_route.send(JSON.stringify(requestMessage)));
-}
+}*/
