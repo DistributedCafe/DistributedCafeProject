@@ -4,8 +4,7 @@ import { OrdersServiceMessages, RequestMessage, ResponseMessage } from '../src/u
 import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection'
 import {
 	check_order_message, closeWs, closeWsIfOpened, createConnectionAndCall,
-	createRequestMessage, createResponseMessage, initializeServer, openWsCheckService,
-	OrderStates, server, startWebsocket, ws_check_service, wss
+	createRequestMessage, createResponseMessage, initializeServer, openWsCheckService, OrderStates, server, startWebsocket, ws_check_service, wss
 } from './utils/test-utils'
 import { addId, addIdandState } from './utils/order-json-utils'
 import { check_service } from '../src/check-service'
@@ -28,7 +27,6 @@ beforeAll(async () => {
 beforeEach(async () => {
 	await cleanCollection(DbNames.ORDERS, DbCollections.ORDERS)
 	await cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
-	await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
 	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(egg))
 	insertedId = (await add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(order))).insertedId.toString()
 	initializeServer()

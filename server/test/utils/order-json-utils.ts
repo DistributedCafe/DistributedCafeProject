@@ -8,7 +8,6 @@ import { getLastInsertedOrder } from "./db-connection"
  * @returns the modified order
  */
 export async function addIdandState(order: any) {
-	console.log("CHIAMATA")
 	let last = await getLastInsertedOrder()
 	let output = { ...order }
 	output["_id"] = last?._id.toString()
