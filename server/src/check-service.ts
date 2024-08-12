@@ -2,9 +2,9 @@ import {
 	MenuServiceMessages, MissingIngredientNotification, OrdersServiceMessages,
 	RequestMessage, ResponseMessage, WarehouseServiceMessages
 } from './utils/messages'
-import { Service } from './utils/service';
-import axios from 'axios';
-import WebSocket from 'ws';
+import { Service } from './utils/service'
+import axios from 'axios'
+import WebSocket from 'ws'
 
 const http = axios.create({
 	baseURL: 'http://localhost:8080'
@@ -27,13 +27,13 @@ export function check_service(message: RequestMessage, currentWs: WebSocket, man
 	switch (message.client_name) {
 		case Service.WAREHOUSE:
 			warehouse_api(message.client_request, message.input, currentWs)
-			break;
+			break
 		case Service.MENU:
 			menu_api(message.client_request, message.input, currentWs)
-			break;
+			break
 		default:
 			orders_api(message.client_request, message.input, currentWs, managerWs)
-			break;
+			break
 	}
 }
 
@@ -42,29 +42,29 @@ async function menu_api(message: string, input: any, ws: WebSocket) {
 	switch (message) {
 		case MenuServiceMessages.CREATE_ITEM:
 			handleResponse(httpMenu.post('/menu/', input), ws)
-			break;
+			break
 		case MenuServiceMessages.GET_ITEMS:
 			handleResponse(httpMenu.get('/menu/'), ws)
-			break;
+			break
 		case MenuServiceMessages.UPDATE_ITEM:
 			handleResponse(httpMenu.put('/menu/', input), ws)
-			break;
+			break
 		case MenuServiceMessages.GET_AVAILABLE_ITEMS:
 			await http.get('/warehouse/available/').then((res) => {
 				const availableIng: any[] = res.data
 
 				availableIng.forEach(e => {
 					names.push(e.name)
-				});
+				})
 
 				handleResponse(httpMenu.get('/menu/available/' + JSON.stringify(names)), ws)
 			}).catch((e) => {
-				ws.send(JSON.stringify(checkErrorMessage(e)))
+				ws.send(checkErrorMessage(e))
 			})
-			break;
+			break
 		default: //get item by name
 			handleResponse(httpMenu.get('/menu/' + input), ws)
-			break;
+			break
 	}
 }
 
@@ -77,27 +77,27 @@ function orders_api(message: string, input: any, ws: WebSocket, managerWs: WebSo
 						handleNewOrder(httpOrders.post('/orders/', input), input, ws, managerWs)
 						break
 					case 500:
-						ws.send(JSON.stringify(createErrorMessage(res, "ERROR_MICROSERVICE_NOT_AVAILABLE")))
+						ws.send(createErrorMessage(res, "ERROR_MICROSERVICE_NOT_AVAILABLE"))
 						break
 					default:
-						ws.send(JSON.stringify(createErrorMessage(400, "ERROR_MISSING_INGREDIENTS")))
+						ws.send(createErrorMessage(400, "ERROR_MISSING_INGREDIENTS"))
 				}
 			})
-			break;
+			break
 		case OrdersServiceMessages.GET_ORDER_BY_ID:
 			handleResponse(httpOrders.get('/orders/' + input), ws)
-			break;
+			break
 		case OrdersServiceMessages.PUT_ORDER:
-			httpOrders.get('/orders/' + JSON.parse(input)._id).then((res) => {
-				res.data["state"] = JSON.parse(input).state
+			httpOrders.get('/orders/' + input._id).then((res) => {
+				res.data["state"] = input.state
 				httpOrders.put('/orders/', res.data).then(() => {
 					handleResponse(httpOrders.get('/orders/'), ws)
-				}).catch((e) => ws.send(JSON.stringify(checkErrorMessage(e))))
-			}).catch((e) => ws.send(JSON.stringify(checkErrorMessage(e))))
-			break;
+				}).catch((e) => ws.send(checkErrorMessage(e)))
+			}).catch((e) => ws.send(checkErrorMessage(e)))
+			break
 		default: //get all orders
 			handleResponse(httpOrders.get('/orders/'), ws)
-			break;
+			break
 	}
 }
 
@@ -105,30 +105,28 @@ function warehouse_api(message: string, input: any, ws: WebSocket) {
 	switch (message) {
 		case WarehouseServiceMessages.CREATE_INGREDIENT:
 			handleResponse(http.post('/warehouse/', input), ws)
-			break;
+			break
 		case WarehouseServiceMessages.DECREASE_INGREDIENTS_QUANTITY:
 			handleResponse(http.put('/warehouse/', input), ws)
-			break;
+			break
 		case WarehouseServiceMessages.GET_ALL_AVAILABLE_INGREDIENT:
 			handleResponse(http.get('/warehouse/available'), ws)
-			break;
+			break
 		case WarehouseServiceMessages.GET_ALL_INGREDIENT:
 			handleResponse(http.get('/warehouse/'), ws)
-			break;
+			break
 		// restock
 		default: {
-			const body = JSON.parse(input)
-			const quantity = {
-				"quantity": body.quantity
-			}
-			handleResponse(http.put('/warehouse/' + body.name, quantity), ws)
+			handleResponse(http.put('/warehouse/' + input.name, {
+				"quantity": input.quantity
+			}), ws)
 			break;
 		}
 	}
 }
 
 interface IArray {
-	[index: string]: number;
+	[index: string]: number
 }
 
 async function calcUsedIngredient(item: string, ingredients: IArray, items: IArray) {
@@ -137,7 +135,8 @@ async function calcUsedIngredient(item: string, ingredients: IArray, items: IArr
 		let ingredient = r.ingredient_name
 		let qty = r.quantity
 		ingredients[ingredient] =
-			Object.keys(ingredients).includes(ingredient) ? ingredients[ingredient] + (items[item] * qty) : items[item] * qty
+			Object.keys(ingredients).includes(ingredient) ?
+				ingredients[ingredient] + (items[item] * qty) : items[item] * qty
 	}
 	return ingredients
 }
@@ -205,16 +204,15 @@ function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket, manage
 				const msg: ResponseMessage = {
 					message: res.statusText,
 					code: res.status,
-					data: JSON.stringify(res.data)
+					data: res.data
 				}
 				ws.send(JSON.stringify(msg))
 				checkAndNotify(oldAvailable, managerWs)
 			})
 		})
 	}).catch((error) => {
-		const msg = checkErrorMessage(error)
-		ws.send(JSON.stringify(msg))
-	});
+		ws.send(checkErrorMessage(error))
+	})
 }
 
 function handleResponse(promise: Promise<any>, ws: WebSocket) {
@@ -222,21 +220,20 @@ function handleResponse(promise: Promise<any>, ws: WebSocket) {
 		const msg: ResponseMessage = {
 			message: res.statusText,
 			code: res.status,
-			data: JSON.stringify(res.data)
+			data: res.data
 		}
 		ws.send(JSON.stringify(msg))
 	}).catch((error) => {
-		const msg = checkErrorMessage(error)
-		ws.send(JSON.stringify(msg))
-	});
+		ws.send(checkErrorMessage(error))
+	})
 }
 
 function createErrorMessage(code: number, msg: string) {
-	return {
+	return JSON.stringify({
 		code: code,
 		message: msg,
 		data: ""
-	}
+	})
 }
 
 function checkErrorMessage(error: any) {
@@ -258,7 +255,7 @@ function checkAndNotify(oldAvailableIngredients: any, managerWs: WebSocket[]) {
 		if (missingIngredients.length > 0) {
 			const notification: MissingIngredientNotification = {
 				message: "NEW_MISSING_INGREDIENTS",
-				data: JSON.stringify(missingIngredients)
+				data: missingIngredients
 			}
 			managerWs.forEach(ws => {
 				ws.send(JSON.stringify(notification))

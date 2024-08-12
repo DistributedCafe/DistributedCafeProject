@@ -1,13 +1,13 @@
-import { createServer, IncomingMessage, Server, ServerResponse } from "http";
-import { OrdersServiceMessages, RequestMessage, ResponseMessage } from "../../src/utils/messages";
-import { Service } from "../../src/utils/service";
-import { ApiResponse } from "./api-response";
-import { DbCollections, DbNames, getCollection } from "./db-connection";
-import { addIdandState } from "./order-json-utils";
-import { WebSocket, WebSocketServer } from 'ws';
-import { check_service } from "../../src/check-service";
+import { createServer, IncomingMessage, Server, ServerResponse } from "http"
+import { OrdersServiceMessages, RequestMessage, ResponseMessage } from "../../src/utils/messages"
+import { Service } from "../../src/utils/service"
+import { ApiResponse } from "./api-response"
+import { DbCollections, DbNames, getCollection } from "./db-connection"
+import { addIdandState } from "./order-json-utils"
+import { WebSocket, WebSocketServer } from 'ws'
+import { check_service } from "../../src/check-service"
 import express from "express"
-import { egg, omelette, orderItemQuantity } from "./test-data";
+import { egg, omelette, orderItemQuantity } from "./test-data"
 
 const app = express()
 export let ws_route: WebSocket
@@ -26,18 +26,18 @@ export function closeWs() {
 }
 
 export function openWsRoute(address: string) {
-	ws_route = new WebSocket(address);
+	ws_route = new WebSocket(address)
 }
 
 export function openWsCheckService(address: string) {
-	ws_check_service = new WebSocket(address);
+	ws_check_service = new WebSocket(address)
 }
 
 function onMessage(ws: WebSocket, expectedResponse: ResponseMessage, request: string, callback: jest.DoneCallback) {
 	ws.on('message', async (msg: string) => {
 		await check_order_message(JSON.parse(msg), expectedResponse, request)
 		callback()
-	});
+	})
 }
 
 export function startWebsocket(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
@@ -46,15 +46,15 @@ export function startWebsocket(requestMessage: RequestMessage, expectedResponse:
 
 	ws_route.on('open', () => {
 		ws_route.send(JSON.stringify(requestMessage))
-	});
+	})
 }
 
 export function createConnectionAndCall(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
 	wss.on('connection', (ws) => {
-		ws.on('error', console.error);
+		ws.on('error', console.error)
 		onMessage(ws, expectedResponse, requestMessage.client_request, callback)
-	});
-	server.listen(8081, () => console.log('listening on port :8081'));
+	})
+	server.listen(8081, () => console.log('listening on port :8081'))
 
 	openWsCheckService('ws://localhost:8081')
 	ws_check_service.on('open', () => {
@@ -72,17 +72,17 @@ export function createConnectionAndCall(requestMessage: RequestMessage, expected
 export async function check_order_message(msg: ResponseMessage, expectedResponse: ResponseMessage, request?: string) {
 	console.log("MESSAGE: " + msg.message)
 	const expectedData = expectedResponse.data
-	expect(msg.code).toBe(expectedResponse.code);
-	expect(msg.message).toBe(expectedResponse.message);
+	expect(msg.code).toBe(expectedResponse.code)
+	expect(msg.message).toBe(expectedResponse.message)
 	if (msg.code == 200) {
 		if (request == OrdersServiceMessages.CREATE_ORDER) {
-			expect(JSON.parse(msg.data)).toStrictEqual(await addIdandState(expectedData));
+			expect(msg.data).toStrictEqual(await addIdandState(expectedData))
 			//check ingredient db
 			let dbEgg = await (await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)).findOne({ name: "egg" }, { projection: { _id: 0 } })
 			const qty = egg.quantity - (omelette.recipe[0].quantity * orderItemQuantity)
 			expect(dbEgg?.quantity).toBe(qty)
 		} else {
-			expect(JSON.parse(msg.data)).toStrictEqual(expectedData);
+			expect(msg.data).toStrictEqual(expectedData)
 		}
 	} else {
 		expect(msg.data).toBe("")
@@ -129,7 +129,7 @@ export function closeWsIfOpened(ws: WebSocket) {
 	}
 }
 
-export const OrderStates = {
+export const OrderState = {
 	PENDING: "PENDING",
 	READY: "READY",
 	COMPLETED: "COMPLETED"

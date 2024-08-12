@@ -4,7 +4,7 @@ import { OrdersServiceMessages, RequestMessage, ResponseMessage } from '../src/u
 import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection'
 import {
 	check_order_message, closeWs, closeWsIfOpened, createConnectionAndCall,
-	createRequestMessage, createResponseMessage, initializeServer, openWsCheckService, OrderStates, server, startWebsocket, ws_check_service, wss
+	createRequestMessage, createResponseMessage, initializeServer, openWsCheckService, OrderState, server, startWebsocket, ws_check_service, wss
 } from './utils/test-utils'
 import { addId, addIdandState } from './utils/order-json-utils'
 import { check_service } from '../src/check-service'
@@ -20,15 +20,15 @@ beforeAll(async () => {
 	await cleanCollection(DbNames.MENU, DbCollections.MENU)
 	await (await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)).createIndex({ name: 1 }, { unique: true })
 	await (await getCollection(DbNames.MENU, DbCollections.MENU)).createIndex({ name: 1 }, { unique: true })
-	await add(DbNames.MENU, DbCollections.MENU, JSON.stringify(omelette))
+	await add(DbNames.MENU, DbCollections.MENU, omelette)
 })
 
 
 beforeEach(async () => {
 	await cleanCollection(DbNames.ORDERS, DbCollections.ORDERS)
 	await cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
-	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(egg))
-	insertedId = (await add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(order))).insertedId.toString()
+	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, egg)
+	insertedId = (await add(DbNames.ORDERS, DbCollections.ORDERS, order)).insertedId.toString()
 	initializeServer()
 })
 
@@ -83,8 +83,8 @@ test('Create Order Test (check-service) - 200 and missing ingredient notificatio
 })
 
 test('Create Order Test (check-service) - 200', done => {
-	add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(coffee)).then(() => {
-		add(DbNames.MENU, DbCollections.MENU, JSON.stringify(blackCoffee)).then(() => {
+	add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, coffee).then(() => {
+		add(DbNames.MENU, DbCollections.MENU, blackCoffee).then(() => {
 			testCheckService(OrdersServiceMessages.CREATE_ORDER, newOrderOmelette,
 				createResponseMessage(OK, newOrderOmelette), done)
 		})
@@ -109,14 +109,14 @@ test('Create Order Test - 400 - Wrong parameters (check-service)', done => {
 })
 
 test('Put Order Test - 200', done => {
-	testPutOrder(OrderStates.PENDING, OrderStates.READY, OK, testApi, done)
+	testPutOrder(OrderState.PENDING, OrderState.READY, OK, testApi, done)
 })
 
 function testPutOrder(initState: string, finalState: string, apiResponse: ApiResponse, test: (action: string, input: any, expectedResponse: ResponseMessage, callback: jest.DoneCallback) => void, callback: jest.DoneCallback) {
 	cleanCollection(DbNames.ORDERS, DbCollections.ORDERS).then(() => {
 		let newOrder = { ...order }
 		newOrder["state"] = initState
-		add(DbNames.ORDERS, DbCollections.ORDERS, JSON.stringify(newOrder)).then((res) => {
+		add(DbNames.ORDERS, DbCollections.ORDERS, newOrder).then((res) => {
 			let id = res.insertedId.toString()
 			let update = {
 				"_id": id,
@@ -130,28 +130,28 @@ function testPutOrder(initState: string, finalState: string, apiResponse: ApiRes
 			} else {
 				expectedData = undefined
 			}
-			test(OrdersServiceMessages.PUT_ORDER, JSON.stringify(update),
+			test(OrdersServiceMessages.PUT_ORDER, update,
 				createResponseMessage(apiResponse, expectedData), callback)
 		})
 	})
 }
 
 test('Put Order Test - 200 (check-service)', done => {
-	testPutOrder(OrderStates.READY, OrderStates.COMPLETED, OK, testCheckService, done)
+	testPutOrder(OrderState.READY, OrderState.COMPLETED, OK, testCheckService, done)
 })
 
 test('Put Order Test - 400 (check-service)', done => {
-	testPutOrder(OrderStates.COMPLETED, OrderStates.PENDING, CHANGE_STATE_NOT_VALID, testCheckService, done)
+	testPutOrder(OrderState.COMPLETED, OrderState.PENDING, CHANGE_STATE_NOT_VALID, testCheckService, done)
 })
 
 test('Put Order Test - 404 (check-service) - id not found', done => {
 	cleanCollection(DbNames.ORDERS, DbCollections.ORDERS).then(() => {
 		let update = {
 			"_id": "1",
-			"state": OrderStates.PENDING
+			"state": OrderState.PENDING
 		}
 
-		testCheckService(OrdersServiceMessages.PUT_ORDER, JSON.stringify(update),
+		testCheckService(OrdersServiceMessages.PUT_ORDER, update,
 			createResponseMessage(ORDER_ID_NOT_FOUND, undefined), done)
 	})
 })
@@ -185,7 +185,7 @@ function createConnectionAndCallNewOrder(requestMessage: RequestMessage, expecte
 					expectedResponse.data = await addIdandState(expectedResponse.data)
 					check_order_message(orederRes, expectedResponse, OrdersServiceMessages.CREATE_ORDER)
 					expect(managerRes.message).toBe("NEW_MISSING_INGREDIENTS")
-					expect(JSON.parse(managerRes.data)).toStrictEqual([egg])
+					expect(managerRes.data).toStrictEqual([egg])
 					callback()
 				}
 			}

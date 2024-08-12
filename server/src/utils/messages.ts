@@ -1,4 +1,4 @@
-import { Service } from './service';
+import { Service } from './service'
 
 /**
  * This interface represents the request the client sends to the server
@@ -15,7 +15,7 @@ export interface RequestMessage {
 export interface ResponseMessage {
 	message: string,
 	code: number,
-	data: string
+	data: any
 }
 
 /**
@@ -52,17 +52,6 @@ export const MenuServiceMessages = {
 	GET_AVAILABLE_ITEMS: 'GET_AVAILABLE_ITEMS'
 }
 Object.freeze(MenuServiceMessages)
-
-
-/**
- * Different messages sent to log a frontend connection
- */
-export const Frontend = {
-	MANAGER: 'MANAGER',
-	EMPLOYEE: 'EMPLOYEE',
-	CUSTOMER: 'CUSTOMER',
-}
-Object.freeze(Frontend)
 
 /**
  * This interface represents the notification sent when an element is missing in the warehouse

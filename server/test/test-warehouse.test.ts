@@ -1,12 +1,12 @@
 import { Service } from '../src/utils/service'
-import { ResponseMessage, WarehouseServiceMessages } from '../src/utils/messages';
-import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection';
+import { ResponseMessage, WarehouseServiceMessages } from '../src/utils/messages'
+import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection'
 import {
 	closeWs, createConnectionAndCall, createRequestMessage, createResponseMessage,
 	initializeServer, server, startWebsocket
-} from './utils/test-utils';
-import { ERROR_INGREDIENT_ALREADY_EXISTS, ERROR_INGREDIENT_NOT_FOUND, ERROR_INGREDIENT_QUANTITY, OK } from './utils/api-response';
-import { coffee, milk, tea } from './utils/test-data';
+} from './utils/test-utils'
+import { ERROR_INGREDIENT_ALREADY_EXISTS, ERROR_INGREDIENT_NOT_FOUND, ERROR_INGREDIENT_QUANTITY, OK } from './utils/api-response'
+import { coffee, milk, tea } from './utils/test-data'
 
 // milk 95, tea 0
 let qty = 10
@@ -21,8 +21,8 @@ afterEach(() => {
 })
 beforeEach(async () => {
 	await cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)
-	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(milk))
-	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, JSON.stringify(tea))
+	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, milk)
+	await add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, tea)
 	initializeServer()
 })
 
@@ -40,12 +40,12 @@ const testApi = (action: string, input: any, expectedResponse: ResponseMessage, 
 test('Get all Ingredient Test (check-service) - 200', done => {
 	testCheckService(WarehouseServiceMessages.GET_ALL_INGREDIENT, '',
 		createResponseMessage(OK, [milk, tea]), done)
-});
+})
 
 test('Get all Available Ingredient Test (check-service) - 200', done => {
 	testCheckService(WarehouseServiceMessages.GET_ALL_AVAILABLE_INGREDIENT, '',
 		createResponseMessage(OK, [milk]), done)
-});
+})
 
 test('Get all Ingredient Test - 200', done => {
 	testApi(WarehouseServiceMessages.GET_ALL_INGREDIENT, '',
@@ -59,51 +59,51 @@ test('Get all Available Ingredient Test - 200', done => {
 
 // write
 test('Restock Test (check-service) - 200', done => {
-	let input = JSON.stringify({ name: "milk", quantity: qty })
+	let input = { name: "milk", quantity: qty }
 	let output = { name: "milk", quantity: (milk.quantity + qty) }
 
 	testCheckService(WarehouseServiceMessages.RESTOCK_INGREDIENT, input,
 		createResponseMessage(OK, output), done)
-});
+})
 
 test('Restock Test (check-service) - 400', done => {
-	let input = JSON.stringify({ name: "coffee", quantity: qty })
+	let input = { name: "coffee", quantity: qty }
 	testCheckService(WarehouseServiceMessages.RESTOCK_INGREDIENT, input,
 		createResponseMessage(ERROR_INGREDIENT_NOT_FOUND, ""), done)
-});
+})
 
 test('Create Ingredient Test (check-service) - 400', done => {
 	testCheckService(WarehouseServiceMessages.CREATE_INGREDIENT, milk,
 		createResponseMessage(ERROR_INGREDIENT_ALREADY_EXISTS, ""), done)
-});
+})
 
 test('Create Ingredient Test (check-service) - 200', done => {
 	testCheckService(WarehouseServiceMessages.CREATE_INGREDIENT, coffee,
 		createResponseMessage(OK, coffee), done)
-});
+})
 
 test('Decrease Ingredients Quantity Test (check-service) - 400', done => {
-	let input = JSON.stringify([{ name: "milk", quantity: (milk.quantity + qty) }])
+	let input = [{ name: "milk", quantity: (milk.quantity + qty) }]
 	testCheckService(WarehouseServiceMessages.DECREASE_INGREDIENTS_QUANTITY, input,
 		createResponseMessage(ERROR_INGREDIENT_QUANTITY, ""), done)
-});
+})
 
 test('Decrease Ingredients Quantity Test (check-service) - 200', done => {
-	let input = JSON.stringify([{ name: "milk", quantity: qty }])
+	let input = [{ name: "milk", quantity: qty }]
 	let output = [{ name: "milk", quantity: (milk.quantity - qty) }, { name: "tea", quantity: 0 }]
 	testCheckService(WarehouseServiceMessages.DECREASE_INGREDIENTS_QUANTITY, input,
 		createResponseMessage(OK, output), done)
-});
+})
 
 test('Restock Test - 200', done => {
-	let input = JSON.stringify({ name: "milk", quantity: qty })
+	let input = { name: "milk", quantity: qty }
 	let output = { name: "milk", quantity: (milk.quantity + qty) }
 	testApi(WarehouseServiceMessages.RESTOCK_INGREDIENT, input,
 		createResponseMessage(OK, output), done)
 })
 
 test('Restock Test - 400', done => {
-	let input = JSON.stringify({ name: "coffee", quantity: qty })
+	let input = { name: "coffee", quantity: qty }
 	testApi(WarehouseServiceMessages.RESTOCK_INGREDIENT, input,
 		createResponseMessage(ERROR_INGREDIENT_NOT_FOUND, ""), done)
 })
@@ -119,13 +119,13 @@ test('Create Ingredient Test - 200', done => {
 })
 
 test('Decrease Ingredients Quantity Test - 400', done => {
-	let input = JSON.stringify([{ name: "milk", quantity: (milk.quantity + qty) }])
+	let input = [{ name: "milk", quantity: (milk.quantity + qty) }]
 	testApi(WarehouseServiceMessages.DECREASE_INGREDIENTS_QUANTITY, input,
 		createResponseMessage(ERROR_INGREDIENT_QUANTITY, ""), done)
 })
 
 test('Decrease Ingredients Quantity Test - 200', done => {
-	let input = JSON.stringify([{ name: "milk", quantity: qty }])
+	let input = [{ name: "milk", quantity: qty }]
 	let output = [{ name: "milk", quantity: (milk.quantity - qty) }, { name: "tea", quantity: 0 }]
 	testApi(WarehouseServiceMessages.DECREASE_INGREDIENTS_QUANTITY, input,
 		createResponseMessage(OK, output), done)

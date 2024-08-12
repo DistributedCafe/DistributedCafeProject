@@ -34,10 +34,9 @@ const client: mongoDB.MongoClient = new mongoDB.MongoClient(DB_CONN_STRING)
  * @param input the element to add
  * @returns if the operation was successful and the id of the inserted element
  */
-export async function add(db_name: string, collection_name: string, input: string) {
+export async function add(db_name: string, collection_name: string, input: any) {
 	await client.connect()
-
-	return client.db(db_name).collection(collection_name).insertOne(JSON.parse(input))
+	return client.db(db_name).collection(collection_name).insertOne({ ...input })
 }
 
 /**
@@ -67,11 +66,10 @@ export async function cleanCollection(db_name: string, collection_name: string) 
  * @returns the last inserted Item
  */
 export async function getLastInsertedItem() {
-	let menuItems = (await client.db(DbNames.MENU).collection(DbCollections.MENU)).find({}, { projection: { _id: 0 } })
+	let menuItems = client.db(DbNames.MENU).collection(DbCollections.MENU).find({}, { projection: { _id: 0 } })
 	let last = (await menuItems.toArray()).pop()
 	return last!
 }
-
 /**
   * Utility function to get the last inserted Order
   * @returns the last inserted Order
@@ -79,7 +77,7 @@ export async function getLastInsertedItem() {
 export async function getLastInsertedOrder() {
 	await client.connect()
 
-	let orders = (await client.db(DbNames.ORDERS).collection(DbCollections.ORDERS)).find()
+	let orders = client.db(DbNames.ORDERS).collection(DbCollections.ORDERS).find()
 	let last = (await orders.toArray()).pop()
 	return last
 }

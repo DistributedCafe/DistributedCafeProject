@@ -1,4 +1,5 @@
 import { getLastInsertedOrder } from "./db-connection"
+import { OrderState } from "./test-utils"
 
 /**
  * Adds id and state to a given order.
@@ -11,7 +12,7 @@ export async function addIdandState(order: any) {
 	let last = await getLastInsertedOrder()
 	let output = { ...order }
 	output["_id"] = last?._id.toString()
-	output["state"] = "PENDING"
+	output["state"] = OrderState.PENDING
 	return output
 }
 
