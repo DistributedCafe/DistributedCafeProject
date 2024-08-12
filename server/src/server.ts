@@ -1,7 +1,7 @@
 import express from 'express'
 import { createServer } from 'http'
 import WebSocket, { Server as WebSocketServer } from 'ws'
-import { check_service } from './check-service'
+import { checkService } from './check-service'
 import { Log } from './utils/messages'
 import { is } from 'typia'
 
@@ -26,7 +26,7 @@ wss.on('connection', (ws: WebSocket) => {
 		if (is<Log>(parsedData)) {
 			managerWs.push(ws)
 		} else {
-			check_service(parsedData, ws, managerWs)
+			checkService(parsedData, ws, managerWs)
 		}
 	})
 

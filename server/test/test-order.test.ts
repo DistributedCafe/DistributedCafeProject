@@ -3,11 +3,11 @@ import { Service } from '../src/utils/service'
 import { OrdersServiceMessages, RequestMessage, ResponseMessage } from '../src/utils/messages'
 import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection'
 import {
-	check_order_message, closeWs, closeWsIfOpened, createConnectionAndCall,
-	createRequestMessage, createResponseMessage, initializeServer, openWsCheckService, OrderState, server, startWebsocket, ws_check_service, wss
+	checkOrderMessage, closeWs, closeWsIfOpened, createConnectionAndCall,
+	createRequestMessage, createResponseMessage, initializeServer, openWsCheckService, OrderState, server, startWebsocket, wsCheckService, wss
 } from './utils/test-utils'
 import { addId, addIdandState } from './utils/order-json-utils'
-import { check_service } from '../src/check-service'
+import { checkService } from '../src/check-service'
 import { ApiResponse, CHANGE_STATE_NOT_VALID, ERROR_MISSING_INGREDIENTS, ERROR_WRONG_PARAMETERS, OK, ORDER_ID_NOT_FOUND } from './utils/api-response'
 import { blackCoffee, coffee, egg, newOrderOmelette, newWrongOrder, omelette, order } from './utils/test-data'
 
@@ -183,7 +183,7 @@ function createConnectionAndCallNewOrder(requestMessage: RequestMessage, expecte
 
 					// server
 					expectedResponse.data = await addIdandState(expectedResponse.data)
-					check_order_message(orederRes, expectedResponse, OrdersServiceMessages.CREATE_ORDER)
+					checkOrderMessage(orederRes, expectedResponse, OrdersServiceMessages.CREATE_ORDER)
 					expect(managerRes.message).toBe("NEW_MISSING_INGREDIENTS")
 					expect(managerRes.data).toStrictEqual([egg])
 					callback()
@@ -194,11 +194,11 @@ function createConnectionAndCallNewOrder(requestMessage: RequestMessage, expecte
 	server.listen(8081, () => console.log('listening on port :8081'))
 
 	openWsCheckService('ws://localhost:8081')
-	ws_check_service.on('open', () => {
+	wsCheckService.on('open', () => {
 		let managerWsArray = Array()
 		managerWsArray.push(wsManager)
-		check_service(requestMessage, ws_check_service, managerWsArray)
-		ws_check_service.send(orderWsMsg)
+		checkService(requestMessage, wsCheckService, managerWsArray)
+		wsCheckService.send(orderWsMsg)
 	})
 
 	wsManager = new WebSocket('ws://localhost:8081')

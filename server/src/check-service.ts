@@ -23,21 +23,21 @@ const httpMenu = axios.create({
  * @param currentWs the websocket communication used
  * @param managerWs list of manager application web socket 
  */
-export function check_service(message: RequestMessage, currentWs: WebSocket, managerWs: WebSocket[]) {
+export function checkService(message: RequestMessage, currentWs: WebSocket, managerWs: WebSocket[]) {
 	switch (message.client_name) {
 		case Service.WAREHOUSE:
-			warehouse_api(message.client_request, message.input, currentWs)
+			warehouseApi(message.client_request, message.input, currentWs)
 			break
 		case Service.MENU:
-			menu_api(message.client_request, message.input, currentWs)
+			menuApi(message.client_request, message.input, currentWs)
 			break
 		default:
-			orders_api(message.client_request, message.input, currentWs, managerWs)
+			ordersApi(message.client_request, message.input, currentWs, managerWs)
 			break
 	}
 }
 
-async function menu_api(message: string, input: any, ws: WebSocket) {
+async function menuApi(message: string, input: any, ws: WebSocket) {
 	let names: string[] = []
 	switch (message) {
 		case MenuServiceMessages.CREATE_ITEM:
@@ -68,10 +68,10 @@ async function menu_api(message: string, input: any, ws: WebSocket) {
 	}
 }
 
-function orders_api(message: string, input: any, ws: WebSocket, managerWs: WebSocket[]) {
+function ordersApi(message: string, input: any, ws: WebSocket, managerWs: WebSocket[]) {
 	switch (message) {
 		case OrdersServiceMessages.CREATE_ORDER:
-			check_order(input).then((res) => {
+			checkOrder(input).then((res) => {
 				switch (res) {
 					case 200:
 						handleNewOrder(httpOrders.post('/orders/', input), input, ws, managerWs)
@@ -101,7 +101,7 @@ function orders_api(message: string, input: any, ws: WebSocket, managerWs: WebSo
 	}
 }
 
-function warehouse_api(message: string, input: any, ws: WebSocket) {
+function warehouseApi(message: string, input: any, ws: WebSocket) {
 	switch (message) {
 		case WarehouseServiceMessages.CREATE_INGREDIENT:
 			handleResponse(http.post('/warehouse/', input), ws)
@@ -163,7 +163,7 @@ function getQuantity(array: any[], name: string) {
 	return array.filter((i: any) => { return i.name == name })[0].quantity
 }
 
-async function check_order(input: any): Promise<number> {
+async function checkOrder(input: any): Promise<number> {
 	let response = 500
 	await http.get('/warehouse/available/').then(async (res) => {
 		const availableIngredients = res.data
@@ -204,7 +204,7 @@ function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket, manage
 				const msg: ResponseMessage = {
 					message: res.statusText,
 					code: res.status,
-					data: res.data
+					data: JSON.stringify(res.data)
 				}
 				ws.send(JSON.stringify(msg))
 				checkAndNotify(oldAvailable, managerWs)
@@ -220,7 +220,7 @@ function handleResponse(promise: Promise<any>, ws: WebSocket) {
 		const msg: ResponseMessage = {
 			message: res.statusText,
 			code: res.status,
-			data: res.data
+			data: JSON.stringify(res.data)
 		}
 		ws.send(JSON.stringify(msg))
 	}).catch((error) => {

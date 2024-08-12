@@ -29,36 +29,37 @@ const client: mongoDB.MongoClient = new mongoDB.MongoClient(DB_CONN_STRING)
 
 /**
  * Add one element into a collection
- * @param db_name 
- * @param collection_name 
+ * @param dbName 
+ * @param dbCollection 
  * @param input the element to add
  * @returns if the operation was successful and the id of the inserted element
  */
-export async function add(db_name: string, collection_name: string, input: any) {
+export async function add(dbName: string, dbCollection: string, input: any) {
 	await client.connect()
-	return client.db(db_name).collection(collection_name).insertOne({ ...input })
+	return client.db(dbName).collection(dbCollection).insertOne({ ...input })
 }
 
 /**
  * Get a specific collection of a DB
- * @param db_name 
- * @param db_collection 
+ * @param dbName 
+ * @param dbCollection 
  * @returns the collection
  */
-export async function getCollection(db_name: string, db_collection: string) {
+export async function getCollection(dbName: string, dbCollection: string) {
 
 	await client.connect()
 
-	return client.db(db_name).collection(db_collection)
+	return client.db(dbName).collection(dbCollection)
 }
 
 /**
  * Delete all the orders present in the collection
+ * @param dbName 
+ * @param dbCollection 
  */
-export async function cleanCollection(db_name: string, collection_name: string) {
+export async function cleanCollection(dbName: string, dbCollection: string) {
 	await client.connect()
-
-	await client.db(db_name).collection(collection_name).deleteMany()
+	await client.db(dbName).collection(dbCollection).deleteMany()
 }
 
 /**

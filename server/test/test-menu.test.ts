@@ -77,7 +77,7 @@ test('Add new item Test - 200 (check-service)', done => {
 })
 
 test('Update item Test - 200', done => {
-	const update_omelette = {
+	const updateOmelette = {
 		name: "omelette",
 		recipe: [
 			{
@@ -92,12 +92,12 @@ test('Update item Test - 200', done => {
 		price: 4
 	}
 
-	testApi(MenuServiceMessages.UPDATE_ITEM, update_omelette,
-		createResponseMessage(OK, update_omelette), done)
+	testApi(MenuServiceMessages.UPDATE_ITEM, updateOmelette,
+		createResponseMessage(OK, updateOmelette), done)
 })
 
 test('Update item Test - 200 (check-service)', done => {
-	const update_omelette = {
+	const updateOmelette = {
 		name: "omelette",
 		recipe: [
 			{
@@ -115,8 +115,8 @@ test('Update item Test - 200 (check-service)', done => {
 		],
 		price: 5
 	}
-	testCheckService(MenuServiceMessages.UPDATE_ITEM, update_omelette,
-		createResponseMessage(OK, update_omelette), done)
+	testCheckService(MenuServiceMessages.UPDATE_ITEM, updateOmelette,
+		createResponseMessage(OK, updateOmelette), done)
 })
 
 test('Get all available items Test - 404', done => {

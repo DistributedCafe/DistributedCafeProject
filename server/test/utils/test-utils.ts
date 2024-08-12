@@ -5,13 +5,13 @@ import { ApiResponse } from "./api-response"
 import { DbCollections, DbNames, getCollection } from "./db-connection"
 import { addIdandState } from "./order-json-utils"
 import { WebSocket, WebSocketServer } from 'ws'
-import { check_service } from "../../src/check-service"
+import { checkService } from "../../src/check-service"
 import express from "express"
 import { egg, omelette, orderItemQuantity } from "./test-data"
 
 const app = express()
-export let ws_route: WebSocket
-export let ws_check_service: WebSocket
+export let wsRoute: WebSocket
+export let wsCheckService: WebSocket
 export let wss: WebSocketServer
 export let server: Server<typeof IncomingMessage, typeof ServerResponse>
 
@@ -21,31 +21,31 @@ export function initializeServer() {
 }
 
 export function closeWs() {
-	closeWsIfOpened(ws_check_service)
-	closeWsIfOpened(ws_route)
+	closeWsIfOpened(wsCheckService)
+	closeWsIfOpened(wsRoute)
 }
 
 export function openWsRoute(address: string) {
-	ws_route = new WebSocket(address)
+	wsRoute = new WebSocket(address)
 }
 
 export function openWsCheckService(address: string) {
-	ws_check_service = new WebSocket(address)
+	wsCheckService = new WebSocket(address)
 }
 
 function onMessage(ws: WebSocket, expectedResponse: ResponseMessage, request: string, callback: jest.DoneCallback) {
 	ws.on('message', async (msg: string) => {
-		await check_order_message(JSON.parse(msg), expectedResponse, request)
+		await checkOrderMessage(JSON.parse(msg), expectedResponse, request)
 		callback()
 	})
 }
 
 export function startWebsocket(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
 	openWsRoute('ws://localhost:3000')
-	onMessage(ws_route, expectedResponse, requestMessage.client_request, callback)
+	onMessage(wsRoute, expectedResponse, requestMessage.client_request, callback)
 
-	ws_route.on('open', () => {
-		ws_route.send(JSON.stringify(requestMessage))
+	wsRoute.on('open', () => {
+		wsRoute.send(JSON.stringify(requestMessage))
 	})
 }
 
@@ -57,9 +57,9 @@ export function createConnectionAndCall(requestMessage: RequestMessage, expected
 	server.listen(8081, () => console.log('listening on port :8081'))
 
 	openWsCheckService('ws://localhost:8081')
-	ws_check_service.on('open', () => {
+	wsCheckService.on('open', () => {
 		const managerWsArray = Array()
-		check_service(requestMessage, ws_check_service, managerWsArray)
+		checkService(requestMessage, wsCheckService, managerWsArray)
 	})
 }
 
@@ -69,20 +69,20 @@ export function createConnectionAndCall(requestMessage: RequestMessage, expected
  * @param expectedResponse correct response
  * @param request request of the client (if needed)
  */
-export async function check_order_message(msg: ResponseMessage, expectedResponse: ResponseMessage, request?: string) {
+export async function checkOrderMessage(msg: ResponseMessage, expectedResponse: ResponseMessage, request?: string) {
 	console.log("MESSAGE: " + msg.message)
 	const expectedData = expectedResponse.data
 	expect(msg.code).toBe(expectedResponse.code)
 	expect(msg.message).toBe(expectedResponse.message)
 	if (msg.code == 200) {
 		if (request == OrdersServiceMessages.CREATE_ORDER) {
-			expect(msg.data).toStrictEqual(await addIdandState(expectedData))
+			expect(JSON.parse(msg.data)).toStrictEqual(await addIdandState(expectedData))
 			//check ingredient db
 			let dbEgg = await (await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)).findOne({ name: "egg" }, { projection: { _id: 0 } })
 			const qty = egg.quantity - (omelette.recipe[0].quantity * orderItemQuantity)
 			expect(dbEgg?.quantity).toBe(qty)
 		} else {
-			expect(msg.data).toStrictEqual(expectedData)
+			expect(JSON.parse(msg.data)).toStrictEqual(expectedData)
 		}
 	} else {
 		expect(msg.data).toBe("")
