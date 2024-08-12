@@ -15,20 +15,30 @@ export let wsCheckService: WebSocket
 export let wss: WebSocketServer
 export let server: Server<typeof IncomingMessage, typeof ServerResponse>
 
+/**
+ * This function initializes the server
+ */
 export function initializeServer() {
 	server = createServer(app)
 	wss = new WebSocketServer({ server })
 }
 
+/**
+ * This function closes the web socket used for the routes tests and the one used for the check service tests
+ */
 export function closeWs() {
 	closeWsIfOpened(wsCheckService)
 	closeWsIfOpened(wsRoute)
 }
 
-export function openWsRoute(address: string) {
+function openWsRoute(address: string) {
 	wsRoute = new WebSocket(address)
 }
 
+/**
+ * This function opems the check service used for the routes tests
+ * @param address 
+ */
 export function openWsCheckService(address: string) {
 	wsCheckService = new WebSocket(address)
 }
@@ -40,6 +50,12 @@ function onMessage(ws: WebSocket, expectedResponse: ResponseMessage, request: st
 	})
 }
 
+/**
+ * This function sends a message to the server with a request, collects the response and check if it's correct
+ * @param requestMessage 
+ * @param expectedResponse 
+ * @param callback 
+ */
 export function startWebsocket(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
 	openWsRoute('ws://localhost:3000')
 	onMessage(wsRoute, expectedResponse, requestMessage.client_request, callback)
@@ -49,6 +65,12 @@ export function startWebsocket(requestMessage: RequestMessage, expectedResponse:
 	})
 }
 
+/**
+ * This function calls check service given a request message, collects the response and check if it's correct
+ * @param requestMessage 
+ * @param expectedResponse 
+ * @param callback 
+ */
 export function createConnectionAndCall(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
 	wss.on('connection', (ws) => {
 		ws.on('error', console.error)
@@ -129,6 +151,9 @@ export function closeWsIfOpened(ws: WebSocket) {
 	}
 }
 
+/**
+ * Possible states that an order can have 
+ */
 export const OrderState = {
 	PENDING: "PENDING",
 	READY: "READY",

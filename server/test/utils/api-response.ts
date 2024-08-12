@@ -1,4 +1,6 @@
-
+/**
+ * This interface represents the response given by an API
+ */
 export interface ApiResponse {
 	code: number,
 	message: string

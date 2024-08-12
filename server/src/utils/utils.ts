@@ -6,6 +6,12 @@ interface IArray {
 	[index: string]: number
 }
 
+/**
+ * This function creates an error message given the code and the message returned by an API
+ * @param code 
+ * @param msg 
+ * @returns a new response message with empty data
+ */
 export function createErrorMessage(code: number, msg: string) {
 	return JSON.stringify({
 		code: code,
@@ -14,6 +20,12 @@ export function createErrorMessage(code: number, msg: string) {
 	})
 }
 
+/**
+ * This function checks if the response of an error message is undefined and if it's the case 
+ * it returns "ERROR_SERVER_NOT_AVAILABLE", otherwise it returns the response of the message
+ * @param error 
+ * @returns 
+ */
 export function checkErrorMessage(error: any) {
 	return error.response == undefined ? createErrorMessage(500, "ERROR_SERVER_NOT_AVAILABLE") :
 		createErrorMessage(error.response.status, error.response.statusText)
@@ -53,6 +65,11 @@ function getQuantity(array: any[], name: string) {
 	return array.filter((i: any) => { return i.name == name })[0].quantity
 }
 
+/**
+ * This function checks if there are enough ingredients in the warehouse to complete the order  
+ * @param input the order
+ * @returns true if there are enough ingredients, false otherwise
+ */
 export async function checkOrder(input: any): Promise<number> {
 	let response = 500
 	await http.get('/warehouse/available/').then(async (res) => {
@@ -95,6 +112,16 @@ function checkAndNotify(oldAvailableIngredients: any, managerWs: WebSocket[]) {
 	})
 }
 
+/**
+ * This function handles the creation of a new order. If the new order is sucessfully created, 
+ * it removes the ingredients necessary to complete the order from the warehouse.
+ * If one or more ingredients become missing, it sends to all the manager frontends logged a notification.
+ * At the end, it sends a message back with the response of the API.
+ * @param promise returned by the create order API
+ * @param input the order
+ * @param ws 
+ * @param managerWs array of all the manager frontends logged
+ */
 export function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket, managerWs: WebSocket[]) {
 	promise.then(async (res) => {
 		const orderItems = input.items
@@ -128,6 +155,11 @@ export function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket,
 	})
 }
 
+/**
+ * This function handles the call of an API. It sends a message back with the response.
+ * @param promise returned by the API
+ * @param ws 
+ */
 export function handleResponse(promise: Promise<any>, ws: WebSocket) {
 	promise.then((res) => {
 		const msg: ResponseMessage = {
