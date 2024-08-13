@@ -1,14 +1,11 @@
-import { WebSocket } from 'ws'
 import { Service } from '../src/utils/service'
-import { OrdersServiceMessages, RequestMessage, ResponseMessage } from '../src/utils/messages'
+import { OrdersServiceMessages, ResponseMessage } from '../src/utils/messages'
 import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection'
 import {
-	checkOrderMessage, closeServer, closeWs, closeWsIfOpened, createConnectionAndCall,
-	createConnectionAndCallNewOrder,
-	createRequestMessage, createResponseMessage, initializeServer, openWsCheckService, OrderState, startWebsocket
+	closeServer, closeWs, createConnectionAndCall, createConnectionAndCallNewOrder, createRequestMessage, createResponseMessage,
+	initializeServer, OrderState, startWebsocket
 } from './utils/test-utils'
-import { addId, addIdandState } from './utils/order-json-utils'
-import { checkService } from '../src/check-service'
+import { addId } from './utils/order-json-utils'
 import { ApiResponse, CHANGE_STATE_NOT_VALID, ERROR_MISSING_INGREDIENTS, ERROR_WRONG_PARAMETERS, OK, ORDER_ID_NOT_FOUND } from './utils/api-response'
 import { blackCoffee, coffee, egg, friedEgg, newOrderMissingIngredient, newOrderNotification, newOrderOmelette, newWrongOrder, omelette, order, salt } from './utils/test-data'
 
