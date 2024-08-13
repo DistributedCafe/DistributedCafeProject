@@ -5,7 +5,7 @@ import {
 } from './utils/messages'
 import { Service } from './utils/service'
 import WebSocket from 'ws'
-import { checkErrorMessage, checkOrder, createErrorMessage, handleNewOrder, handleResponse } from './utils/utils'
+import { checkOrder, createErrorMessage, handleNewOrder, handleResponse } from './utils/utils'
 
 /**
  * This function is used to call the correct microservice and API based on the received RequestMessage. 

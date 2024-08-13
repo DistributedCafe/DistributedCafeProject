@@ -2,8 +2,9 @@ import { Service } from '../src/utils/service'
 import { ResponseMessage, WarehouseServiceMessages } from '../src/utils/messages'
 import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection'
 import {
+	closeServer,
 	closeWs, createConnectionAndCall, createRequestMessage, createResponseMessage,
-	initializeServer, server, startWebsocket
+	initializeServer, startWebsocket
 } from './utils/test-utils'
 import { ERROR_INGREDIENT_ALREADY_EXISTS, ERROR_INGREDIENT_NOT_FOUND, ERROR_INGREDIENT_QUANTITY, OK } from './utils/api-response'
 import { coffee, milk, tea } from './utils/test-data'
@@ -17,7 +18,7 @@ beforeAll(async () => {
 
 afterEach(() => {
 	closeWs()
-	server.close()
+	closeServer()
 })
 beforeEach(async () => {
 	await cleanCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)

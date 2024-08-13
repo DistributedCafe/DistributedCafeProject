@@ -2,8 +2,9 @@ import { Service } from '../src/utils/service'
 import { MenuServiceMessages, ResponseMessage } from '../src/utils/messages'
 import { add, cleanCollection, closeMongoClient, DbCollections, DbNames, getCollection } from './utils/db-connection'
 import {
+	closeServer,
 	closeWs, createConnectionAndCall, createRequestMessage,
-	createResponseMessage, initializeServer, server, startWebsocket
+	createResponseMessage, initializeServer, startWebsocket
 } from './utils/test-utils'
 import { boiledEgg, egg, friedEgg, omelette } from './utils/test-data'
 import { ERROR_EMPTY_WAREHOUSE, OK } from './utils/api-response'
@@ -22,7 +23,7 @@ beforeEach(async () => {
 
 afterEach(() => {
 	closeWs()
-	server.close()
+	closeServer()
 })
 
 afterAll(() => { closeMongoClient() })
