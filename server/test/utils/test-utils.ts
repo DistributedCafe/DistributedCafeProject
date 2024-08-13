@@ -7,13 +7,16 @@ import { addIdandState } from "./order-json-utils"
 import { WebSocket, WebSocketServer } from 'ws'
 import { checkService } from "../../src/check-service"
 import express from "express"
-import { egg, friedEgg, omelette, salt } from "./test-data"
+import { egg, salt } from "./test-data"
 
 const app = express()
-export let wsRoute: WebSocket
-export let wsCheckService: WebSocket
-export let wss: WebSocketServer
-export let server: Server<typeof IncomingMessage, typeof ServerResponse>
+let wsRoute: WebSocket
+let wsCheckService: WebSocket
+let wss: WebSocketServer
+let server: Server<typeof IncomingMessage, typeof ServerResponse>
+let wsManager: WebSocket
+const managerWsMsg = "Manager frontend web socket"
+const orderWsMsg = "New order web socket"
 
 interface IArray {
 	[index: string]: number
@@ -24,6 +27,13 @@ createOrderIngredients[egg.name] = egg.quantity
 createOrderIngredients[salt.name] = salt.quantity
 
 /**
+ * This function closes the server
+ */
+export function closeServer() {
+	server.close()
+}
+
+/**
  * This function initializes the server
  */
 export function initializeServer() {
@@ -32,11 +42,13 @@ export function initializeServer() {
 }
 
 /**
- * This function closes the web socket used for the routes tests and the one used for the check service tests
+ * This function closes the web socket used for the routes tests, 
+ * the one used for the check service tests and the manager application one
  */
 export function closeWs() {
 	closeWsIfOpened(wsCheckService)
 	closeWsIfOpened(wsRoute)
+	closeWsIfOpened(wsManager)
 }
 
 function openWsRoute(address: string) {
@@ -180,5 +192,63 @@ export const OrderState = {
 	PENDING: "PENDING",
 	READY: "READY",
 	COMPLETED: "COMPLETED"
+}
+
+interface IWebsocketArray {
+	[index: string]: WebSocket
+}
+
+/**
+ * This function calls check service given a request message, 
+ * collects the response and check if it's correct in case a new order is created
+ * @param requestMessage 
+ * @param expectedResponse 
+ * @param callback 
+ */
+export function createConnectionAndCallNewOrder(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
+	let connections: Map<WebSocket, string> = new Map()
+	let wsArray = {} as IWebsocketArray
+	wss.on('connection', (ws: WebSocket) => {
+		ws.on('error', console.error)
+
+		ws.on('message', async (msg: string) => {
+			if (msg == managerWsMsg) {
+				wsArray[managerWsMsg] = ws
+			} else if (msg == orderWsMsg) {
+				wsArray[orderWsMsg] = ws
+			} else {
+				connections.set(ws, msg)
+				if (connections.size == 2) {
+					const orederRes = JSON.parse(connections.get(wsArray[orderWsMsg])!)
+					const managerRes = JSON.parse(connections.get(wsArray[managerWsMsg])!)
+
+					expect(wsArray[managerWsMsg]).toBe(ws)
+					expect(wsArray[orderWsMsg] == ws).toBeFalsy
+
+					// server
+					expectedResponse.data = await addIdandState(expectedResponse.data)
+					checkOrderMessage(orederRes, expectedResponse, requestMessage).then(() => {
+						expect(managerRes.message).toBe("NEW_MISSING_INGREDIENTS")
+						expect(managerRes.data).toStrictEqual([egg])
+						callback()
+					})
+				}
+			}
+		})
+	})
+	server.listen(8081, () => console.log('listening on port :8081'))
+
+	openWsCheckService('ws://localhost:8081')
+	wsCheckService.on('open', () => {
+		let managerWsArray = Array()
+		managerWsArray.push(wsManager)
+		checkService(requestMessage, wsCheckService, managerWsArray)
+		wsCheckService.send(orderWsMsg)
+	})
+
+	wsManager = new WebSocket('ws://localhost:8081')
+	wsManager.on('open', () => {
+		wsManager.send(managerWsMsg)
+	})
 }
 
