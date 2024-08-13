@@ -35,7 +35,7 @@ export class HomeComponent {
 	activePath: string = ""
 	ws!: WebSocket
 
-	constructor(router: Router, private notification: MatSnackBar) {
+	constructor(router: Router, notification: MatSnackBar) {
 		if (localStorage.getItem(this.activePath) == undefined) {
 			localStorage.setItem(this.activePath, "")
 		} else {
@@ -53,7 +53,7 @@ export class HomeComponent {
 		this.ws.onmessage = function(e) {
 			const data = JSON.parse(e.data)
 			if (equals<MissingIngredientNotification>(data)) {
-				const missingIngredients = JSON.parse(data.data)
+				const missingIngredients = data.data
 				notify(createMsg(missingIngredients), "OK")
 			}
 		}
