@@ -54,7 +54,7 @@ export interface Log {
  */
 export interface MissingIngredientNotification {
 	message: string,
-	data: string
+	data: any
 }
 
 /**

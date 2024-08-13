@@ -12,7 +12,7 @@ import {
 	MatDialogTitle,
 } from '@angular/material/dialog';
 import { MenuServiceMessages, RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../../utils/messages';
-import { IngredientInRecipe, Item } from '../../utils/Item';
+import { Item } from '../../utils/Item';
 import { Service } from '../../utils/service';
 import { DialogData } from '../../utils/DialogData';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -79,6 +79,7 @@ export class Dialog {
 	name: string = ''
 	price: number = 1
 	errorEmpty = false
+	errorPrice = false
 	error = false
 	selectedIngredients: string[] = Array()
 	selectedQuantities = {} as IArray
@@ -129,6 +130,8 @@ export class Dialog {
 	public add() {
 		if (this.selectedIngredients.length <= 0) {
 			this.error = true
+		} else if (this.price <= 0) {
+			this.errorPrice = true
 		} else {
 			const data = this.data
 

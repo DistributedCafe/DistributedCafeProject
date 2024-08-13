@@ -4,6 +4,9 @@
     <p *ngIf="errorEmpty" class="error">
         Menu database is empty!
     </p>
+    <p *ngIf="error" class="error">
+        No ingredient selected!
+    </p>
     <div *ngIf="!errorEmpty">
         <section  *ngFor="let ingredient of ingredients; index as i">
             <p>
@@ -14,6 +17,9 @@
             </p>
         </section>
     </div>
+    <p *ngIf="errorPrice" class="error">
+        Illegal price!
+    </p>
     <p>
         <mat-form-field class="form" appearance="outline">
             <mat-label>Price</mat-label>

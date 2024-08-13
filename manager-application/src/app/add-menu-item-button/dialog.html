@@ -24,6 +24,9 @@
             </p>
         </section>
     </div>
+    <p *ngIf="errorPrice" class="error">
+        Illigal price!
+    </p>
     <p>
         <mat-form-field class="form" appearance="outline">
             <mat-label>Price</mat-label>

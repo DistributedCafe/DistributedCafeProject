@@ -77,6 +77,8 @@ export class Dialog {
 	selectedQuantities = {} as IArray
 	selectedIngredients: string[] = Array()
 	errorEmpty = false
+	errorPrice = false
+	error = false
 	price = this.data.item.price
 
 	closeDialog() {
@@ -125,37 +127,44 @@ export class Dialog {
 	}
 
 	public updateItem() {
-		const data = this.data
-		const closeDialog = () => this.closeDialog()
-		const openDialog = (msg: any) => {
-			this.dialog.open(ErrorDialog, {
-				data:
-					msg
-			});
-		}
-		const input = {
-			name: data.item.name,
-			recipe: buildRecipe(this.selectedQuantities, this.selectedIngredients),
-			price: this.price
-		}
-		const request: RequestMessage = {
-			client_name: Service.MENU,
-			client_request: MenuServiceMessages.UPDATE_ITEM,
-			input: input
-		}
-		if (!checkWsConnectionAndSend(request, data.ws)) {
-			closeDialog()
-		}
-		data.ws.onmessage = function(e) {
-			const response = JSON.parse(e.data) as ResponseMessage
-			if (response.code == 200) {
-				console.log(response.message)
+		const recipe = buildRecipe(this.selectedQuantities, this.selectedIngredients)
+		if (this.price <= 0) {
+			this.errorPrice = true
+		} else if (recipe.length <= 0) {
+			this.error = true
+		} else {
+			const data = this.data
+			const closeDialog = () => this.closeDialog()
+			const openDialog = (msg: any) => {
+				this.dialog.open(ErrorDialog, {
+					data:
+						msg
+				});
+			}
+			const input = {
+				name: data.item.name,
+				recipe: recipe,
+				price: this.price
+			}
+			const request: RequestMessage = {
+				client_name: Service.MENU,
+				client_request: MenuServiceMessages.UPDATE_ITEM,
+				input: input
+			}
+			if (!checkWsConnectionAndSend(request, data.ws)) {
 				closeDialog()
-			} else {
-				console.error(response.code)
-				console.error(response.message)
-				data.dialog.closeAll()
-				openDialog(response)
+			}
+			data.ws.onmessage = function(e) {
+				const response = JSON.parse(e.data) as ResponseMessage
+				if (response.code == 200) {
+					console.log(response.message)
+					closeDialog()
+				} else {
+					console.error(response.code)
+					console.error(response.message)
+					data.dialog.closeAll()
+					openDialog(response)
+				}
 			}
 		}
 	}
