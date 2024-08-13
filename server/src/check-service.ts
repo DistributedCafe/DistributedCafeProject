@@ -1,4 +1,4 @@
-import { http, httpMenu, httpOrders } from './utils/axios'
+import { catchErrorAndSendMsg, http, httpMenu, httpOrders } from './utils/axios'
 import {
 	MenuServiceMessages, OrdersServiceMessages,
 	RequestMessage, WarehouseServiceMessages
@@ -41,7 +41,7 @@ async function menuApi(message: string, input: any, ws: WebSocket) {
 			handleResponse(httpMenu.put('/menu/', input), ws)
 			break
 		case MenuServiceMessages.GET_AVAILABLE_ITEMS:
-			await http.get('/warehouse/available/').then((res) => {
+			catchErrorAndSendMsg(http.get('/warehouse/available/').then((res) => {
 				const availableIng: any[] = res.data
 
 				availableIng.forEach(e => {
@@ -49,9 +49,7 @@ async function menuApi(message: string, input: any, ws: WebSocket) {
 				})
 
 				handleResponse(httpMenu.get('/menu/available/' + JSON.stringify(names)), ws)
-			}).catch((e) => {
-				ws.send(checkErrorMessage(e))
-			})
+			}), ws)
 			break
 		default: //get item by name
 			handleResponse(httpMenu.get('/menu/' + input), ws)
@@ -79,12 +77,12 @@ function ordersApi(message: string, input: any, ws: WebSocket, managerWs: WebSoc
 			handleResponse(httpOrders.get('/orders/' + input), ws)
 			break
 		case OrdersServiceMessages.PUT_ORDER:
-			httpOrders.get('/orders/' + input._id).then((res) => {
+			catchErrorAndSendMsg(httpOrders.get('/orders/' + input._id).then((res) => {
 				res.data["state"] = input.state
-				httpOrders.put('/orders/', res.data).then(() => {
+				catchErrorAndSendMsg(httpOrders.put('/orders/', res.data).then(() => {
 					handleResponse(httpOrders.get('/orders/'), ws)
-				}).catch((e) => ws.send(checkErrorMessage(e)))
-			}).catch((e) => ws.send(checkErrorMessage(e)))
+				}), ws)
+			}), ws)
 			break
 		default: //get all orders
 			handleResponse(httpOrders.get('/orders/'), ws)
