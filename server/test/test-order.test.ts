@@ -9,7 +9,7 @@ import {
 import { addId, addIdandState } from './utils/order-json-utils'
 import { checkService } from '../src/check-service'
 import { ApiResponse, CHANGE_STATE_NOT_VALID, ERROR_MISSING_INGREDIENTS, ERROR_WRONG_PARAMETERS, OK, ORDER_ID_NOT_FOUND } from './utils/api-response'
-import { blackCoffee, coffee, egg, newOrderOmelette, newWrongOrder, omelette, order } from './utils/test-data'
+import { blackCoffee, coffee, egg, friedEgg, newOrderMissingIngredient, newOrderNotification, newOrderOmelette, newWrongOrder, omelette, order, salt } from './utils/test-data'
 
 let wsManager: WebSocket
 let insertedId: string
@@ -22,7 +22,6 @@ beforeAll(async () => {
 	await (await getCollection(DbNames.MENU, DbCollections.MENU)).createIndex({ name: 1 }, { unique: true })
 	await add(DbNames.MENU, DbCollections.MENU, omelette)
 })
-
 
 beforeEach(async () => {
 	await cleanCollection(DbNames.ORDERS, DbCollections.ORDERS)
@@ -48,6 +47,7 @@ function testApi(action: string, input: any, expectedResponse: ResponseMessage, 
 	startWebsocket(createRequestMessage(Service.ORDERS, action, input),
 		expectedResponse, callback)
 }
+
 //read
 test('Get all orders - 200', done => {
 	testApi(OrdersServiceMessages.GET_ALL_ORDERS, '', createResponseMessage(OK, [addId(order, insertedId)]), done)
@@ -78,8 +78,12 @@ test('Create Order Test - 200', done => {
 })
 
 test('Create Order Test (check-service) - 200 and missing ingredient notification', done => {
-	createConnectionAndCallNewOrder(createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrderOmelette),
-		createResponseMessage(OK, newOrderOmelette), done)
+	add(DbNames.WAREHOUSE, DbCollections.WAREHOUSE, salt).then(() => {
+		add(DbNames.MENU, DbCollections.MENU, friedEgg).then(() => {
+			createConnectionAndCallNewOrder(createRequestMessage(Service.ORDERS, OrdersServiceMessages.CREATE_ORDER, newOrderNotification),
+				createResponseMessage(OK, newOrderNotification), done)
+		})
+	})
 })
 
 test('Create Order Test (check-service) - 200', done => {
@@ -106,6 +110,11 @@ test('Create Order Test - 400 - Wrong parameters', done => {
 test('Create Order Test - 400 - Wrong parameters (check-service)', done => {
 	testCheckService(OrdersServiceMessages.CREATE_ORDER, newWrongOrder,
 		createResponseMessage(ERROR_WRONG_PARAMETERS, ""), done)
+})
+
+test('Create Order Test - 400 - Missing ingredients (check-service)', done => {
+	testCheckService(OrdersServiceMessages.CREATE_ORDER, newOrderMissingIngredient,
+		createResponseMessage(ERROR_MISSING_INGREDIENTS, ""), done)
 })
 
 test('Put Order Test - 200', done => {
@@ -163,7 +172,6 @@ interface IArray {
 function createConnectionAndCallNewOrder(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
 	let connections: Map<WebSocket, string> = new Map()
 	let wsArray = {} as IArray
-
 	wss.on('connection', (ws: WebSocket) => {
 		ws.on('error', console.error)
 
@@ -183,10 +191,11 @@ function createConnectionAndCallNewOrder(requestMessage: RequestMessage, expecte
 
 					// server
 					expectedResponse.data = await addIdandState(expectedResponse.data)
-					checkOrderMessage(orederRes, expectedResponse, OrdersServiceMessages.CREATE_ORDER)
-					expect(managerRes.message).toBe("NEW_MISSING_INGREDIENTS")
-					expect(managerRes.data).toStrictEqual([egg])
-					callback()
+					checkOrderMessage(orederRes, expectedResponse, requestMessage).then(() => {
+						expect(managerRes.message).toBe("NEW_MISSING_INGREDIENTS")
+						expect(managerRes.data).toStrictEqual([egg])
+						callback()
+					})
 				}
 			}
 		})

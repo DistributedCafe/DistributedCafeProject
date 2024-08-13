@@ -46,9 +46,7 @@ async function calcUsedIngredient(item: string, ingredients: IArray, items: IArr
 function calcItemNumber(orderItem: any[]) {
 	let items = {} as IArray
 	orderItem.forEach((i: any) => {
-		let item: string = i.item.name.toString()
-		let qty: number = i.quantity
-		items[item] = Object.keys(items).includes(item) ? items[item] + qty : qty
+		items[i.item.name.toString()] = i.quantity
 	})
 	return items
 }

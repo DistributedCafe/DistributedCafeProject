@@ -7,13 +7,21 @@ import { addIdandState } from "./order-json-utils"
 import { WebSocket, WebSocketServer } from 'ws'
 import { checkService } from "../../src/check-service"
 import express from "express"
-import { egg, omelette, orderItemQuantity } from "./test-data"
+import { egg, friedEgg, omelette, salt } from "./test-data"
 
 const app = express()
 export let wsRoute: WebSocket
 export let wsCheckService: WebSocket
 export let wss: WebSocketServer
 export let server: Server<typeof IncomingMessage, typeof ServerResponse>
+
+interface IArray {
+	[index: string]: number
+}
+
+const createOrderIngredients = {} as IArray
+createOrderIngredients[egg.name] = egg.quantity
+createOrderIngredients[salt.name] = salt.quantity
 
 /**
  * This function initializes the server
@@ -43,7 +51,7 @@ export function openWsCheckService(address: string) {
 	wsCheckService = new WebSocket(address)
 }
 
-function onMessage(ws: WebSocket, expectedResponse: ResponseMessage, request: string, callback: jest.DoneCallback) {
+function onMessage(ws: WebSocket, expectedResponse: ResponseMessage, request: RequestMessage, callback: jest.DoneCallback) {
 	ws.on('message', async (msg: string) => {
 		await checkOrderMessage(JSON.parse(msg), expectedResponse, request)
 		callback()
@@ -58,7 +66,7 @@ function onMessage(ws: WebSocket, expectedResponse: ResponseMessage, request: st
  */
 export function startWebsocket(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
 	openWsRoute('ws://localhost:3000')
-	onMessage(wsRoute, expectedResponse, requestMessage.client_request, callback)
+	onMessage(wsRoute, expectedResponse, requestMessage, callback)
 
 	wsRoute.on('open', () => {
 		wsRoute.send(JSON.stringify(requestMessage))
@@ -74,7 +82,7 @@ export function startWebsocket(requestMessage: RequestMessage, expectedResponse:
 export function createConnectionAndCall(requestMessage: RequestMessage, expectedResponse: ResponseMessage, callback: jest.DoneCallback) {
 	wss.on('connection', (ws) => {
 		ws.on('error', console.error)
-		onMessage(ws, expectedResponse, requestMessage.client_request, callback)
+		onMessage(ws, expectedResponse, requestMessage, callback)
 	})
 	server.listen(8081, () => console.log('listening on port :8081'))
 
@@ -91,18 +99,32 @@ export function createConnectionAndCall(requestMessage: RequestMessage, expected
  * @param expectedResponse correct response
  * @param request request of the client (if needed)
  */
-export async function checkOrderMessage(msg: ResponseMessage, expectedResponse: ResponseMessage, request?: string) {
-	console.log("MESSAGE: " + msg.message)
+export async function checkOrderMessage(msg: ResponseMessage, expectedResponse: ResponseMessage, request?: RequestMessage) {
 	const expectedData = expectedResponse.data
 	expect(msg.code).toBe(expectedResponse.code)
 	expect(msg.message).toBe(expectedResponse.message)
 	if (msg.code == 200) {
-		if (request == OrdersServiceMessages.CREATE_ORDER) {
+		if (request?.client_request == OrdersServiceMessages.CREATE_ORDER) {
 			expect(JSON.parse(msg.data)).toStrictEqual(await addIdandState(expectedData))
 			//check ingredient db
-			let dbEgg = await (await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE)).findOne({ name: "egg" }, { projection: { _id: 0 } })
-			const qty = egg.quantity - (omelette.recipe[0].quantity * orderItemQuantity)
-			expect(dbEgg?.quantity).toBe(qty)
+			let ingredients = {} as IArray
+			request.input.items.forEach(async (i: any) => {
+				let item = await (await getCollection(DbNames.MENU, DbCollections.MENU))
+					.findOne({ name: i.name }, { projection: { _id: 0 } })
+				item?.recipe.forEach((ing: any) => {
+					if (ingredients[ing.ingredient_name] != undefined) {
+						ingredients[ing.ingredient_name]
+							= ingredients[ing.ingredient_name] + ing.quantity
+					} else {
+						ingredients[ing.ingredient_name] = ing.quantity
+					}
+				})
+			})
+			Object.keys(ingredients).forEach(async (ing: any) => {
+				let dbQty = await (await getCollection(DbNames.WAREHOUSE, DbCollections.WAREHOUSE))
+					.findOne({ name: ing }, { projection: { _id: 0 } })
+				expect(dbQty).toBe(createOrderIngredients[ing] - ingredients[ing])
+			})
 		} else {
 			expect(JSON.parse(msg.data)).toStrictEqual(expectedData)
 		}

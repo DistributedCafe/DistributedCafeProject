@@ -1,5 +1,3 @@
-export const orderItemQuantity = 2
-
 export const newOrderOmelette = {
 	"customerEmail": "c2@example.com",
 	"price": 1,
@@ -9,13 +7,52 @@ export const newOrderOmelette = {
 			"item": {
 				"name": "omelette"
 			},
-			"quantity": orderItemQuantity
+			"quantity": 2
+		},
+	]
+}
+
+export const newOrderNotification = {
+	"customerEmail": "c3@example.com",
+	"price": 1,
+	"type": "TAKE_AWAY",
+	"items": [
+		{
+			"item": {
+				"name": "omelette"
+			},
+			"quantity": 1
+		},
+		{
+			"item": {
+				"name": "fried_egg"
+			},
+			"quantity": 2
+		},
+	]
+}
+
+export const newOrderMissingIngredient = {
+	"customerEmail": "c4@example.com",
+	"price": 1,
+	"type": "TAKE_AWAY",
+	"items": [
+		{
+			"item": {
+				"name": "omelette"
+			},
+			"quantity": 3
 		},
 	]
 }
 
 export const milk = {
 	name: "milk",
+	quantity: 95
+}
+
+export const salt = {
+	name: "salt",
 	quantity: 95
 }
 
@@ -61,6 +98,10 @@ export const friedEgg = {
 	recipe: [
 		{
 			ingredient_name: "egg",
+			quantity: 1
+		},
+		{
+			ingredient_name: "salt",
 			quantity: 1
 		}
 	],
