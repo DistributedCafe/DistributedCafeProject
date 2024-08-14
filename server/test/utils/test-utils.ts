@@ -8,6 +8,7 @@ import { WebSocket, WebSocketServer } from 'ws'
 import { checkService } from "../../src/check-service"
 import express from "express"
 import { egg, salt } from "./test-data"
+import { StatusCodes } from "http-status-codes"
 
 const app = express()
 let wsRoute: WebSocket
@@ -115,7 +116,7 @@ export async function checkOrderMessage(msg: ResponseMessage, expectedResponse: 
 	const expectedData = expectedResponse.data
 	expect(msg.code).toBe(expectedResponse.code)
 	expect(msg.message).toBe(expectedResponse.message)
-	if (msg.code == 200) {
+	if (msg.code == StatusCodes.OK) {
 		if (request?.client_request == OrdersServiceMessages.CREATE_ORDER) {
 			expect(JSON.parse(msg.data)).toStrictEqual(await addIdandState(expectedData))
 			//check ingredient db
