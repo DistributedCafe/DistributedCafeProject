@@ -1,3 +1,4 @@
+import { StatusCodes } from "http-status-codes"
 import { http, httpMenu } from "./axios"
 import { MissingIngredientNotification, ResponseMessage } from "./messages"
 import WebSocket from 'ws'
@@ -27,7 +28,7 @@ export function createErrorMessage(code: number, msg: string) {
  * @returns 
  */
 export function checkErrorMessage(error: any) {
-	return error.response == undefined ? createErrorMessage(500, "ERROR_SERVER_NOT_AVAILABLE") :
+	return error.response == undefined ? createErrorMessage(StatusCodes.INTERNAL_SERVER_ERROR, "ERROR_SERVER_NOT_AVAILABLE") :
 		createErrorMessage(error.response.status, error.response.statusText)
 }
 
@@ -69,7 +70,7 @@ function getQuantity(array: any[], name: string) {
  * @returns true if there are enough ingredients, false otherwise
  */
 export async function checkOrder(input: any): Promise<number> {
-	let response = 500
+	let response = StatusCodes.INTERNAL_SERVER_ERROR
 	await http.get('/warehouse/available/').then(async (res) => {
 		const availableIngredients = res.data
 		let ingredients = {} as IArray
@@ -80,9 +81,9 @@ export async function checkOrder(input: any): Promise<number> {
 		response = (Object.keys(ingredients).filter((name) => {
 			return getNames(availableIngredients).includes(name) && (ingredients[name]
 				<= getQuantity(availableIngredients, name))
-		}).length == Object.keys(ingredients).length) ? 200 : 400
+		}).length == Object.keys(ingredients).length) ? StatusCodes.OK : StatusCodes.BAD_REQUEST
 	}).catch((e) => {
-		response = e.response == undefined ? 500 : e.response.status
+		response = e.response == undefined ? StatusCodes.INTERNAL_SERVER_ERROR : e.response.status
 	})
 	return response
 }

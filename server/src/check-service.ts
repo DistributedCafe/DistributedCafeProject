@@ -6,6 +6,7 @@ import {
 import { Service } from './utils/service'
 import WebSocket from 'ws'
 import { checkOrder, createErrorMessage, handleNewOrder, handleResponse } from './utils/utils'
+import { StatusCodes } from 'http-status-codes'
 
 /**
  * This function is used to call the correct microservice and API based on the received RequestMessage. 
@@ -62,14 +63,14 @@ function ordersApi(message: string, input: any, ws: WebSocket, managerWs: WebSoc
 		case OrdersServiceMessages.CREATE_ORDER:
 			checkOrder(input).then((res) => {
 				switch (res) {
-					case 200:
+					case StatusCodes.OK:
 						handleNewOrder(httpOrders.post('/orders/', input), input, ws, managerWs)
 						break
-					case 500:
+					case StatusCodes.INTERNAL_SERVER_ERROR:
 						ws.send(createErrorMessage(res, "ERROR_MICROSERVICE_NOT_AVAILABLE"))
 						break
 					default:
-						ws.send(createErrorMessage(400, "ERROR_MISSING_INGREDIENTS"))
+						ws.send(createErrorMessage(StatusCodes.BAD_REQUEST, "ERROR_MISSING_INGREDIENTS"))
 				}
 			})
 			break
