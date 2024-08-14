@@ -1,3 +1,6 @@
+/**
+ * This enum lists the messages sent by the repository
+ */
 export enum MenuMessage {
 	OK = "OK",
 	ERROR_ITEM_ALREADY_EXISTS = "ERROR_ITEM_ALREADY_EXISTS",
