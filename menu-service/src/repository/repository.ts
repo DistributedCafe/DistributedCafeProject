@@ -30,7 +30,7 @@ export async function createItem(name: string, price: number, recipe: Ingredient
 		await (await collection).insertOne(menuItem, { forceServerObjectId: true })
 		return repositoryResponse(MenuMessage.OK, menuItem)
 	} catch (error) {
-		return { message: MenuMessage.ERROR_ITEM_ALREADY_EXISTS }
+		return repositoryResponse(MenuMessage.ERROR_ITEM_ALREADY_EXISTS)
 	}
 }
 
