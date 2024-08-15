@@ -66,7 +66,7 @@ public class WebSocketConnection extends AbstractVerticle {
                       Thread.sleep(1000);
                       ws.write(Buffer.buffer(String.valueOf(request)));
                     } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
+                      Thread.currentThread().interrupt();
                     }
                   }
                   view.setLabel(msg);
