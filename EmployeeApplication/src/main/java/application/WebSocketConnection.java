@@ -1,3 +1,5 @@
+package application;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -20,7 +22,7 @@ public class WebSocketConnection extends AbstractVerticle {
   /**
    * Class Constructor
    *
-   * @param view the Main GUI
+   * @param view the application.Main GUI
    */
   public WebSocketConnection(View view) {
     this.view = view;
@@ -47,7 +49,7 @@ public class WebSocketConnection extends AbstractVerticle {
         3000,
         "localhost",
         "/",
-        (ctx) -> {
+        ctx -> {
           var ws = ctx.result();
           if (ws != null) {
 
@@ -64,7 +66,7 @@ public class WebSocketConnection extends AbstractVerticle {
                       Thread.sleep(1000);
                       ws.write(Buffer.buffer(String.valueOf(request)));
                     } catch (InterruptedException e) {
-                      e.printStackTrace();
+                      System.exit(1);
                     }
                   }
                   view.setLabel(msg);

@@ -1,3 +1,5 @@
+package application;
+
 import io.vertx.core.AsyncResult;
 import io.vertx.core.http.WebSocket;
 import io.vertx.core.json.JsonArray;
@@ -7,13 +9,13 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 import javax.swing.*;
 
-/** Main GUI Frame */
+/** application.Main GUI Frame */
 public class View extends JFrame {
 
   private final JPanel panel;
   private final JLabel label;
 
-  /** Main GUI Frame Constructor */
+  /** application.Main GUI Frame Constructor */
   public View() {
     setTitle("Employee Application");
 
