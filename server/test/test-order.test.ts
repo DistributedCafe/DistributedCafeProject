@@ -133,7 +133,7 @@ function testPutOrder(initState: string, finalState: string, apiResponse: ApiRes
 			} else {
 				expectedData = undefined
 			}
-			test(OrdersServiceMessages.PUT_ORDER, update,
+			test(OrdersServiceMessages.PUT_ORDER, JSON.stringify(update),
 				createResponseMessage(apiResponse, expectedData), callback)
 		})
 	})
@@ -154,7 +154,7 @@ test('Put Order Test - 404 (check-service) - id not found', done => {
 			"state": OrderState.PENDING
 		}
 
-		testCheckService(OrdersServiceMessages.PUT_ORDER, update,
+		testCheckService(OrdersServiceMessages.PUT_ORDER, JSON.stringify(update),
 			createResponseMessage(ORDER_ID_NOT_FOUND, undefined), done)
 	})
 })
