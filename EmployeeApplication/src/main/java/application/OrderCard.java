@@ -1,3 +1,5 @@
+package application;
+
 import io.vertx.core.AsyncResult;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.WebSocket;
@@ -12,7 +14,7 @@ import javax.swing.border.EmptyBorder;
 public class OrderCard extends JPanel {
 
   /**
-   * OrderCard constructor
+   * application.OrderCard constructor
    *
    * @param jsonOrder json representation of an order
    * @param ctx the websocket

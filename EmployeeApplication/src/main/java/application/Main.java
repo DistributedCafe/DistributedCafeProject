@@ -1,6 +1,8 @@
+package application;
+
 import io.vertx.core.Vertx;
 
-/** Main Class */
+/** application.Main Class */
 public class Main {
   /**
    * main starts the Employee Application GUI and the websocket communication with the server

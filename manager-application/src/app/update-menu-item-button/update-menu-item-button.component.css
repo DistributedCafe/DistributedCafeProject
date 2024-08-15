@@ -2,16 +2,13 @@ button{
     width: auto;
     height: auto;
     padding: 2%;
+    background-color: #ff4081 !important;
 }
 
 .button{
     width: auto;
     height: auto;
     padding: 2%;
-}
-
-button{
-    background-color: #ff4081 !important;
 }
 
 .form{

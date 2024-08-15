@@ -1,7 +1,11 @@
+package application;
+
 /** Interface for the different messages the Employee Application sends to the server. */
-public interface Message {
+public final class Message {
   /** To ask the server for all the orders */
-  String GET_ALL_ORDERS = "GET_ALL_ORDERS";
+  public static final String GET_ALL_ORDERS = "GET_ALL_ORDERS";
   /** To ask the server to update the order with the provided information */
-  String PUT_ORDER = "PUT_ORDER";
+  public static final String PUT_ORDER = "PUT_ORDER";
+
+  private Message() {}
 }
