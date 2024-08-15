@@ -78,8 +78,8 @@ function ordersApi(message: string, input: any, ws: WebSocket, managerWs: WebSoc
 			handleResponse(httpOrders.get('/orders/' + input), ws)
 			break
 		case OrdersServiceMessages.PUT_ORDER:
-			catchErrorAndSendMsg(httpOrders.get('/orders/' + input._id).then((res) => {
-				res.data["state"] = input.state
+			catchErrorAndSendMsg(httpOrders.get('/orders/' + JSON.parse(input)._id).then((res) => {
+				res.data["state"] = JSON.parse(input).state
 				catchErrorAndSendMsg(httpOrders.put('/orders/', res.data).then(() => {
 					handleResponse(httpOrders.get('/orders/'), ws)
 				}), ws)
