@@ -1,25 +1,10 @@
-import { Component, Inject, Input, OnDestroy } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {
-	MAT_DIALOG_DATA,
-	MatDialog,
-	MatDialogContent,
-	MatDialogTitle,
-} from '@angular/material/dialog';
-import { MenuServiceMessages, RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../../utils/messages';
-import { Item } from '../../utils/Item';
-import { Service } from '../../utils/service';
-import { DialogData } from '../../utils/DialogData';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Ingredient } from '../../utils/Ingredient';
-import { IArray } from '../../utils/IArray';
-import { buildRecipe } from '../../utils/recipe';
-import { checkWsConnectionAndSend } from '../../utils/send';
+import { MatDialog } from '@angular/material/dialog';
 import { IngredientDialogComponent } from '../item-dialog/item-dialog.component';
 
 /**

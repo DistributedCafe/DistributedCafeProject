@@ -11,7 +11,7 @@
     <p *ngIf="errorEmpty" class="error">
         Warehouse is empty!
     </p>
-    <p *ngIf="error" class="error">
+    <p *ngIf="selectedIngredients.length <= 0 && !errorEmpty" class="error">
         No ingredient selected!
     </p>
     <div *ngIf="!errorEmpty">
@@ -24,8 +24,8 @@
             </p>
         </section>
     </div>
-    <p *ngIf="errorPrice" class="error">
-        Illigal price!
+    <p *ngIf="price <= 0" class="error">
+        Illegal price!
     </p>
     <p>
         <mat-form-field class="form" appearance="outline">
@@ -34,9 +34,9 @@
             <mat-hint>Ex. 10</mat-hint>
         </mat-form-field>
     </p>
-    <button mat-raised-button (click)="onClick()" class="add-button" [disabled]="errorEmpty">
-        {{data.buttonMsg}}
-    </button> 
+    <send-button 
+    [isDisabled]="price <= 0 || selectedIngredients.length <= 0 || errorEmpty"
+    [ws]="data.ws" [buttonName]="data.buttonMsg" [dialog]="data.dialog" [request]="createRequest()"></send-button>
     
 </mat-dialog-content>
 
