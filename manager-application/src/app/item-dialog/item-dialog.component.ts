@@ -31,6 +31,7 @@ import { SendButtonComponent } from '../send-button/send-button.component';
 	styleUrl: './item-dialog.component.css'
 })
 export class ItemDialogComponent {
+	isUpdate = (this.data.item != undefined)
 	ingredients: Ingredient[] = Array()
 	name: string = ''
 	price: number = 1
@@ -87,7 +88,7 @@ export class ItemDialogComponent {
 		const recipe = buildRecipe(this.selectedQuantities, this.selectedIngredients)
 		let request: RequestMessage
 
-		if (this.data.update) {
+		if (this.isUpdate) {
 			const input = {
 				name: data.item!.name,
 				recipe: recipe,

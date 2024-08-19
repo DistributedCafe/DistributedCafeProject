@@ -34,6 +34,7 @@ import { SendButtonComponent } from '../send-button/send-button.component';
 	styleUrl: './ingredient-dialog.component.css'
 })
 export class IngredientDialogComponent {
+	isUpdate = (this.data.ingredient != undefined)
 	quantity = 1
 	name = ""
 
@@ -41,7 +42,7 @@ export class IngredientDialogComponent {
 
 	createRequest() {
 		let request: RequestMessage
-		if (!this.data.update) {
+		if (!this.isUpdate) {
 			request = {
 				client_name: Service.WAREHOUSE,
 				client_request: WarehouseServiceMessages.CREATE_INGREDIENT,

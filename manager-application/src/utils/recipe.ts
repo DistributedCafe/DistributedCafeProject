@@ -18,6 +18,5 @@ export function buildRecipe(selectedQuantities: IArray, selectedIngredients: str
 			recipe.push(newItem)
 		}
 	})
-	console.log(recipe)
 	return recipe
 }

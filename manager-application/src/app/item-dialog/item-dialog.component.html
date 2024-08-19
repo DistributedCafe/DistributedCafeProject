@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>{{data.title}}</h2>
 <mat-dialog-content>
-    <p *ngIf="!data.update">
+    <p *ngIf="!isUpdate">
         <mat-form-field class="form" appearance="outline">
             <mat-label>Name</mat-label>
             <input matInput placeholder="Name" [(ngModel)]="name" minlength="1">

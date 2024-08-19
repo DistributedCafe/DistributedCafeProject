@@ -5,7 +5,6 @@ import { Ingredient } from "./Ingredient";
 interface DialogData {
 	ws: WebSocket,
 	dialog: MatDialog
-	update: boolean,
 	title: string,
 	buttonMsg: string,
 }
