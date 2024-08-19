@@ -4,9 +4,11 @@ import { RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../..
 import { Service } from '../../utils/service';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { RestockButtonComponent } from '../restock-button/restock-button.component';
 import { Ingredient } from '../../utils/Ingredient';
-import { AddButtonComponent } from '../add-button/add-button.component';
+import { IngredientDialogComponent } from '../ingredient-dialog/ingredient-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 /**
  * Component that implements a table displaying the ingredients 
@@ -21,8 +23,10 @@ import { AddButtonComponent } from '../add-button/add-button.component';
 	imports: [MatTableModule,
 		CommonModule,
 		MatProgressSpinnerModule,
-		RestockButtonComponent,
-		AddButtonComponent],
+		MatIconModule,
+		MatButtonModule,
+		MatButtonModule,
+		MatIconModule],
 })
 export class TableComponent {
 	displayedColumns: string[] = ['name', 'quantity', 'restock'];
@@ -32,7 +36,22 @@ export class TableComponent {
 	dataSource: Ingredient[] = []
 	ws!: WebSocket;
 
-	constructor() {
+	openDialog(ingredient?: Ingredient) {
+		let title = ingredient == undefined ? "Add a new ingredient" : "Ingredient: " + ingredient.name
+		let buttonMsg = ingredient == undefined ? "Add" : "Restock"
+
+		this.dialog.open(IngredientDialogComponent, {
+			data: {
+				title: title,
+				buttonMsg: buttonMsg,
+				ingredient: ingredient,
+				ws: this.ws,
+				dialog: this.dialog
+			},
+		});
+	}
+
+	constructor(private dialog: MatDialog) {
 		this.ws = new WebSocket('ws://localhost:3000')
 
 		this.ws.onerror = () => {

@@ -5,8 +5,10 @@ import { Service } from '../../utils/service';
 import { MenuServiceMessages, RequestMessage, ResponseMessage } from '../../utils/messages';
 import { MatTableModule } from '@angular/material/table'
 import { CommonModule } from '@angular/common';
-import { AddMenuItemButtonComponent } from "../add-menu-item-button/add-menu-item-button.component";
-import { UpdateMenuItemButtonComponent } from "../update-menu-item-button/update-menu-item-button.component";
+import { MatDialog } from '@angular/material/dialog';
+import { ItemDialogComponent } from '../item-dialog/item-dialog.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 /**
  * Component that implements a table displaying the items 
@@ -19,8 +21,8 @@ import { UpdateMenuItemButtonComponent } from "../update-menu-item-button/update
 	imports: [MatProgressSpinnerModule,
 		MatTableModule,
 		CommonModule,
-		AddMenuItemButtonComponent,
-		UpdateMenuItemButtonComponent],
+		MatButtonModule,
+		MatIconModule],
 	templateUrl: './data-table-menu.component.html',
 	styleUrl: './data-table-menu.component.css'
 })
@@ -32,7 +34,23 @@ export class DataTableMenuComponent {
 	dataSource = Array()
 	ws!: WebSocket;
 
-	constructor() {
+	openDialog(item?: Item) {
+		let title = item == undefined ? "Add a new item" : "Update " + item.name
+		let buttonMsg = item == undefined ? "Add" : "Update"
+
+		this.dialog.open(ItemDialogComponent, {
+			data: {
+				ws: this.ws,
+				dialog: this.dialog,
+				update: true,
+				title: title,
+				buttonMsg: buttonMsg,
+				item: item
+			},
+		});
+	}
+
+	constructor(private dialog: MatDialog) {
 		this.ws = new WebSocket('ws://localhost:3000')
 
 		this.ws.onerror = () => {

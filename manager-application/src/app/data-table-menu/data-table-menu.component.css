@@ -19,3 +19,14 @@ th, td{
     font-size: 300%;
     line-height: 150%;
 }
+
+button{
+    background-color: #ff4081 !important;
+}
+
+.button{
+    width: auto;
+    height: auto;
+    padding: 2%;
+    background-color: #ff4081 !important;
+}
