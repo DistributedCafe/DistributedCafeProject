@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import { RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../../utils/messages';
+import { RequestMessage, ResponseMessage } from '../../utils/messages';
 import { Service } from '../../utils/service';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Ingredient } from '../../utils/Ingredient';
 import { IngredientDialogComponent } from '../ingredient-dialog/ingredient-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { IngredientInRecipe, Item } from '../../utils/Item';
+import { ItemDialogComponent } from '../item-dialog/item-dialog.component';
 
 /**
  * Component that implements a table displaying the ingredients 
@@ -16,7 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
  * error occurs it shows it.
  */
 @Component({
-	selector: 'dataTable',
+	selector: 'data-table',
 	styleUrl: 'table.component.css',
 	templateUrl: 'table.component.html',
 	standalone: true,
@@ -28,32 +29,48 @@ import { MatIconModule } from '@angular/material/icon';
 		MatButtonModule,
 		MatIconModule],
 })
-export class TableComponent {
-	displayedColumns: string[] = ['name', 'quantity', 'restock'];
-	display = false
+export class TableComponent implements OnInit {
+	@Input()
+	displayedColumns!: string[]
+	@Input()
+	initialRequest!: RequestMessage
+
+	display = true
 	error = false
 	errorMessage = ''
-	dataSource: Ingredient[] = []
+	dataSource = Array()
 	ws!: WebSocket;
 
-	openDialog(ingredient?: Ingredient) {
-		let title = ingredient == undefined ? "Add a new ingredient" : "Ingredient: " + ingredient.name
-		let buttonMsg = ingredient == undefined ? "Add" : "Restock"
-
-		this.dialog.open(IngredientDialogComponent, {
+	createDialogData(title: string, buttonMsg: string, data?: any) {
+		return {
 			data: {
 				title: title,
 				buttonMsg: buttonMsg,
-				ingredient: ingredient,
+				ingredient: data,
 				ws: this.ws,
 				dialog: this.dialog
 			},
-		});
+		}
 	}
 
-	constructor(private dialog: MatDialog) {
-		this.ws = new WebSocket('ws://localhost:3000')
+	openDialog(data?: any) {
+		if (this.initialRequest.client_name == Service.WAREHOUSE) {
+			let title = data == undefined ? "Add a new ingredient" : "Ingredient: " + data.name
+			let buttonMsg = data == undefined ? "Add" : "Restock"
 
+			this.dialog.open(IngredientDialogComponent, this.createDialogData(title, buttonMsg, data))
+		} else {
+			let title = data == undefined ? "Add a new item" : "Update " + data.name
+			let buttonMsg = data == undefined ? "Add" : "Update"
+
+			this.dialog.open(ItemDialogComponent, this.createDialogData(title, buttonMsg, data));
+		}
+	}
+
+	constructor(private dialog: MatDialog) { }
+	ngOnInit(): void {
+		this.ws = new WebSocket('ws://localhost:3000')
+		let request = this.initialRequest
 		this.ws.onerror = () => {
 			this.errorMessage = "Server not available!"
 			this.error = true
@@ -61,15 +78,9 @@ export class TableComponent {
 			this.ws.close()
 		}
 
-		let ingredients: Ingredient[]
-		const initialRequest: RequestMessage = {
-			client_name: Service.WAREHOUSE,
-			client_request: WarehouseServiceMessages.GET_ALL_INGREDIENT,
-			input: ''
-		}
 		this.ws.onopen = function() {
 			console.log("Websocket opend!")
-			this.send(JSON.stringify(initialRequest))
+			this.send(JSON.stringify(request))
 		}
 
 		this.ws.onmessage = function(e) {
@@ -77,24 +88,44 @@ export class TableComponent {
 			console.log("message: " + data.message)
 			console.log("code: " + data.code)
 			if (data.code == 200) {
-				ingredients = JSON.parse(data.data) as Ingredient[]
-				setData(ingredients)
+				setData(JSON.parse(data.data))
 			} else {
-				setEmptyWarehouse(data.code)
+				setEmpty("Database empty!", data.code)
 			}
 			setDisplayTrue()
 		}
 		const setDisplayTrue = () => { this.display = true }
-		const setEmptyWarehouse = (code: number) => {
+		const setEmpty = (msg: string, code: number) => {
 			this.error = true
 			if (code == 500) {
 				this.errorMessage = "Microservice not available!"
 			} else {
-				this.errorMessage = "Warehouse empty!"
+				this.errorMessage = msg
 			}
 		}
-		const setData = (ingredients: Ingredient[]) => {
-			this.dataSource = ingredients
+
+		const setData = (data: any[]) => {
+			if (this.initialRequest.client_name == Service.WAREHOUSE) {
+				this.dataSource = data
+			} else {
+				let items = Array()
+				data.forEach(e => {
+					items.push({
+						name: e.name,
+						recipe: formatRecipe(e.recipe),
+						price: e.price
+					})
+				})
+				this.dataSource = items
+			}
+		}
+		const formatRecipe = (recipe: IngredientInRecipe[]) => {
+			let formattedRecipe = ""
+			recipe.forEach(i => {
+				const newElem = i.ingredient_name + " x" + i.quantity + ", "
+				formattedRecipe = formattedRecipe + newElem
+			})
+			return formattedRecipe
 		}
 	}
 }
