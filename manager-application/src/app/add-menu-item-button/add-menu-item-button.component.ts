@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialog } from '@angular/material/dialog';
-import { IngredientDialogComponent } from '../item-dialog/item-dialog.component';
+import { ItemDialogComponent } from '../item-dialog/item-dialog.component';
 
 /**
  * Component that implements a button that manages 
@@ -30,7 +30,7 @@ export class AddMenuItemButtonComponent {
 	ws!: WebSocket;
 
 	openDialog() {
-		this.dialog.open(IngredientDialogComponent, {
+		this.dialog.open(ItemDialogComponent, {
 			data: {
 				ws: this.ws,
 				dialog: this.dialog,

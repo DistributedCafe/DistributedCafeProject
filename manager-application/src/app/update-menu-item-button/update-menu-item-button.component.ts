@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialog } from '@angular/material/dialog';
 import { Item } from '../../utils/Item';
-import { IngredientDialogComponent } from '../item-dialog/item-dialog.component';
+import { ItemDialogComponent } from '../item-dialog/item-dialog.component';
 
 /**
  * Component that implements a button that manages 
@@ -28,7 +28,7 @@ export class UpdateMenuItemButtonComponent {
 
 	constructor(public dialog: MatDialog) { }
 	openDialog() {
-		this.dialog.open(IngredientDialogComponent, {
+		this.dialog.open(ItemDialogComponent, {
 			data: {
 				ws: this.ws,
 				dialog: this.dialog,

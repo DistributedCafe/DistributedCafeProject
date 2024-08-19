@@ -1,0 +1,9 @@
+
+.add-button{
+   width: 100%;
+}
+
+.error{
+    color: red;
+    font-weight: bold;
+}

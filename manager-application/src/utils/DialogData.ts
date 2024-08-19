@@ -1,14 +1,25 @@
 import { MatDialog } from "@angular/material/dialog";
 import { Item } from "./Item";
+import { Ingredient } from "./Ingredient";
 
-/**
- * This interface represents the data passed to a dialog
- */
-export interface DialogData {
+interface DialogData {
 	ws: WebSocket,
 	dialog: MatDialog
 	update: boolean,
 	title: string,
 	buttonMsg: string,
+}
+
+/**
+ * This interface represents the data passed to a item dialog
+ */
+export interface DialogDataItems extends DialogData {
 	item?: Item
+}
+
+/**
+ * This interface represents the data passed to a ingredient dialog
+ */
+export interface DialogDataIngredient extends DialogData {
+	ingredient?: Ingredient
 }

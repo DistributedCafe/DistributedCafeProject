@@ -13,7 +13,7 @@ import { Service } from '../../utils/service';
 import { checkWsConnectionAndSend } from '../../utils/send';
 import { Item } from '../../utils/Item';
 import { buildRecipe } from '../../utils/recipe';
-import { DialogData } from '../../utils/DialogData';
+import { DialogDataItems } from '../../utils/DialogData';
 import { SendButtonComponent } from '../send-button/send-button.component';
 
 @Component({
@@ -30,7 +30,7 @@ import { SendButtonComponent } from '../send-button/send-button.component';
 	templateUrl: './item-dialog.component.html',
 	styleUrl: './item-dialog.component.css'
 })
-export class IngredientDialogComponent {
+export class ItemDialogComponent {
 	ingredients: Ingredient[] = Array()
 	name: string = ''
 	price: number = 1
@@ -39,7 +39,7 @@ export class IngredientDialogComponent {
 	selectedQuantities = {} as IArray
 	orderItem!: any
 
-	constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, public dialog: MatDialog) {
+	constructor(@Inject(MAT_DIALOG_DATA) public data: DialogDataItems, public dialog: MatDialog) {
 		const initialRequest: RequestMessage = {
 			client_name: Service.WAREHOUSE,
 			client_request: WarehouseServiceMessages.GET_ALL_INGREDIENT,
