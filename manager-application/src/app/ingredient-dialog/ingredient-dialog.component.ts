@@ -14,7 +14,6 @@ import { Service } from '../../utils/service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SendButtonComponent } from '../send-button/send-button.component';
-import { SendButtonData } from '../../utils/send-button-data';
 import { DialogData } from '../../utils/dialog-data';
 
 /**
@@ -45,14 +44,6 @@ export class IngredientDialogComponent {
 	name = ""
 
 	constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, public dialog: MatDialog) { }
-
-	buttonData: SendButtonData = {
-		ws: this.data.ws,
-		dialog: this.data.dialog,
-		buttonMsg: this.data.buttonMsg,
-		isDisabled: (this.quantity <= 0),
-		request: this.createRequest()
-	}
 
 	createRequest() {
 		let request: RequestMessage

@@ -13,7 +13,6 @@ import { Service } from '../../utils/service';
 import { checkWsConnectionAndSend } from '../../utils/send';
 import { buildRecipe } from '../../utils/recipe';
 import { SendButtonComponent } from '../send-button/send-button.component';
-import { SendButtonData } from '../../utils/send-button-data';
 import { DialogData } from '../../utils/dialog-data';
 
 /**
@@ -44,14 +43,6 @@ export class ItemDialogComponent {
 	selectedIngredients: string[] = Array()
 	selectedQuantities = {} as IArray
 	orderItem!: any
-
-	buttonData: SendButtonData = {
-		ws: this.data.ws,
-		dialog: this.data.dialog,
-		buttonMsg: this.data.buttonMsg,
-		isDisabled: (this.price <= 0 || this.selectedIngredients.length <= 0 || this.errorEmpty),
-		request: this.createRequest()
-	}
 
 	constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, public dialog: MatDialog) {
 		const initialRequest: RequestMessage = {

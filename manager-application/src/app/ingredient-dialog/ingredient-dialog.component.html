@@ -16,7 +16,7 @@
             <mat-hint>Ex. 10</mat-hint>
         </mat-form-field>
     </div>
-    <send-button [input]="buttonData"></send-button>
+    <send-button [isDisabled]="quantity <= 0" [ws]="data.ws" [buttonName]="data.buttonMsg" [dialog]="data.dialog" [request]="createRequest()"></send-button>
     
 </mat-dialog-content>
 
