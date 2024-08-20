@@ -13,8 +13,9 @@ import { RequestMessage, WarehouseServiceMessages } from '../../utils/messages';
 import { Service } from '../../utils/service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { DialogDataIngredient } from '../../utils/DialogData';
 import { SendButtonComponent } from '../send-button/send-button.component';
+import { SendButtonData } from '../../utils/sendButtonData';
+import { DialogData } from '../../utils/DialogData';
 
 /**
  * Component that implements a dialog containing a 
@@ -39,11 +40,19 @@ import { SendButtonComponent } from '../send-button/send-button.component';
 	styleUrl: './ingredient-dialog.component.css'
 })
 export class IngredientDialogComponent {
-	isUpdate = (this.data.ingredient != undefined)
+	isUpdate = (this.data.data != undefined)
 	quantity = 1
 	name = ""
 
-	constructor(@Inject(MAT_DIALOG_DATA) public data: DialogDataIngredient, public dialog: MatDialog) { }
+	constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, public dialog: MatDialog) { }
+
+	buttonData: SendButtonData = {
+		ws: this.data.ws,
+		dialog: this.data.dialog,
+		buttonMsg: this.data.buttonMsg,
+		isDisabled: (this.quantity <= 0),
+		request: this.createRequest()
+	}
 
 	createRequest() {
 		let request: RequestMessage
@@ -61,7 +70,7 @@ export class IngredientDialogComponent {
 				client_name: Service.WAREHOUSE,
 				client_request: WarehouseServiceMessages.RESTOCK_INGREDIENT,
 				input: {
-					name: this.data.ingredient!.name,
+					name: this.data.data!.name,
 					quantity: this.quantity
 				}
 			}

@@ -8,8 +8,8 @@ import { IngredientDialogComponent } from '../ingredient-dialog/ingredient-dialo
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { IngredientInRecipe, Item } from '../../utils/Item';
 import { ItemDialogComponent } from '../item-dialog/item-dialog.component';
+import { formatRecipe } from '../../utils/recipe';
 
 /**
  * Component that implements a table displaying the ingredients or items 
@@ -46,7 +46,7 @@ export class TableComponent implements OnInit {
 			data: {
 				title: title,
 				buttonMsg: buttonMsg,
-				ingredient: data,
+				data: data,
 				ws: this.ws,
 				dialog: this.dialog
 			},
@@ -62,12 +62,13 @@ export class TableComponent implements OnInit {
 		} else {
 			let title = data == undefined ? "Add a new item" : "Update " + data.name
 			let buttonMsg = data == undefined ? "Add" : "Update"
-
+			console.log(data)
 			this.dialog.open(ItemDialogComponent, this.createDialogData(title, buttonMsg, data));
 		}
 	}
 
 	constructor(private dialog: MatDialog) { }
+
 	ngOnInit(): void {
 		this.ws = new WebSocket('ws://localhost:3000')
 		let request = this.initialRequest
@@ -118,14 +119,6 @@ export class TableComponent implements OnInit {
 				})
 				this.dataSource = items
 			}
-		}
-		const formatRecipe = (recipe: IngredientInRecipe[]) => {
-			let formattedRecipe = ""
-			recipe.forEach(i => {
-				const newElem = i.ingredient_name + " x" + i.quantity + ", "
-				formattedRecipe = formattedRecipe + newElem
-			})
-			return formattedRecipe
 		}
 	}
 }

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,10 +11,10 @@ import { IArray } from '../../utils/IArray';
 import { MenuServiceMessages, RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../../utils/messages';
 import { Service } from '../../utils/service';
 import { checkWsConnectionAndSend } from '../../utils/send';
-import { Item } from '../../utils/Item';
 import { buildRecipe } from '../../utils/recipe';
-import { DialogDataItems } from '../../utils/DialogData';
 import { SendButtonComponent } from '../send-button/send-button.component';
+import { SendButtonData } from '../../utils/sendButtonData';
+import { DialogData } from '../../utils/DialogData';
 
 /**
  * Component that implements a dialog containing a 
@@ -36,7 +36,7 @@ import { SendButtonComponent } from '../send-button/send-button.component';
 	styleUrl: './item-dialog.component.css'
 })
 export class ItemDialogComponent {
-	isUpdate = (this.data.item != undefined)
+	isUpdate = (this.data.data != undefined)
 	ingredients: Ingredient[] = Array()
 	name: string = ''
 	price: number = 1
@@ -45,7 +45,16 @@ export class ItemDialogComponent {
 	selectedQuantities = {} as IArray
 	orderItem!: any
 
-	constructor(@Inject(MAT_DIALOG_DATA) public data: DialogDataItems, public dialog: MatDialog) {
+	buttonData: SendButtonData = {
+		ws: this.data.ws,
+		dialog: this.data.dialog,
+		buttonMsg: this.data.buttonMsg,
+		isDisabled: (this.price <= 0 || this.selectedIngredients.length <= 0 || this.errorEmpty),
+		request: this.createRequest()
+	}
+
+	constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, public dialog: MatDialog) {
+		console.log(this.data)
 		const initialRequest: RequestMessage = {
 			client_name: Service.WAREHOUSE,
 			client_request: WarehouseServiceMessages.GET_ALL_INGREDIENT,
@@ -88,34 +97,30 @@ export class ItemDialogComponent {
 		}
 	}
 
-	public createRequest() {
+	createRequest() {
 		const data = this.data
 		const recipe = buildRecipe(this.selectedQuantities, this.selectedIngredients)
 		let request: RequestMessage
 
 		if (this.isUpdate) {
-			const input = {
-				name: data.item!.name,
-				recipe: recipe,
-				price: this.price
-			}
-
 			request = {
 				client_name: Service.MENU,
 				client_request: MenuServiceMessages.UPDATE_ITEM,
-				input: input
+				input: {
+					name: data.data!.name,
+					recipe: recipe,
+					price: this.price
+				}
 			}
 		} else {
-			const input: Item = {
-				name: this.name,
-				recipe: recipe,
-				price: this.price
-			}
-
 			request = {
 				client_name: Service.MENU,
 				client_request: MenuServiceMessages.CREATE_ITEM,
-				input: input
+				input: {
+					name: this.name,
+					recipe: recipe,
+					price: this.price
+				}
 			}
 		}
 		return request

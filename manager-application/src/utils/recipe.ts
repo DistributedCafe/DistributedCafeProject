@@ -20,3 +20,17 @@ export function buildRecipe(selectedQuantities: IArray, selectedIngredients: str
 	})
 	return recipe
 }
+
+/**
+ * This function formats a given recipe to be printed in the web page
+ * @param recipe 
+ * @returns 
+ */
+export function formatRecipe(recipe: IngredientInRecipe[]) {
+	let formattedRecipe = ""
+	recipe.forEach(i => {
+		const newElem = i.ingredient_name + " x" + i.quantity + ", "
+		formattedRecipe = formattedRecipe + newElem
+	})
+	return formattedRecipe
+}

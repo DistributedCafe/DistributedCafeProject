@@ -34,9 +34,7 @@
             <mat-hint>Ex. 10</mat-hint>
         </mat-form-field>
     </p>
-    <send-button 
-    [isDisabled]="price <= 0 || selectedIngredients.length <= 0 || errorEmpty"
-    [ws]="data.ws" [buttonName]="data.buttonMsg" [dialog]="data.dialog" [request]="createRequest()"></send-button>
+    <send-button [input]="buttonData"></send-button>
     
 </mat-dialog-content>
 

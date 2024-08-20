@@ -8,7 +8,7 @@
             </mat-form-field>
     </div>
     <div>
-        <h3 *ngIf="isUpdate">Actual quantity: {{data.ingredient!.quantity}}</h3> 
+        <h3 *ngIf="isUpdate">Actual quantity: {{data.data!.quantity}}</h3> 
         <h4 class="error" *ngIf="quantity <= 0">Illegal quantity!</h4>
         <mat-form-field appearance="outline">
             <mat-label>Quantity</mat-label>
@@ -16,7 +16,7 @@
             <mat-hint>Ex. 10</mat-hint>
         </mat-form-field>
     </div>
-    <send-button [isDisabled]="quantity <= 0" [ws]="data.ws" [buttonName]="data.buttonMsg" [dialog]="data.dialog" [request]="createRequest()"></send-button>
+    <send-button [input]="buttonData"></send-button>
     
 </mat-dialog-content>
 

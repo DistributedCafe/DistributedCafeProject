@@ -9,9 +9,10 @@ import {
 	MatDialogContent,
 	MatDialogTitle,
 } from '@angular/material/dialog';
-import { RequestMessage, ResponseMessage } from '../../utils/messages';
+import { ResponseMessage } from '../../utils/messages';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { SendButtonData } from '../../utils/sendButtonData';
 
 /**
  * Button component that sends a request and, in case of an error,
@@ -27,15 +28,7 @@ import { CommonModule } from '@angular/common';
 export class SendButtonComponent {
 
 	@Input()
-	ws!: WebSocket
-	@Input()
-	request!: RequestMessage
-	@Input()
-	buttonName!: string
-	@Input()
-	dialog?: MatDialog
-	@Input()
-	isDisabled!: boolean
+	input!: SendButtonData
 
 	constructor(private errorDialog: MatDialog) { }
 
@@ -47,22 +40,18 @@ export class SendButtonComponent {
 			});
 		}
 
-		const closeDialog = () => {
-			if (this.dialog != null) {
-				this.dialog.closeAll()
-			}
-		}
+		const closeDialog = () => { this.input.dialog.closeAll() }
 
 		const closeAndReloadDialog = () => {
 			closeDialog()
 			window.location.reload()
 		}
 
-		if (!checkWsConnectionAndSend(this.request, this.ws)) {
+		if (!checkWsConnectionAndSend(this.input.request, this.input.ws)) {
 			closeDialog()
 		}
 
-		this.ws.onmessage = function(e) {
+		this.input.ws.onmessage = function(e) {
 			const res = JSON.parse(e.data) as ResponseMessage
 			if (res.code == 200) {
 				console.log(res.message)
