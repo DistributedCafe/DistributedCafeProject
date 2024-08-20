@@ -16,6 +16,11 @@ import { CommonModule } from '@angular/common';
 import { DialogDataIngredient } from '../../utils/DialogData';
 import { SendButtonComponent } from '../send-button/send-button.component';
 
+/**
+ * Component that implements a dialog containing a 
+ * form to insert all the necessary information 
+ * about the new ingredient or to update one
+ */
 @Component({
 	selector: 'ingredient-dialog',
 	standalone: true,

@@ -16,6 +16,11 @@ import { buildRecipe } from '../../utils/recipe';
 import { DialogDataItems } from '../../utils/DialogData';
 import { SendButtonComponent } from '../send-button/send-button.component';
 
+/**
+ * Component that implements a dialog containing a 
+ * form to insert all the necessary information 
+ * about the new item or to update one
+ */
 @Component({
 	selector: 'item-dialog',
 	standalone: true,

@@ -13,6 +13,10 @@ import { RequestMessage, ResponseMessage } from '../../utils/messages';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+/**
+ * Button component that sends a request and, in case of an error,
+ * shows an error dialog.
+ */
 @Component({
 	selector: 'send-button',
 	standalone: true,

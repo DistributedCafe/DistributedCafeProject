@@ -12,8 +12,8 @@ import { IngredientInRecipe, Item } from '../../utils/Item';
 import { ItemDialogComponent } from '../item-dialog/item-dialog.component';
 
 /**
- * Component that implements a table displaying the ingredients 
- * present in the warehouse. If the warehouse is empty or an 
+ * Component that implements a table displaying the ingredients or items 
+ * present in the warehouse. If the db is empty or an 
  * error occurs it shows it.
  */
 @Component({
