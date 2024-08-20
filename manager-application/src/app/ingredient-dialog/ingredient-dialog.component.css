@@ -1,10 +1,4 @@
 
-button{
-    width: auto;
-    height: auto;
-    padding: 2%;
-}
-
 .add-button{
    width: 100%;
 }
@@ -12,4 +6,11 @@ button{
 .error{
     color: red;
     font-weight: bold;
+}
+.form{
+    padding-top: 5%;
+}
+
+.name{
+    margin-bottom: 5%;
 }

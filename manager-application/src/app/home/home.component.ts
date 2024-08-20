@@ -8,7 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Frontend, Log, MissingIngredientNotification } from '../../utils/messages';
 import { equals } from 'typia';
 
-interface ILink {
+interface Route {
 	path: string;
 	label: string;
 }
@@ -62,25 +62,26 @@ export class HomeComponent {
 		}
 
 		function createMsg(missingIngredients: any) {
-			let notificationMsg
+			const msg = "missing from the warehouse!"
+			let notificationMsg = ""
 			let missingNames = ""
 			if (missingIngredients.length == 1) {
-				notificationMsg = missingIngredients[0].name + " is missing from the warehouse!"
+				notificationMsg = missingIngredients[0].name + " is " + msg
 			} else {
 				Array.from(missingIngredients).forEach((i: any) => {
 					missingNames = missingNames + i.name + ", "
 				});
-				notificationMsg = missingNames + "are missing from the warehouse!"
+				notificationMsg = missingNames + "are " + msg
 			}
 			return notificationMsg
 		}
 	}
-	links: ILink[] = [
+	routes: Route[] = [
 		{ path: '', label: 'WAREHOUSE' },
 		{ path: 'menu', label: 'MENU' },
 	];
 
-	setActiveLink(path: string) {
+	setActiveRoute(path: string) {
 		localStorage.setItem(this.activePath, path)
 	}
 

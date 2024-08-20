@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DataTableMenuComponent } from './data-table-menu.component';
+import { SendButtonComponent } from './send-button.component';
 
-describe('DataTableMenuComponent', () => {
-	let component: DataTableMenuComponent;
-	let fixture: ComponentFixture<DataTableMenuComponent>;
+describe('SendButtonComponent', () => {
+	let component: SendButtonComponent;
+	let fixture: ComponentFixture<SendButtonComponent>;
 
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
-			imports: [DataTableMenuComponent]
+			imports: [SendButtonComponent]
 		})
 			.compileComponents();
 
-		fixture = TestBed.createComponent(DataTableMenuComponent);
+		fixture = TestBed.createComponent(SendButtonComponent);
 		component = fixture.componentInstance;
 		fixture.detectChanges();
 	});

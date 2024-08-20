@@ -1,18 +1,11 @@
-button{
-    width: auto;
-    height: auto;
-    padding: 2%;
-    background-color: #ff4081 !important;
-}
-
 .button{
     width: auto;
     height: auto;
     padding: 2%;
 }
 
-.form{
-    padding-top: 5%;
+button{
+    background-color: #ff4081 !important;
 }
 
 .add-button{
@@ -27,4 +20,9 @@ button{
 .error{
     color: red;
     font-weight: bold;
+}
+
+h2{
+    margin-left: 5%;
+    margin-top: 5%;
 }

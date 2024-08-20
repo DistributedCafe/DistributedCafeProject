@@ -1,10 +1,17 @@
-<h2 mat-dialog-title>Update {{data.item.name}}</h2>
+<h2 mat-dialog-title>{{data.title}}</h2>
 <mat-dialog-content>
+    <p *ngIf="!isUpdate">
+        <mat-form-field class="form" appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput placeholder="Name" [(ngModel)]="name" minlength="1">
+            <mat-hint>Ex. Omelette</mat-hint>
+            </mat-form-field>
+    </p>
     <mat-label>Recipe</mat-label>
     <p *ngIf="errorEmpty" class="error">
-        Menu database is empty!
+        Warehouse is empty!
     </p>
-    <p *ngIf="error" class="error">
+    <p *ngIf="selectedIngredients.length <= 0 && !errorEmpty" class="error">
         No ingredient selected!
     </p>
     <div *ngIf="!errorEmpty">
@@ -17,7 +24,7 @@
             </p>
         </section>
     </div>
-    <p *ngIf="errorPrice" class="error">
+    <p *ngIf="price <= 0" class="error">
         Illegal price!
     </p>
     <p>
@@ -27,9 +34,7 @@
             <mat-hint>Ex. 10</mat-hint>
         </mat-form-field>
     </p>
-    <button mat-raised-button (click)="updateItem()" class="add-button" [disabled]="errorEmpty">
-        Update
-    </button>
+    <send-button [input]="buttonData"></send-button>
     
 </mat-dialog-content>
 

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RestockButtonComponent } from './restock-button.component';
+import { ItemDialogComponent } from './item-dialog.component';
 
-describe('DeleteButtonComponent', () => {
-	let component: RestockButtonComponent;
-	let fixture: ComponentFixture<RestockButtonComponent>;
+describe('IngredientDialogComponent', () => {
+	let component: ItemDialogComponent;
+	let fixture: ComponentFixture<ItemDialogComponent>;
 
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
-			imports: [RestockButtonComponent]
+			imports: [ItemDialogComponent]
 		})
 			.compileComponents();
 
-		fixture = TestBed.createComponent(RestockButtonComponent);
+		fixture = TestBed.createComponent(ItemDialogComponent);
 		component = fixture.componentInstance;
 		fixture.detectChanges();
 	});
