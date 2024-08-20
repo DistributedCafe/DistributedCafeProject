@@ -1,6 +1,4 @@
 import { MatDialog } from "@angular/material/dialog";
-import { Item } from "./Item";
-import { Ingredient } from "./Ingredient";
 
 /**
  * This interface represents the data passed to a item dialog or an ingredient dialog
