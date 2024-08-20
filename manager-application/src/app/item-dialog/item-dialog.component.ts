@@ -6,15 +6,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogContent } from '@angular/material/dialog';
-import { Ingredient } from '../../utils/Ingredient';
-import { IArray } from '../../utils/IArray';
+import { Ingredient } from '../../utils/ingredient';
+import { IArray } from '../../utils/array';
 import { MenuServiceMessages, RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../../utils/messages';
 import { Service } from '../../utils/service';
 import { checkWsConnectionAndSend } from '../../utils/send';
 import { buildRecipe } from '../../utils/recipe';
 import { SendButtonComponent } from '../send-button/send-button.component';
-import { SendButtonData } from '../../utils/sendButtonData';
-import { DialogData } from '../../utils/DialogData';
+import { SendButtonData } from '../../utils/send-button-data';
+import { DialogData } from '../../utils/dialog-data';
 
 /**
  * Component that implements a dialog containing a 
@@ -54,7 +54,6 @@ export class ItemDialogComponent {
 	}
 
 	constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, public dialog: MatDialog) {
-		console.log(this.data)
 		const initialRequest: RequestMessage = {
 			client_name: Service.WAREHOUSE,
 			client_request: WarehouseServiceMessages.GET_ALL_INGREDIENT,

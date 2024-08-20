@@ -1,5 +1,5 @@
-import { IArray } from "./IArray"
-import { IngredientInRecipe } from "./Item"
+import { IArray } from "./array"
+import { IngredientInRecipe } from "./item"
 
 /**
  * This function builds an array of IngredientInRecipe given the list of ingredient names and their quantity

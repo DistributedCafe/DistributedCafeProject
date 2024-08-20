@@ -12,7 +12,7 @@ import {
 import { ResponseMessage } from '../../utils/messages';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { SendButtonData } from '../../utils/sendButtonData';
+import { SendButtonData } from '../../utils/send-button-data';
 
 /**
  * Button component that sends a request and, in case of an error,
@@ -83,9 +83,7 @@ export class SendButtonComponent {
 		CommonModule],
 })
 export class ErrorDialog implements OnDestroy {
-	constructor(@Inject(MAT_DIALOG_DATA) public data: ResponseMessage) {
-		console.log(data.code)
-	}
+	constructor(@Inject(MAT_DIALOG_DATA) public data: ResponseMessage) { }
 	ngOnDestroy(): void {
 		window.location.reload()
 	}

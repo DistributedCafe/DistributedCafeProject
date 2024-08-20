@@ -14,8 +14,8 @@ import { Service } from '../../utils/service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SendButtonComponent } from '../send-button/send-button.component';
-import { SendButtonData } from '../../utils/sendButtonData';
-import { DialogData } from '../../utils/DialogData';
+import { SendButtonData } from '../../utils/send-button-data';
+import { DialogData } from '../../utils/dialog-data';
 
 /**
  * Component that implements a dialog containing a 
