@@ -62,7 +62,6 @@ export class TableComponent implements OnInit {
 		} else {
 			let title = data == undefined ? "Add a new item" : "Update " + data.name
 			let buttonMsg = data == undefined ? "Add" : "Update"
-			console.log(data)
 			this.dialog.open(ItemDialogComponent, this.createDialogData(title, buttonMsg, data));
 		}
 	}
