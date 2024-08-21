@@ -28,7 +28,7 @@ public class View extends JFrame {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
 
-  private JLabel initMessageLabel(){
+  private JLabel initMessageLabel() {
     JPanel labelPanel = new JPanel();
     JLabel label = new JLabel("");
     labelPanel.add(label);
@@ -36,7 +36,7 @@ public class View extends JFrame {
     return label;
   }
 
-  private JPanel initOrdersPanel(){
+  private JPanel initOrdersPanel() {
     JPanel panel = new JPanel();
     panel.setLayout(new GridLayout(0, 1));
     JScrollPane scroll = new JScrollPane(panel);
@@ -44,15 +44,14 @@ public class View extends JFrame {
     return panel;
   }
 
-  private void initFrameSizeAndLocation(){
+  private void initFrameSizeAndLocation() {
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     int width = screenSize.width / 2;
     int height = screenSize.height / 2;
     setSize(width, height);
-    setLocation(width / 2 , height / 2);
+    setLocation(width / 2, height / 2);
     setVisible(true);
     getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-
   }
 
   /**

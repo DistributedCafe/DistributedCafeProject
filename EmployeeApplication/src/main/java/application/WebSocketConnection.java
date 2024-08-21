@@ -42,23 +42,22 @@ public class WebSocketConnection extends AbstractVerticle {
   }
 
   private void checkResponseAndUpdateView(Response res, AsyncResult<WebSocket> ctx) {
-      if (res.isCodeOk()) {
-          var data = new JsonArray(res.getData());
-          view.addPanels(data, ctx);
-      }
+    if (res.isCodeOk()) {
+      var data = new JsonArray(res.getData());
+      view.addPanels(data, ctx);
+    }
   }
 
-  private void checkResponseAndReconnect(Response res, WebSocket ws, JsonObject request){
-  if (!res.isCodeOk() && res.isServerNotAvailable()) {
-        try {
-            Thread.sleep(1000);
-            ws.write(Buffer.buffer(String.valueOf(request)));
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+  private void checkResponseAndReconnect(Response res, WebSocket ws, JsonObject request) {
+    if (!res.isCodeOk() && res.isServerNotAvailable()) {
+      try {
+        Thread.sleep(1000);
+        ws.write(Buffer.buffer(String.valueOf(request)));
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
     }
-}
-
+  }
 
   private void connect(WebSocketClient client, JsonObject request) {
     client.connect(
@@ -71,10 +70,10 @@ public class WebSocketConnection extends AbstractVerticle {
 
             ws.handler(
                 message -> {
-                    Response res = new Response(message);
-                    checkResponseAndUpdateView(res, ctx);
-                    checkResponseAndReconnect(res, ws, request);
-                    view.setMessageLabel(res.getMsg());
+                  Response res = new Response(message);
+                  checkResponseAndUpdateView(res, ctx);
+                  checkResponseAndReconnect(res, ws, request);
+                  view.setMessageLabel(res.getMsg());
                 });
 
             ws.write(Buffer.buffer(String.valueOf(request)));

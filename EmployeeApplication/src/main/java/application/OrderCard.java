@@ -36,7 +36,8 @@ public class OrderCard extends JPanel {
     JRadioButton ready = createRadioButton(READY, color, button, radio);
     createRadioButton(COMPLETED, color, button, radio);
 
-    button.addActionListener(x -> changeOrderState(ready.isSelected() ? READY : COMPLETED, jsonOrder, ctx));
+    button.addActionListener(
+        x -> changeOrderState(ready.isSelected() ? READY : COMPLETED, jsonOrder, ctx));
 
     add(button);
     var border = BorderFactory.createLineBorder(Color.black);
@@ -45,10 +46,14 @@ public class OrderCard extends JPanel {
     setBackground(color);
   }
 
-  private void changeOrderState(String state, JsonObject jsonOrder, AsyncResult<WebSocket> ctx){
+  private void changeOrderState(String state, JsonObject jsonOrder, AsyncResult<WebSocket> ctx) {
     var updateOrder = new JsonObject();
     updateOrder.put("_id", jsonOrder.getValue("_id")).put("state", state);
-    ctx.result().write(Buffer.buffer(String.valueOf(Request.createJsonRequest(Message.PUT_ORDER, updateOrder.toString()))));
+    ctx.result()
+        .write(
+            Buffer.buffer(
+                String.valueOf(
+                    Request.createJsonRequest(Message.PUT_ORDER, updateOrder.toString()))));
   }
 
   private void addLabels(JsonObject jsonOrder) {
