@@ -16,6 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MessageCode } from '../../utils/codes'
 import { NotAvailableError } from '../../utils/error';
 import * as errors from '../../utils/error'
+import * as cartStorage from '../../utils/cart-storage'
 
 /**
  * Component that implements the cart page.
@@ -95,10 +96,7 @@ export class CartComponent {
       }
     }
 
-    let cart = localStorage.getItem("cart")
-    if (cart != null) {
-      this.order = JSON.parse(cart)
-    }
+    this.order = cartStorage.getCartStorage()
   }
 
   formatOrder() {
