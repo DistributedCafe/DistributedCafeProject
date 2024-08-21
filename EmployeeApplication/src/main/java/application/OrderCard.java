@@ -22,6 +22,10 @@ public class OrderCard extends JPanel {
    */
   public OrderCard(JsonObject jsonOrder, AsyncResult<WebSocket> ctx, Color color) {
     super();
+
+    String READY = "READY";
+    String COMPLETED = "COMPLETED";
+
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     addLabels(jsonOrder);
 
@@ -29,28 +33,22 @@ public class OrderCard extends JPanel {
     button.setEnabled(false);
 
     ButtonGroup radio = new ButtonGroup();
-    JRadioButton ready = createRadioButton("READY", color, button, radio);
-    createRadioButton("COMPLETED", color, button, radio);
+    JRadioButton ready = createRadioButton(READY, color, button, radio);
+    createRadioButton(COMPLETED, color, button, radio);
 
-    button.addActionListener(
-        x -> {
-          var state = ready.isSelected() ? "READY" : "COMPLETED";
-          var updateOrder = new JsonObject();
-          updateOrder.put("_id", jsonOrder.getValue("_id")).put("state", state);
-
-          var request = new JsonObject();
-          request
-              .put("client_name", "Orders")
-              .put("client_request", Message.PUT_ORDER)
-              .put("input", updateOrder.toString());
-          ctx.result().write(Buffer.buffer(String.valueOf(request)));
-        });
+    button.addActionListener(x -> changeOrderState(ready.isSelected() ? READY : COMPLETED, jsonOrder, ctx));
 
     add(button);
     var border = BorderFactory.createLineBorder(Color.black);
     var margin = new EmptyBorder(10, 10, 10, 10);
     setBorder(new CompoundBorder(border, margin));
     setBackground(color);
+  }
+
+  private void changeOrderState(String state, JsonObject jsonOrder, AsyncResult<WebSocket> ctx){
+    var updateOrder = new JsonObject();
+    updateOrder.put("_id", jsonOrder.getValue("_id")).put("state", state);
+    ctx.result().write(Buffer.buffer(String.valueOf(Request.createJsonRequest(Message.PUT_ORDER, updateOrder.toString()))));
   }
 
   private void addLabels(JsonObject jsonOrder) {
