@@ -1,8 +1,10 @@
 package application;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.http.WebSocket;
 import io.vertx.core.http.WebSocketClient;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -17,7 +19,7 @@ import io.vertx.core.json.JsonObject;
  */
 public class WebSocketConnection extends AbstractVerticle {
 
-  View view;
+  private final View view;
 
   /**
    * Class Constructor
@@ -34,14 +36,27 @@ public class WebSocketConnection extends AbstractVerticle {
   }
 
   private void startClient(Vertx vertx) {
-    var request = new JsonObject();
-    request
-        .put("client_name", "Orders")
-        .put("client_request", Message.GET_ALL_ORDERS)
-        .put("input", "");
-
+    var request = Request.createJsonRequest(Message.GET_ALL_ORDERS, "");
     WebSocketClient client = vertx.createWebSocketClient();
     connect(client, request);
+  }
+
+  private void checkResponseAndUpdateView(Response res, AsyncResult<WebSocket> ctx) {
+    if (res.isCodeOk()) {
+      var data = new JsonArray(res.getData());
+      view.addPanels(data, ctx);
+    }
+  }
+
+  private void checkResponseAndReconnect(Response res, WebSocket ws, JsonObject request) {
+    if (!res.isCodeOk() && res.isServerNotAvailable()) {
+      try {
+        Thread.sleep(1000);
+        ws.write(Buffer.buffer(String.valueOf(request)));
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+    }
   }
 
   private void connect(WebSocketClient client, JsonObject request) {
@@ -55,21 +70,10 @@ public class WebSocketConnection extends AbstractVerticle {
 
             ws.handler(
                 message -> {
-                  JsonObject res = message.toJsonObject();
-                  var msg = (String) res.getValue("message");
-                  var code = (Integer) res.getValue("code");
-                  if (code == 200) {
-                    var data = new JsonArray(res.getValue("data").toString());
-                    view.addPanels(data, ctx);
-                  } else if (msg.equals("ERROR_SERVER_NOT_AVAILABLE")) {
-                    try {
-                      Thread.sleep(1000);
-                      ws.write(Buffer.buffer(String.valueOf(request)));
-                    } catch (InterruptedException e) {
-                      Thread.currentThread().interrupt();
-                    }
-                  }
-                  view.setLabel(msg);
+                  Response res = new Response(message);
+                  checkResponseAndUpdateView(res, ctx);
+                  checkResponseAndReconnect(res, ws, request);
+                  view.setMessageLabel(res.getMsg());
                 });
 
             ws.write(Buffer.buffer(String.valueOf(request)));

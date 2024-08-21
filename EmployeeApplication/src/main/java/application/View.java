@@ -12,30 +12,46 @@ import javax.swing.*;
 /** application.Main GUI Frame */
 public class View extends JFrame {
 
-  private final JPanel panel;
-  private final JLabel label;
+  private final JPanel ordersPanel;
+  private final JLabel messageLabel;
 
   /** application.Main GUI Frame Constructor */
   public View() {
     setTitle("Employee Application");
 
+    messageLabel = initMessageLabel();
+
+    ordersPanel = initOrdersPanel();
+
+    initFrameSizeAndLocation();
+
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+  }
+
+  private JLabel initMessageLabel() {
     JPanel labelPanel = new JPanel();
-    label = new JLabel("");
+    JLabel label = new JLabel("");
     labelPanel.add(label);
     add(labelPanel);
+    return label;
+  }
 
-    panel = new JPanel();
+  private JPanel initOrdersPanel() {
+    JPanel panel = new JPanel();
     panel.setLayout(new GridLayout(0, 1));
     JScrollPane scroll = new JScrollPane(panel);
     getContentPane().add(scroll);
+    return panel;
+  }
 
+  private void initFrameSizeAndLocation() {
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    setSize(screenSize.width / 2, screenSize.height / 2);
-    setLocation(screenSize.width / 4, screenSize.height / 4);
+    int width = screenSize.width / 2;
+    int height = screenSize.height / 2;
+    setSize(width, height);
+    setLocation(width / 2, height / 2);
     setVisible(true);
     getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
 
   /**
@@ -45,7 +61,7 @@ public class View extends JFrame {
    * @param ctx the websocket
    */
   public void addPanels(JsonArray array, AsyncResult<WebSocket> ctx) {
-    panel.removeAll();
+    ordersPanel.removeAll();
     var iterator = array.stream().iterator();
     var colors = new LinkedList<Color>();
     colors.add(Color.PINK);
@@ -55,9 +71,9 @@ public class View extends JFrame {
     while (iterator.hasNext()) {
       var color = colors.get(infiniteIterator.next());
       var next = (JsonObject) iterator.next();
-      panel.add(new OrderCard(next, ctx, color));
+      ordersPanel.add(new OrderCard(next, ctx, color));
     }
-    panel.revalidate();
+    ordersPanel.revalidate();
   }
 
   /**
@@ -65,7 +81,7 @@ public class View extends JFrame {
    *
    * @param message to display
    */
-  public void setLabel(String message) {
-    label.setText("Recap Order: " + message);
+  public void setMessageLabel(String message) {
+    messageLabel.setText("Recap Order: " + message);
   }
 }
