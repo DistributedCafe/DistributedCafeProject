@@ -1,7 +1,3 @@
-/*
-let error = false;
-let errorMessage = "";
-*/
 export interface NotAvailableError {
     error: boolean,
     errorMsg: string

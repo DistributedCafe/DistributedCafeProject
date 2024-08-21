@@ -31,7 +31,7 @@ import * as cartStorage from '../../utils/cart-storage'
     MatInputModule,
     FormsModule,
     MatRadioModule,
-    CommonModule
+    CommonModule,
   ],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css'
@@ -113,12 +113,12 @@ export class CartComponent {
   }
 
   sendOrder() {
-    if (this.validateEmail()) {
-      this.errorEmail = false
-      if (this.type != undefined) {
-        this.errorType = false
-        if (this.order.length > 0) {
-          this.errorEmptyCart = false
+    
+    this.errorEmail = !this.validateEmail()
+    this.errorType = this.type == undefined 
+    this.errorEmptyCart = !(this.order.length > 0)
+    
+    if(!this.errorEmail && !this.errorType && !this.errorEmptyCart){
           const order: NewOrder = {
             customerEmail: this.email,
             price: this.totalAmount(this.order),
@@ -131,14 +131,8 @@ export class CartComponent {
             input: order
           }
           this.ws.send(JSON.stringify(req))
-        } else {
-          this.errorEmptyCart = true
-        }
-      } else {
-        this.errorType = true
-      }
-    } else {
-      this.errorEmail = true
     }
+
+    } 
   }
-}
+ 
