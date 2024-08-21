@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { ItemCardComponent } from "../item-card/item-card.component";
-import { Item } from '../../utils/Item';
+import { Item } from '../../utils/item';
 import { MenuServiceMessages, RequestMessage, ResponseMessage } from '../../utils/message';
 import { Service } from '../../utils/service';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MessageCode } from '../../utils/codes';
 
 /**
  * Component that implements the menu page.
@@ -37,8 +38,7 @@ export class MenuComponent {
 
     this.ws.onerror = () => {
       this.display = true
-      this.error = true
-      this.errorMsg = "Server not available!"
+      this.setError("Server not available!")
       this.ws.close()
     }
 
@@ -50,13 +50,13 @@ export class MenuComponent {
       let data = JSON.parse(e.data) as ResponseMessage
       this.display = true
       switch (data.code) {
-        case 200:
+        case MessageCode.OK:
           this.items = JSON.parse(data.data)
           break
-        case 404:
+        case MessageCode.NOT_FOUND:
           this.setError("Warehouse empty!")
           break
-        case 500:
+        case MessageCode.SERVICE_NOT_AVAILABLE:
           this.setError("Microservice not available!")
       }
     }

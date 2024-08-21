@@ -1,4 +1,4 @@
-import { Item } from "./Item"
+import { Item } from "./item"
 
 /**
  * this interface represents the information needed to create a new pending order

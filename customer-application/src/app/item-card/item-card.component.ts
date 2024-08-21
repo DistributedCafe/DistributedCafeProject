@@ -5,7 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Item } from '../../utils/Item';
+import { Item } from '../../utils/item';
 import { beautifyDbName } from '../../utils/utils';
 
 /**

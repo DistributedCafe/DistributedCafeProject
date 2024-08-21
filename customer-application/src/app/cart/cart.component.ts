@@ -13,6 +13,7 @@ import { NewOrder, OrderType } from '../../utils/order';
 import { OrdersServiceMessages, RequestMessage } from '../../utils/message';
 import { Service } from '../../utils/service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MessageCode } from '../../utils/codes'
 
 /**
  * Component that implements the cart page.
@@ -80,12 +81,12 @@ export class CartComponent {
 
     this.ws.onmessage = (e) => {
       const data = JSON.parse(e.data)
-      if (data.code == 200) {
+      if (data.code == MessageCode.OK) {
         this.errorNewOrder = false
         notification.open("Order successfully created", "OK").afterDismissed().subscribe(() => {
           this.cleanCart()
         })
-      } else if (data.code == 500) {
+      } else if (data.code == MessageCode.SERVICE_NOT_AVAILABLE) {
         this.error = true
         this.errorMsg = "Microservice not available!"
       }
