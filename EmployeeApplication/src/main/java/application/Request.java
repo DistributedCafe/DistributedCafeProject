@@ -5,6 +5,8 @@ import io.vertx.core.json.JsonObject;
 /** This utility class allows to create a request for the server. */
 public final class Request {
 
+  private Request() {}
+
   /**
    * @param message representing the needed server functionality
    * @param input data to send to the server

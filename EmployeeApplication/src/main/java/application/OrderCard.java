@@ -13,6 +13,9 @@ import javax.swing.border.EmptyBorder;
 /** Graphic Panel Representation for an Order */
 public class OrderCard extends JPanel {
 
+  private static final String READY = "READY";
+  private static final String COMPLETED = "COMPLETED";
+
   /**
    * application.OrderCard constructor
    *
@@ -22,9 +25,6 @@ public class OrderCard extends JPanel {
    */
   public OrderCard(JsonObject jsonOrder, AsyncResult<WebSocket> ctx, Color color) {
     super();
-
-    String READY = "READY";
-    String COMPLETED = "COMPLETED";
 
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     addLabels(jsonOrder);
