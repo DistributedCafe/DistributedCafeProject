@@ -113,26 +113,25 @@ export class CartComponent {
   }
 
   sendOrder() {
-    
+
     this.errorEmail = !this.validateEmail()
-    this.errorType = this.type == undefined 
+    this.errorType = this.type == undefined
     this.errorEmptyCart = !(this.order.length > 0)
-    
-    if(!this.errorEmail && !this.errorType && !this.errorEmptyCart){
-          const order: NewOrder = {
-            customerEmail: this.email,
-            price: this.totalAmount(this.order),
-            type: this.type,
-            items: this.formatOrder()
-          }
-          const req: RequestMessage = {
-            client_name: Service.ORDERS,
-            client_request: OrdersServiceMessages.CREATE_ORDER,
-            input: order
-          }
-          this.ws.send(JSON.stringify(req))
+
+    if (!this.errorEmail && !this.errorType && !this.errorEmptyCart) {
+      const order: NewOrder = {
+        customerEmail: this.email,
+        price: this.totalAmount(this.order),
+        type: this.type,
+        items: this.formatOrder()
+      }
+      const req: RequestMessage = {
+        client_name: Service.ORDERS,
+        client_request: OrdersServiceMessages.CREATE_ORDER,
+        input: order
+      }
+      this.ws.send(JSON.stringify(req))
     }
 
-    } 
   }
- 
+}
