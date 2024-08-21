@@ -6,6 +6,7 @@ import { Service } from '../../utils/service';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MessageCode } from '../../utils/codes';
+import * as errors from '../../utils/error'
 
 /**
  * Component that implements the menu page.
@@ -23,9 +24,8 @@ export class MenuComponent {
 
   ws!: WebSocket
   items: Item[] = []
-  errorMsg = ""
+  error = errors.createError()
   display = false
-  error = false
 
   constructor() {
     this.ws = new WebSocket('ws://localhost:3000')
@@ -38,7 +38,7 @@ export class MenuComponent {
 
     this.ws.onerror = () => {
       this.display = true
-      this.setError("Server not available!")
+      this.error = errors.getServerError()
       this.ws.close()
     }
 
@@ -54,16 +54,12 @@ export class MenuComponent {
           this.items = JSON.parse(data.data)
           break
         case MessageCode.NOT_FOUND:
-          this.setError("Warehouse empty!")
+          this.error = errors.getWarehouseError()
           break
         case MessageCode.SERVICE_NOT_AVAILABLE:
-          this.setError("Microservice not available!")
+          this.error = errors.getMicroserviceError()
       }
     }
   }
 
-  setError(msg: string) {
-    this.error = true
-    this.errorMsg = msg
-  }
 }

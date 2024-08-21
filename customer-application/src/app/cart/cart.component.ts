@@ -14,6 +14,8 @@ import { OrdersServiceMessages, RequestMessage } from '../../utils/message';
 import { Service } from '../../utils/service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MessageCode } from '../../utils/codes'
+import { NotAvailableError } from '../../utils/error';
+import * as errors from '../../utils/error'
 
 /**
  * Component that implements the cart page.
@@ -42,8 +44,7 @@ export class CartComponent {
   errorType = false
   errorEmptyCart = false
   errorNewOrder = false
-  error = false
-  errorMsg = ""
+  error: NotAvailableError = errors.createError()
   apiError = ""
   ws!: WebSocket
 
@@ -74,8 +75,7 @@ export class CartComponent {
     this.ws = new WebSocket('ws://localhost:3000')
 
     this.ws.onerror = () => {
-      this.error = true
-      this.errorMsg = "Server not available!"
+      this.error = errors.getServerError()
       this.ws.close()
     }
 
@@ -87,8 +87,7 @@ export class CartComponent {
           this.cleanCart()
         })
       } else if (data.code == MessageCode.SERVICE_NOT_AVAILABLE) {
-        this.error = true
-        this.errorMsg = "Microservice not available!"
+        this.error = errors.getMicroserviceError()
       }
       else {
         this.apiError = data.message
