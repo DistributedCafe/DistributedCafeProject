@@ -116,7 +116,7 @@ export class CartComponent {
 
     this.errorEmail = !this.validateEmail()
     this.errorType = this.type == undefined
-    this.errorEmptyCart = !(this.order.length > 0)
+    this.errorEmptyCart = this.order.length <= 0
 
     if (!this.errorEmail && !this.errorType && !this.errorEmptyCart) {
       const order: NewOrder = {
