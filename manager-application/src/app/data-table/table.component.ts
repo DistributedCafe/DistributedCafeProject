@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ItemDialogComponent } from '../item-dialog/item-dialog.component';
 import { formatRecipe } from '../../utils/recipe';
+import { MessageCode } from '../../utils/codes';
 
 /**
  * Component that implements a table displaying the ingredients or items 
@@ -87,7 +88,7 @@ export class TableComponent implements OnInit {
 			const data = JSON.parse(e.data) as ResponseMessage
 			console.log("message: " + data.message)
 			console.log("code: " + data.code)
-			if (data.code == 200) {
+			if (data.code == MessageCode.OK) {
 				setData(JSON.parse(data.data))
 			} else {
 				setEmpty("Database empty!", data.code)
@@ -97,7 +98,7 @@ export class TableComponent implements OnInit {
 		const setDisplayTrue = () => { this.display = true }
 		const setEmpty = (msg: string, code: number) => {
 			this.error = true
-			if (code == 500) {
+			if (code == MessageCode.SERVICE_NOT_AVAILABLE) {
 				this.errorMessage = "Microservice not available!"
 			} else {
 				this.errorMessage = msg

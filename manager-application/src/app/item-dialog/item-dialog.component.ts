@@ -14,6 +14,7 @@ import { checkWsConnectionAndSend } from '../../utils/send';
 import { buildRecipe } from '../../utils/recipe';
 import { SendButtonComponent } from '../send-button/send-button.component';
 import { DialogData } from '../../utils/dialog-data';
+import { MessageCode } from '../../utils/codes';
 
 /**
  * Component that implements a dialog containing a 
@@ -54,7 +55,7 @@ export class ItemDialogComponent {
 		let ingredient: Ingredient[]
 		this.data.ws.onmessage = function(e) {
 			const data = JSON.parse(e.data) as ResponseMessage
-			if (data.code == 200) {
+			if (data.code == MessageCode.OK) {
 				ingredient = JSON.parse(data.data) as Ingredient[]
 				setData(ingredient)
 			} else {
