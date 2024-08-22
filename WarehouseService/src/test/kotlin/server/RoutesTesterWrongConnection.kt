@@ -39,7 +39,7 @@ class RoutesTesterWrongConnection : BaseTest() {
         val decreaseTea = 4
 
         val decreaseIngredients =
-            Json.encodeToString(listOf(UpdateQuantity("milk", decreaseMilk), UpdateQuantity("tea", decreaseTea)))
+            Json.encodeToString(listOf(UpdateQuantity(milk.name, decreaseMilk), UpdateQuantity(tea.name, decreaseTea)))
 
         val response = apiUtils.updateConsumedIngredientsQuantity(Buffer.buffer(decreaseIngredients)).coAwait()
         response.statusCode() shouldBe 500
@@ -51,7 +51,7 @@ class RoutesTesterWrongConnection : BaseTest() {
     suspend fun restockRouteTest() {
         val quantity = Buffer.buffer(Json.encodeToString(10))
 
-        val response = apiUtils.restock("tea", quantity).coAwait()
+        val response = apiUtils.restock(tea.name, quantity).coAwait()
         response.statusCode() shouldBe 500
         response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
     }
@@ -69,7 +69,7 @@ class RoutesTesterWrongConnection : BaseTest() {
     @Ignore
     @Test
     suspend fun getAllAvailableIngredients() {
-        collection.insertOne(Ingredient("coffee", 0))
+        collection.insertOne(Ingredient(coffee.name, 0))
 
         val response = apiUtils.getAllIngredients("available").send().coAwait()
 
