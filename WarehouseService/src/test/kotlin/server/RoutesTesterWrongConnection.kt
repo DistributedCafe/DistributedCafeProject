@@ -2,8 +2,8 @@ package server
 
 import ApiUtils
 import BaseTest
-import WarehouseMessage
-import application.UpdateQuantity
+import Message
+import UpdateQuantity
 import domain.Ingredient
 import io.kotest.matchers.shouldBe
 import io.vertx.core.Vertx
@@ -29,7 +29,7 @@ class RoutesTesterWrongConnection : BaseTest() {
 
         val response = apiUtils.createIngredient(Buffer.buffer(newIngredient)).coAwait()
         response.statusCode() shouldBe 500
-        response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
+        response.statusMessage() shouldBe Message.ERROR_DB_NOT_AVAILABLE.toString()
     }
 
     @Ignore
@@ -43,7 +43,7 @@ class RoutesTesterWrongConnection : BaseTest() {
 
         val response = apiUtils.updateConsumedIngredientsQuantity(Buffer.buffer(decreaseIngredients)).coAwait()
         response.statusCode() shouldBe 500
-        response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
+        response.statusMessage() shouldBe Message.ERROR_DB_NOT_AVAILABLE.toString()
     }
 
     @Ignore
@@ -53,7 +53,7 @@ class RoutesTesterWrongConnection : BaseTest() {
 
         val response = apiUtils.restock(tea.name, quantity).coAwait()
         response.statusCode() shouldBe 500
-        response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
+        response.statusMessage() shouldBe Message.ERROR_DB_NOT_AVAILABLE.toString()
     }
 
     @Ignore
@@ -63,7 +63,7 @@ class RoutesTesterWrongConnection : BaseTest() {
 
         response.statusCode() shouldBe 500
         response.bodyAsString() shouldBe null
-        response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
+        response.statusMessage() shouldBe Message.ERROR_DB_NOT_AVAILABLE.toString()
     }
 
     @Ignore
@@ -75,6 +75,6 @@ class RoutesTesterWrongConnection : BaseTest() {
 
         response.statusCode() shouldBe 500
         response.bodyAsString() shouldBe null
-        response.statusMessage() shouldBe WarehouseMessage.ERROR_DB_NOT_AVAILABLE.toString()
+        response.statusMessage() shouldBe Message.ERROR_DB_NOT_AVAILABLE.toString()
     }
 }
