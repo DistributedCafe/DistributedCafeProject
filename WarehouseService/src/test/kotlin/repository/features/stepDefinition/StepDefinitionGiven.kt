@@ -11,7 +11,6 @@ import kotlinx.coroutines.runBlocking
 import server.Server
 
 class StepDefinitionGiven : BaseTest() {
-
     init {
         runBlocking {
             Vertx.vertx().deployVerticle(Server(MongoInfo(), 8080)).coAwait()
