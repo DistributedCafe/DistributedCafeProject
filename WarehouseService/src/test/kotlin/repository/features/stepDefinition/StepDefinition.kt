@@ -12,7 +12,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions
-import repository.Quantity
+import Quantity
 
 class StepDefinition : BaseTest() {
     private var actualAnswer: String = ""

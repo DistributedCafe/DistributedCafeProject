@@ -1,7 +1,7 @@
 /**
  * Class that lists the messages returned by the Repository and the WarehouseService
  */
-enum class WarehouseMessage {
+enum class Message {
     OK,
     ERROR_INGREDIENT_NOT_FOUND,
     ERROR_INGREDIENT_ALREADY_EXISTS,
