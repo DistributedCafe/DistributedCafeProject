@@ -1,16 +1,16 @@
 package handlers
 
-import MongoInfo
 import Message
-import WarehouseMessageToCode
+import MongoInfo
+import Quantity
 import UpdateQuantity
+import WarehouseMessageToCode
 import application.WarehouseServiceImpl
 import application.WarehouseServiceResponse
 import domain.Ingredient
 import io.vertx.ext.web.RoutingContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import Quantity
 import server.MongoUtils
 import java.net.HttpURLConnection
 
@@ -100,8 +100,8 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
                     warehouseService.restock(
                         UpdateQuantity(
                             ingredientName,
-                            Json.decodeFromString<Quantity>(quantity).quantity
-                        )
+                            Json.decodeFromString<Quantity>(quantity).quantity,
+                        ),
                     )
                 } catch (e: Exception) {
                     WarehouseServiceResponse(null, Message.ERROR_WRONG_PARAMETERS)

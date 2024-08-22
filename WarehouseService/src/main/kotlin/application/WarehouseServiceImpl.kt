@@ -1,8 +1,8 @@
 package application
 
+import Message
 import MongoInfo
 import UpdateQuantity
-import Message
 import domain.Ingredient
 import repository.RepositoryImpl
 

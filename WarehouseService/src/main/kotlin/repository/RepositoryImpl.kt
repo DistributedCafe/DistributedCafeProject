@@ -1,7 +1,7 @@
 package repository
 
-import MongoInfo
 import Message
+import MongoInfo
 import com.mongodb.MongoException
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.IndexOptions
@@ -57,9 +57,10 @@ class RepositoryImpl(mongoInfo: MongoInfo) : Repository {
     }
 
     override suspend fun getIngredientQuantity(name: String): RepositoryResponse<Int?> {
-        val quantity = collection.withDocumentClass<Ingredient>().find(
-            eq(Ingredient::name.name, name),
-        ).toList().firstOrNull()?.quantity
+        val quantity =
+            collection.withDocumentClass<Ingredient>().find(
+                eq(Ingredient::name.name, name),
+            ).toList().firstOrNull()?.quantity
 
         return RepositoryResponse(
             quantity,
@@ -113,4 +114,3 @@ class RepositoryImpl(mongoInfo: MongoInfo) : Repository {
         return RepositoryResponse(availableIngredients, Message.OK)
     }
 }
-

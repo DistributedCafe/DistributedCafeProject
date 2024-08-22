@@ -2,8 +2,9 @@ package server
 
 import ApiUtils
 import BaseTest
-import MongoInfo
 import Message
+import MongoInfo
+import Quantity
 import UpdateQuantity
 import com.mongodb.client.model.Filters
 import domain.Ingredient
@@ -14,7 +15,6 @@ import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import Quantity
 import java.net.HttpURLConnection
 
 class RoutesTester : BaseTest() {
