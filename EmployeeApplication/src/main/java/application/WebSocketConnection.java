@@ -1,5 +1,7 @@
 package application;
 
+import application.schema.Request;
+import application.schema.Response;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
@@ -43,7 +45,7 @@ public class WebSocketConnection extends AbstractVerticle {
 
   private void checkResponseAndUpdateView(Response res, AsyncResult<WebSocket> ctx) {
     if (res.isCodeOk()) {
-      var data = new JsonArray(res.getData());
+      var data = new JsonArray(res.data());
       view.addPanels(data, ctx);
     }
   }
@@ -70,10 +72,10 @@ public class WebSocketConnection extends AbstractVerticle {
 
             ws.handler(
                 message -> {
-                  Response res = new Response(message);
+                  Response res = message.toJsonObject().mapTo(Response.class);
                   checkResponseAndUpdateView(res, ctx);
                   checkResponseAndReconnect(res, ws, request);
-                  view.setMessageLabel(res.getMsg());
+                  view.setMessageLabel(res.message());
                 });
 
             ws.write(Buffer.buffer(String.valueOf(request)));

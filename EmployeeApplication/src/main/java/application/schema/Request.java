@@ -1,4 +1,4 @@
-package application;
+package application.schema;
 
 import io.vertx.core.json.JsonObject;
 
