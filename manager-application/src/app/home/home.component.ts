@@ -5,7 +5,7 @@ import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { MenuComponent } from "../menu/menu.component";
 import { WarehouseComponent } from "../warehouse/warehouse.component";
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Frontend, Log, MissingIngredientNotification } from '../../utils/messages';
+import { Frontend, Log, MissingIngredientNotification } from '../../utils/schema/messages';
 import { equals } from 'typia';
 
 interface Route {

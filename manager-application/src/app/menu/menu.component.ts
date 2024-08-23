@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TableComponent } from "../data-table/table.component";
-import { MenuServiceMessages, RequestMessage } from '../../utils/messages';
+import { MenuServiceMessages, RequestMessage } from '../../utils/schema/messages';
 import { Service } from '../../utils/service';
 
 /**

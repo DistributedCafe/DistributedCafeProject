@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import { RequestMessage, ResponseMessage } from '../../utils/messages';
+import { RequestMessage, ResponseMessage } from '../../utils/schema/messages';
 import { Service } from '../../utils/service';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';

@@ -9,7 +9,7 @@ import {
 	MatDialogContent,
 	MatDialogTitle,
 } from '@angular/material/dialog';
-import { RequestMessage, WarehouseServiceMessages } from '../../utils/messages';
+import { RequestMessage, WarehouseServiceMessages } from '../../utils/schema/messages';
 import { Service } from '../../utils/service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';

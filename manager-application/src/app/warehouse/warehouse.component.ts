@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TableComponent } from '../data-table/table.component';
-import { RequestMessage, WarehouseServiceMessages } from '../../utils/messages';
+import { RequestMessage, WarehouseServiceMessages } from '../../utils/schema/messages';
 import { Service } from '../../utils/service';
 
 /**
