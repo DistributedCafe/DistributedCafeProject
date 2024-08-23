@@ -1,5 +1,13 @@
 plugins {
     id("java")
+    alias(libs.plugins.spotless)
+}
+
+spotless {
+    java {
+        googleJavaFormat(libs.versions.google.get())
+        formatAnnotations()
+    }
 }
 
 dependencies{
