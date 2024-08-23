@@ -1,4 +1,4 @@
-import { Service } from "./service"
+import { Service } from "../service"
 
 /**
  * This interface represents the request the client sends to the server
