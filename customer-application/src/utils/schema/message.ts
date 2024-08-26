@@ -15,7 +15,7 @@ export interface RequestMessage {
 export interface ResponseMessage {
   message: string,
   code: number,
-  data: string
+  data: any
 }
 
 /**

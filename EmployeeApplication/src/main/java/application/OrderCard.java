@@ -21,13 +21,12 @@ public class OrderCard extends JPanel {
   /**
    * application.OrderCard constructor
    *
-   * @param jsonOrder json representation of an order
+   * @param order json representation of an order
    * @param ctx the websocket
    * @param color the background color
    */
-  public OrderCard(JsonObject jsonOrder, AsyncResult<WebSocket> ctx, Color color) {
+  public OrderCard(Order order, AsyncResult<WebSocket> ctx, Color color) {
     super();
-    Order order = jsonOrder.mapTo(Order.class);
 
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     addLabels(order);
@@ -56,8 +55,7 @@ public class OrderCard extends JPanel {
     ctx.result()
         .write(
             Buffer.buffer(
-                String.valueOf(
-                    Request.createJsonRequest(Message.PUT_ORDER, updateOrder.toString()))));
+                String.valueOf(Request.createJsonRequest(Message.PUT_ORDER, updateOrder))));
   }
 
   private void addLabels(Order order) {

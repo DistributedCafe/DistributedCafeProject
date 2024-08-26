@@ -62,11 +62,8 @@ export class SendButtonComponent {
 		this.ws.onmessage = function(e) {
 			const res = JSON.parse(e.data) as ResponseMessage
 			if (res.code == MessageCode.OK) {
-				console.log(res.message)
 				closeAndReloadDialog()
 			} else {
-				console.error(res.code)
-				console.error(res.message)
 				closeDialog()
 				openDialog(res)
 			}

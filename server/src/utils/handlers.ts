@@ -1,7 +1,11 @@
 import { StatusCodes } from "http-status-codes"
 import { http, httpMenu } from "./axios"
-import { MissingIngredientNotification, ResponseMessage } from "./messages"
-import WebSocket from 'ws'
+import { MissingIngredientNotification } from '../schema/messages'
+import { ResponseMessage } from '../schema/messages'
+import WebSocket from "ws"
+import { Item, WarehouseIngredient } from "../schema/item"
+import { Order, OrderItem } from "../schema/order"
+import { ServiceResponse } from "../schema/messages"
 
 interface IArray {
 	[index: string]: number
@@ -17,7 +21,7 @@ export function createErrorMessage(code: number, msg: string) {
 	return JSON.stringify({
 		code: code,
 		message: msg,
-		data: ""
+		data: undefined
 	})
 }
 
@@ -33,7 +37,7 @@ export function checkErrorMessage(error: any) {
 }
 
 async function calcUsedIngredient(item: string, ingredients: IArray, items: IArray) {
-	let res = await httpMenu.get('/menu/' + item)
+	let res = (await httpMenu.get('/menu/' + item)) as ServiceResponse<Item>
 	for (let r of res.data.recipe) {
 		let ingredient = r.ingredient_name
 		let qty = r.quantity
@@ -44,24 +48,24 @@ async function calcUsedIngredient(item: string, ingredients: IArray, items: IArr
 	return ingredients
 }
 
-function calcItemNumber(orderItem: any[]) {
+function calcItemNumber(orderItem: OrderItem[]) {
 	let items = {} as IArray
-	orderItem.forEach((i: any) => {
+	orderItem.forEach((i) => {
 		items[i.item.name.toString()] = i.quantity
 	})
 	return items
 }
 
-function getNames(array: any[]) {
+function getNames(array: WarehouseIngredient[]) {
 	let names = Array()
-	array.forEach((i: any) => {
+	array.forEach((i) => {
 		names.push(i.name)
 	})
 	return names
 }
 
-function getQuantity(array: any[], name: string) {
-	return array.filter((i: any) => { return i.name == name })[0].quantity
+function getQuantity(array: WarehouseIngredient[], name: string) {
+	return array.filter((i) => { return i.name == name })[0].quantity
 }
 
 /**
@@ -69,9 +73,9 @@ function getQuantity(array: any[], name: string) {
  * @param input the order
  * @returns true if there are enough ingredients, false otherwise
  */
-export async function checkOrder(input: any): Promise<number> {
+export async function checkOrder(input: Order): Promise<StatusCodes> {
 	let response = StatusCodes.INTERNAL_SERVER_ERROR
-	await http.get('/warehouse/available/').then(async (res) => {
+	await http.get('/warehouse/available/').then(async (res: ServiceResponse<WarehouseIngredient[]>) => {
 		const availableIngredients = res.data
 		let ingredients = {} as IArray
 		const itemNumbers = calcItemNumber(input.items)
@@ -88,16 +92,16 @@ export async function checkOrder(input: any): Promise<number> {
 	return response
 }
 
-function checkAndNotify(oldAvailableIngredients: any, managerWs: WebSocket[]) {
-	http.get('/warehouse/').then((resAvailable) => {
+function checkAndNotify(oldAvailableIngredients: WarehouseIngredient[], managerWs: WebSocket[]) {
+	http.get('/warehouse/').then((resAvailable: ServiceResponse<WarehouseIngredient[]>) => {
 		let availableIngredientsnames = Array()
-		resAvailable.data.forEach((i: any) => {
+		resAvailable.data.forEach((i) => {
 			if (i.quantity > 0) {
 				availableIngredientsnames.push(i.name)
 			}
 		})
 
-		let missingIngredients = oldAvailableIngredients.filter((i: any) => !availableIngredientsnames.includes(i.name))
+		let missingIngredients = oldAvailableIngredients.filter((i) => !availableIngredientsnames.includes(i.name))
 
 		if (missingIngredients.length > 0) {
 			const notification: MissingIngredientNotification = {
@@ -121,9 +125,9 @@ function checkAndNotify(oldAvailableIngredients: any, managerWs: WebSocket[]) {
  * @param ws 
  * @param managerWs array of all the manager frontends logged
  */
-export function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket, managerWs: WebSocket[]) {
+export function handleNewOrder(promise: Promise<ServiceResponse<Order>>, ws: WebSocket, managerWs: WebSocket[]) {
 	promise.then(async (res) => {
-		const orderItems = input.items
+		const orderItems = res.data.items
 		let ingredients = {} as IArray
 		const items = calcItemNumber(orderItems)
 		for (let i of Object.keys(items)) {
@@ -136,14 +140,14 @@ export function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket,
 				"quantity": ingredients[i]
 			})
 		}
-		http.get('/warehouse/available').then((checkMissingIngredient) => {
+		http.get('/warehouse/available').then((checkMissingIngredient: ServiceResponse<WarehouseIngredient[]>) => {
 			const oldAvailable = checkMissingIngredient.data
 
 			http.put('/warehouse/', decrease).then(() => {
 				const msg: ResponseMessage = {
 					message: res.statusText,
 					code: res.status,
-					data: JSON.stringify(res.data)
+					data: res.data
 				}
 				ws.send(JSON.stringify(msg))
 				checkAndNotify(oldAvailable, managerWs)
@@ -159,16 +163,17 @@ export function handleNewOrder(promise: Promise<any>, input: any, ws: WebSocket,
  * @param promise returned by the API
  * @param ws 
  */
-export function handleResponse(promise: Promise<any>, ws: WebSocket) {
+export function handleResponse(promise: Promise<ServiceResponse<any>>, ws: WebSocket) {
 	promise.then((res) => {
 		const msg: ResponseMessage = {
 			message: res.statusText,
 			code: res.status,
-			data: JSON.stringify(res.data)
+			data: res.data
 		}
 		ws.send(JSON.stringify(msg))
 	}).catch((error) => {
 		ws.send(checkErrorMessage(error))
 	})
 }
+
 

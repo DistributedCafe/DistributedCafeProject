@@ -86,10 +86,8 @@ export class TableComponent implements OnInit {
 
 		this.ws.onmessage = function(e) {
 			const data = JSON.parse(e.data) as ResponseMessage
-			console.log("message: " + data.message)
-			console.log("code: " + data.code)
 			if (data.code == MessageCode.OK) {
-				setData(JSON.parse(data.data))
+				setData(data.data)
 			} else {
 				setEmpty("Database empty!", data.code)
 			}

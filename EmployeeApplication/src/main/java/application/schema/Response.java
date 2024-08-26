@@ -1,5 +1,7 @@
 package application.schema;
 
+import java.util.ArrayList;
+
 /**
  * This class represents the response, a message received from the server.
  *
@@ -7,7 +9,7 @@ package application.schema;
  * @param code provided by the server
  * @param data provided by the server
  */
-public record Response(String message, int code, String data) {
+public record Response(String message, int code, ArrayList<Order> data) {
 
   /**
    * It says if the server response is code based on the code.

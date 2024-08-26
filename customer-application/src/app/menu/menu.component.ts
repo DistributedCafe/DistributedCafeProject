@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ItemCardComponent } from "../item-card/item-card.component";
-import { Item } from '../../utils/item';
-import { MenuServiceMessages, RequestMessage, ResponseMessage } from '../../utils/message';
+import { Item } from '../../utils/schema/item';
+import { MenuServiceMessages, RequestMessage, ResponseMessage } from '../../utils/schema/message';
 import { Service } from '../../utils/service';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -51,7 +51,7 @@ export class MenuComponent {
       this.display = true
       switch (data.code) {
         case MessageCode.OK:
-          this.items = JSON.parse(data.data)
+          this.items = data.data
           break
         case MessageCode.NOT_FOUND:
           this.error = errors.getWarehouseError()

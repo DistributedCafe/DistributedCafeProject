@@ -7,6 +7,7 @@ import { WarehouseComponent } from "../warehouse/warehouse.component";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Frontend, Log, MissingIngredientNotification } from '../../utils/schema/messages';
 import { equals } from 'typia';
+import { Ingredient } from '../../utils/schema/ingredient';
 
 interface Route {
 	path: string;
@@ -51,7 +52,7 @@ export class HomeComponent {
 			this.send(JSON.stringify(msg))
 		}
 		this.ws.onmessage = function(e) {
-			const data = JSON.parse(e.data)
+			const data = JSON.parse(e.data) as MissingIngredientNotification
 			if (equals<MissingIngredientNotification>(data)) {
 				const missingIngredients = data.data
 				notify(createMsg(missingIngredients), "OK")
@@ -61,7 +62,7 @@ export class HomeComponent {
 			notification.open(message, action);
 		}
 
-		function createMsg(missingIngredients: any) {
+		function createMsg(missingIngredients: Ingredient[]) {
 			const msg = "missing from the warehouse!"
 			let notificationMsg = ""
 			let missingNames = ""

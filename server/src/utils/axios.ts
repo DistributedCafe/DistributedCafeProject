@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { checkErrorMessage } from './utils'
+import { checkErrorMessage } from './handlers'
 import WebSocket from 'ws'
 
 /**

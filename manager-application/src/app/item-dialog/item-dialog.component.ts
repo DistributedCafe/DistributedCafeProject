@@ -56,7 +56,7 @@ export class ItemDialogComponent {
 		this.data.ws.onmessage = function(e) {
 			const data = JSON.parse(e.data) as ResponseMessage
 			if (data.code == MessageCode.OK) {
-				ingredient = JSON.parse(data.data) as Ingredient[]
+				ingredient = data.data as Ingredient[]
 				setData(ingredient)
 			} else {
 				setError(true)

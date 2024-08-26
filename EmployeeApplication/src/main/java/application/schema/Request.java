@@ -12,7 +12,7 @@ public final class Request {
    * @param input data to send to the server
    * @return the request as a JsonObject
    */
-  public static JsonObject createJsonRequest(String message, String input) {
+  public static JsonObject createJsonRequest(String message, JsonObject input) {
     var request = new JsonObject();
     request.put("client_name", "Orders").put("client_request", message).put("input", input);
     return request;

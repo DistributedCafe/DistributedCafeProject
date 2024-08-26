@@ -1,4 +1,5 @@
 import { Service } from '../service';
+import { Ingredient } from './ingredient';
 
 /**
  * This interface represents the request the client sends to the server
@@ -15,7 +16,7 @@ export interface RequestMessage {
 export interface ResponseMessage {
 	message: string,
 	code: number,
-	data: string
+	data: any
 }
 
 /**
@@ -54,7 +55,7 @@ export interface Log {
  */
 export interface MissingIngredientNotification {
 	message: string,
-	data: any
+	data: Ingredient[]
 }
 
 /**

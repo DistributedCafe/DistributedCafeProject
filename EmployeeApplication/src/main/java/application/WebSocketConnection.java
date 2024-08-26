@@ -8,7 +8,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.WebSocket;
 import io.vertx.core.http.WebSocketClient;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 /**
@@ -38,15 +37,14 @@ public class WebSocketConnection extends AbstractVerticle {
   }
 
   private void startClient(Vertx vertx) {
-    var request = Request.createJsonRequest(Message.GET_ALL_ORDERS, "");
+    var request = Request.createJsonRequest(Message.GET_ALL_ORDERS, new JsonObject());
     WebSocketClient client = vertx.createWebSocketClient();
     connect(client, request);
   }
 
   private void checkResponseAndUpdateView(Response res, AsyncResult<WebSocket> ctx) {
     if (res.isCodeOk()) {
-      var data = new JsonArray(res.data());
-      view.addPanels(data, ctx);
+      view.addPanels(res.data(), ctx);
     }
   }
 
