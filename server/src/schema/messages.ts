@@ -1,6 +1,9 @@
 import { Service } from '../utils/service';
 import { WarehouseIngredient } from './item';
 
+/**
+ * This interface represents the response sent by the microservice to the server
+ */
 export interface ServiceResponse<T> {
 	statusText: string;
 	status: number;

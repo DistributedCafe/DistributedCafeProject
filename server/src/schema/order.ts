@@ -1,3 +1,6 @@
+/**
+ * Order schema
+ */
 export interface Order {
 	customerEmail: string;
 	price: number;
@@ -5,16 +8,17 @@ export interface Order {
 	items: OrderItem[];
 }
 
+/**
+ * Item in Order schema
+ */
 export interface OrderItem {
 	item: ItemId;
 	quantity: number;
 }
 
+/**
+ * Item Id schema
+ */
 export interface ItemId {
 	name: string
-}
-
-export interface UpdateOrder {
-	_id: string,
-	state: string
 }
