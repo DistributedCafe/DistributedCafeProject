@@ -2,7 +2,7 @@ import express from 'express'
 import { createServer } from 'http'
 import WebSocket, { Server as WebSocketServer } from 'ws'
 import { checkService } from './check-service'
-import { Log } from './utils/messages'
+import { Log } from './schema/messages'
 import { is } from 'typia'
 
 /**
@@ -22,7 +22,6 @@ wss.on('connection', (ws: WebSocket) => {
 	ws.on('message', (data: string) => {
 		console.log('received: %s', data)
 		const parsedData = JSON.parse(data)
-
 		if (is<Log>(parsedData)) {
 			managerWs.push(ws)
 		} else {

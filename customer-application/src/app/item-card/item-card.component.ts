@@ -5,7 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Item } from '../../utils/item';
+import { Item } from '../../utils/schema/item';
 import { beautifyDbName } from '../../utils/utils';
 import * as cartStorage from '../../utils/cart-storage'
 

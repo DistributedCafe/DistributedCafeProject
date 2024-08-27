@@ -1,5 +1,5 @@
 import { IArray } from "./array"
-import { IngredientInRecipe } from "./item"
+import { IngredientInRecipe } from "./schema/item"
 
 /**
  * This function builds an array of IngredientInRecipe given the list of ingredient names and their quantity

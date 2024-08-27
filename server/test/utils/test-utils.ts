@@ -1,5 +1,6 @@
 import { createServer, IncomingMessage, Server, ServerResponse } from "http"
-import { OrdersServiceMessages, RequestMessage, ResponseMessage } from "../../src/utils/messages"
+import { OrdersServiceMessages } from "../../src/utils/messages"
+import { RequestMessage, ResponseMessage } from '../../src/schema/messages'
 import { Service } from "../../src/utils/service"
 import { ApiResponse } from "./api-response"
 import { DbCollections, DbNames, getCollection } from "./db-connection"
@@ -66,7 +67,7 @@ export function openWsCheckService(address: string) {
 
 function onMessage(ws: WebSocket, expectedResponse: ResponseMessage, request: RequestMessage, callback: jest.DoneCallback) {
 	ws.on('message', async (msg: string) => {
-		await checkOrderMessage(JSON.parse(msg), expectedResponse, request)
+		await checkMessage(JSON.parse(msg), expectedResponse, request)
 		callback()
 	})
 }
@@ -112,13 +113,13 @@ export function createConnectionAndCall(requestMessage: RequestMessage, expected
  * @param expectedResponse correct response
  * @param request request of the client (if needed)
  */
-export async function checkOrderMessage(msg: ResponseMessage, expectedResponse: ResponseMessage, request?: RequestMessage) {
+export async function checkMessage(msg: ResponseMessage, expectedResponse: ResponseMessage, request?: RequestMessage) {
 	const expectedData = expectedResponse.data
 	expect(msg.code).toBe(expectedResponse.code)
 	expect(msg.message).toBe(expectedResponse.message)
 	if (msg.code == StatusCodes.OK) {
 		if (request?.client_request == OrdersServiceMessages.CREATE_ORDER) {
-			expect(JSON.parse(msg.data)).toStrictEqual(await addIdandState(expectedData))
+			expect(msg.data).toStrictEqual(await addIdandState(expectedData))
 			//check ingredient db
 			let ingredients = {} as IArray
 			request.input.items.forEach(async (i: any) => {
@@ -139,10 +140,10 @@ export async function checkOrderMessage(msg: ResponseMessage, expectedResponse: 
 				expect(dbQty).toBe(createOrderIngredients[ing] - ingredients[ing])
 			})
 		} else {
-			expect(JSON.parse(msg.data)).toStrictEqual(expectedData)
+			expect(msg.data).toStrictEqual(expectedData)
 		}
 	} else {
-		expect(msg.data).toBe("")
+		expect(msg.data).toBe(undefined)
 	}
 }
 
@@ -228,7 +229,7 @@ export function createConnectionAndCallNewOrder(requestMessage: RequestMessage, 
 
 					// server
 					expectedResponse.data = await addIdandState(expectedResponse.data)
-					checkOrderMessage(orederRes, expectedResponse, requestMessage).then(() => {
+					checkMessage(orederRes, expectedResponse, requestMessage).then(() => {
 						expect(managerRes.message).toBe("NEW_MISSING_INGREDIENTS")
 						expect(managerRes.data).toStrictEqual([egg])
 						callback()

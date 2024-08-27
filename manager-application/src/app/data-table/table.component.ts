@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import { RequestMessage, ResponseMessage } from '../../utils/messages';
+import { RequestMessage, ResponseMessage } from '../../utils/schema/messages';
 import { Service } from '../../utils/service';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -86,10 +86,8 @@ export class TableComponent implements OnInit {
 
 		this.ws.onmessage = function(e) {
 			const data = JSON.parse(e.data) as ResponseMessage
-			console.log("message: " + data.message)
-			console.log("code: " + data.code)
 			if (data.code == MessageCode.OK) {
-				setData(JSON.parse(data.data))
+				setData(data.data)
 			} else {
 				setEmpty("Database empty!", data.code)
 			}

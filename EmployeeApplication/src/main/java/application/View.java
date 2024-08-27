@@ -1,11 +1,11 @@
 package application;
 
+import application.schema.Order;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.http.WebSocket;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import java.awt.*;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 import javax.swing.*;
 
@@ -60,7 +60,7 @@ public class View extends JFrame {
    * @param array the order data
    * @param ctx the websocket
    */
-  public void addPanels(JsonArray array, AsyncResult<WebSocket> ctx) {
+  public void addPanels(List<Order> array, AsyncResult<WebSocket> ctx) {
     ordersPanel.removeAll();
     var iterator = array.stream().iterator();
     var colors = new LinkedList<Color>();
@@ -70,7 +70,7 @@ public class View extends JFrame {
         Stream.iterate(0, i -> (i + colors.size() + 1) % colors.size()).iterator();
     while (iterator.hasNext()) {
       var color = colors.get(infiniteIterator.next());
-      var next = (JsonObject) iterator.next();
+      var next = iterator.next();
       ordersPanel.add(new OrderCard(next, ctx, color));
     }
     ordersPanel.revalidate();

@@ -9,8 +9,8 @@ import { FormsModule } from '@angular/forms';
 import { MatRadioModule } from '@angular/material/radio';
 import { CommonModule } from '@angular/common';
 import validator from 'email-validator'
-import { NewOrder, OrderType } from '../../utils/order';
-import { OrdersServiceMessages, RequestMessage } from '../../utils/message';
+import { NewOrder, OrderType } from '../../utils/schema/order';
+import { OrdersServiceMessages, RequestMessage } from '../../utils/schema/message';
 import { Service } from '../../utils/service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MessageCode } from '../../utils/codes'

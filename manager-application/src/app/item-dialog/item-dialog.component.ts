@@ -6,9 +6,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogContent } from '@angular/material/dialog';
-import { Ingredient } from '../../utils/ingredient';
+import { Ingredient } from '../../utils/schema/ingredient';
 import { IArray } from '../../utils/array';
-import { MenuServiceMessages, RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../../utils/messages';
+import { MenuServiceMessages, RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../../utils/schema/messages';
 import { Service } from '../../utils/service';
 import { checkWsConnectionAndSend } from '../../utils/send';
 import { buildRecipe } from '../../utils/recipe';
@@ -56,7 +56,7 @@ export class ItemDialogComponent {
 		this.data.ws.onmessage = function(e) {
 			const data = JSON.parse(e.data) as ResponseMessage
 			if (data.code == MessageCode.OK) {
-				ingredient = JSON.parse(data.data) as Ingredient[]
+				ingredient = data.data as Ingredient[]
 				setData(ingredient)
 			} else {
 				setError(true)

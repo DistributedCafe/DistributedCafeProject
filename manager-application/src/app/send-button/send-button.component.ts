@@ -9,7 +9,7 @@ import {
 	MatDialogContent,
 	MatDialogTitle,
 } from '@angular/material/dialog';
-import { RequestMessage, ResponseMessage } from '../../utils/messages';
+import { RequestMessage, ResponseMessage } from '../../utils/schema/messages';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MessageCode } from '../../utils/codes';
@@ -62,11 +62,8 @@ export class SendButtonComponent {
 		this.ws.onmessage = function(e) {
 			const res = JSON.parse(e.data) as ResponseMessage
 			if (res.code == MessageCode.OK) {
-				console.log(res.message)
 				closeAndReloadDialog()
 			} else {
-				console.error(res.code)
-				console.error(res.message)
 				closeDialog()
 				openDialog(res)
 			}

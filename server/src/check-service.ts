@@ -1,12 +1,14 @@
 import { catchErrorAndSendMsg, http, httpMenu, httpOrders } from './utils/axios'
 import {
 	MenuServiceMessages, OrdersServiceMessages,
-	RequestMessage, WarehouseServiceMessages
+	WarehouseServiceMessages
 } from './utils/messages'
+import { RequestMessage } from './schema/messages'
 import { Service } from './utils/service'
 import WebSocket from 'ws'
-import { checkOrder, createErrorMessage, handleNewOrder, handleResponse } from './utils/utils'
+import { checkOrder, createErrorMessage, handleNewOrder, handleResponse } from './utils/handlers'
 import { StatusCodes } from 'http-status-codes'
+import { WarehouseIngredient } from './schema/item'
 
 /**
  * This function is used to call the correct microservice and API based on the received RequestMessage. 
@@ -43,7 +45,7 @@ async function menuApi(message: string, input: any, ws: WebSocket) {
 			break
 		case MenuServiceMessages.GET_AVAILABLE_ITEMS:
 			catchErrorAndSendMsg(http.get('/warehouse/available/').then((res) => {
-				const availableIng: any[] = res.data
+				const availableIng = res.data as WarehouseIngredient[]
 
 				availableIng.forEach(e => {
 					names.push(e.name)
@@ -64,7 +66,7 @@ function ordersApi(message: string, input: any, ws: WebSocket, managerWs: WebSoc
 			checkOrder(input).then((res) => {
 				switch (res) {
 					case StatusCodes.OK:
-						handleNewOrder(httpOrders.post('/orders/', input), input, ws, managerWs)
+						handleNewOrder(httpOrders.post('/orders/', input), ws, managerWs)
 						break
 					case StatusCodes.INTERNAL_SERVER_ERROR:
 						ws.send(createErrorMessage(res, "ERROR_MICROSERVICE_NOT_AVAILABLE"))
@@ -78,9 +80,10 @@ function ordersApi(message: string, input: any, ws: WebSocket, managerWs: WebSoc
 			handleResponse(httpOrders.get('/orders/' + input), ws)
 			break
 		case OrdersServiceMessages.PUT_ORDER:
-			catchErrorAndSendMsg(httpOrders.get('/orders/' + JSON.parse(input)._id).then((res) => {
-				res.data["state"] = JSON.parse(input).state
+			catchErrorAndSendMsg(httpOrders.get('/orders/' + input._id).then((res) => {
+				res.data["state"] = input.state
 				catchErrorAndSendMsg(httpOrders.put('/orders/', res.data).then(() => {
+
 					handleResponse(httpOrders.get('/orders/'), ws)
 				}), ws)
 			}), ws)

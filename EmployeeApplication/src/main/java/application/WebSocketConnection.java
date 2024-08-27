@@ -1,12 +1,13 @@
 package application;
 
+import application.schema.Request;
+import application.schema.Response;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.WebSocket;
 import io.vertx.core.http.WebSocketClient;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 /**
@@ -36,15 +37,14 @@ public class WebSocketConnection extends AbstractVerticle {
   }
 
   private void startClient(Vertx vertx) {
-    var request = Request.createJsonRequest(Message.GET_ALL_ORDERS, "");
+    var request = Request.createJsonRequest(Message.GET_ALL_ORDERS, new JsonObject());
     WebSocketClient client = vertx.createWebSocketClient();
     connect(client, request);
   }
 
   private void checkResponseAndUpdateView(Response res, AsyncResult<WebSocket> ctx) {
     if (res.isCodeOk()) {
-      var data = new JsonArray(res.getData());
-      view.addPanels(data, ctx);
+      view.addPanels(res.data(), ctx);
     }
   }
 
@@ -70,10 +70,10 @@ public class WebSocketConnection extends AbstractVerticle {
 
             ws.handler(
                 message -> {
-                  Response res = new Response(message);
+                  Response res = message.toJsonObject().mapTo(Response.class);
                   checkResponseAndUpdateView(res, ctx);
                   checkResponseAndReconnect(res, ws, request);
-                  view.setMessageLabel(res.getMsg());
+                  view.setMessageLabel(res.message());
                 });
 
             ws.write(Buffer.buffer(String.valueOf(request)));
