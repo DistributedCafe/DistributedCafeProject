@@ -4,8 +4,8 @@ import application.schema.Order;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.http.WebSocket;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 import javax.swing.*;
 
@@ -60,7 +60,7 @@ public class View extends JFrame {
    * @param array the order data
    * @param ctx the websocket
    */
-  public void addPanels(ArrayList<Order> array, AsyncResult<WebSocket> ctx) {
+  public void addPanels(List<Order> array, AsyncResult<WebSocket> ctx) {
     ordersPanel.removeAll();
     var iterator = array.stream().iterator();
     var colors = new LinkedList<Color>();

@@ -1,11 +1,9 @@
 import { StatusCodes } from "http-status-codes"
 import { http, httpMenu } from "./axios"
-import { MissingIngredientNotification } from '../schema/messages'
-import { ResponseMessage } from '../schema/messages'
+import { MissingIngredientNotification, ResponseMessage, ServiceResponse } from '../schema/messages'
 import WebSocket from "ws"
 import { Item, WarehouseIngredient } from "../schema/item"
 import { Order, OrderItem } from "../schema/order"
-import { ServiceResponse } from "../schema/messages"
 
 interface IArray {
 	[index: string]: number
@@ -37,7 +35,7 @@ export function checkErrorMessage(error: any) {
 }
 
 async function calcUsedIngredient(item: string, ingredients: IArray, items: IArray) {
-	let res = (await httpMenu.get('/menu/' + item)) as ServiceResponse<Item>
+	let res: ServiceResponse<Item> = await httpMenu.get('/menu/' + item)
 	for (let r of res.data.recipe) {
 		let ingredient = r.ingredient_name
 		let qty = r.quantity
