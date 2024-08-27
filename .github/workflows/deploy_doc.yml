@@ -22,7 +22,7 @@ jobs:
 
   javaDoc:
     needs:
-      -typeDoc
+      - typeDoc
     name: deploy javadoc
     uses: ./.github/workflows/javadoc.yml
   
