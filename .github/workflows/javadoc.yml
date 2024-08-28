@@ -9,10 +9,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: java version
-          uses: actions/setup-java@v4
-          with:
-            java-version: 18
-            distribution: 'temurin'
+        uses: actions/setup-java@v4
+        with:
+          java-version: 18
+          distribution: 'temurin'
 
       - name: Install and Build
         run: |
