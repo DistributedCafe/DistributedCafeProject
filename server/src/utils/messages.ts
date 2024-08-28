@@ -34,4 +34,7 @@ export const MenuServiceMessages = {
 }
 Object.freeze(MenuServiceMessages)
 
-
+/**
+ * Message sent to the Employee application when a new order is created
+ */
+export const NEW_ORDER_CREATED = "NEW_ORDER_CREATED"

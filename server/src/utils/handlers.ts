@@ -4,6 +4,7 @@ import { MissingIngredientNotification, ResponseMessage, ServiceResponse } from 
 import WebSocket from "ws"
 import { Item, WarehouseIngredient } from "../schema/item"
 import { Order, OrderItem } from "../schema/order"
+import { NEW_ORDER_CREATED } from "./messages"
 
 interface IArray {
 	[index: string]: number
@@ -106,10 +107,14 @@ function checkAndNotify(oldAvailableIngredients: WarehouseIngredient[], managerW
 				message: "NEW_MISSING_INGREDIENTS",
 				data: missingIngredients
 			}
-			managerWs.forEach(ws => {
-				ws.send(JSON.stringify(notification))
-			})
+			sendToAllWs(managerWs, JSON.stringify(notification))
 		}
+	})
+}
+
+function sendToAllWs(WsArray: WebSocket[], msg: string) {
+	WsArray.forEach(ws => {
+		ws.send(msg)
 	})
 }
 
@@ -119,11 +124,11 @@ function checkAndNotify(oldAvailableIngredients: WarehouseIngredient[], managerW
  * If one or more ingredients become missing, it sends to all the manager frontends logged a notification.
  * At the end, it sends a message back with the response of the API.
  * @param promise returned by the create order API
- * @param input the order
  * @param ws 
  * @param managerWs array of all the manager frontends logged
+ * @param employeeWs array of all the employee frontends logged
  */
-export function handleNewOrder(promise: Promise<ServiceResponse<Order>>, ws: WebSocket, managerWs: WebSocket[]) {
+export function handleNewOrder(promise: Promise<ServiceResponse<Order>>, ws: WebSocket, managerWs: WebSocket[], employeeWs: WebSocket[]) {
 	promise.then(async (res) => {
 		const orderItems = res.data.items
 		let ingredients = {} as IArray
@@ -147,6 +152,9 @@ export function handleNewOrder(promise: Promise<ServiceResponse<Order>>, ws: Web
 					code: res.status,
 					data: res.data
 				}
+				sendToAllWs(employeeWs, JSON.stringify({
+					message: NEW_ORDER_CREATED
+				}))
 				ws.send(JSON.stringify(msg))
 				checkAndNotify(oldAvailable, managerWs)
 			})

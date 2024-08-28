@@ -12,8 +12,10 @@ const app = express()
 const server = createServer(app)
 
 const wss = new WebSocketServer({ server })
+const manager = "MANAGER"
 
 let managerWs = Array()
+let employyWs = Array()
 
 wss.on('connection', (ws: WebSocket) => {
 
@@ -23,9 +25,9 @@ wss.on('connection', (ws: WebSocket) => {
 		console.log('received: %s', data)
 		const parsedData = JSON.parse(data)
 		if (is<Log>(parsedData)) {
-			managerWs.push(ws)
+			parsedData.message == manager ? managerWs.push(ws) : employyWs.push(ws)
 		} else {
-			checkService(parsedData, ws, managerWs)
+			checkService(parsedData, ws, managerWs, employyWs)
 		}
 	})
 

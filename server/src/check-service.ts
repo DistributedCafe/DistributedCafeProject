@@ -16,8 +16,9 @@ import { WarehouseIngredient } from './schema/item'
  * @param message sent by the client through the websocket
  * @param currentWs the websocket communication used
  * @param managerWs list of manager application web socket 
+ * @param employeeWs list of employee application web socket 
  */
-export function checkService(message: RequestMessage, currentWs: WebSocket, managerWs: WebSocket[]) {
+export function checkService(message: RequestMessage, currentWs: WebSocket, managerWs: WebSocket[], employeeWs: WebSocket[]) {
 	switch (message.client_name) {
 		case Service.WAREHOUSE:
 			warehouseApi(message.client_request, message.input, currentWs)
@@ -26,7 +27,7 @@ export function checkService(message: RequestMessage, currentWs: WebSocket, mana
 			menuApi(message.client_request, message.input, currentWs)
 			break
 		default:
-			ordersApi(message.client_request, message.input, currentWs, managerWs)
+			ordersApi(message.client_request, message.input, currentWs, managerWs, employeeWs)
 			break
 	}
 }
@@ -60,13 +61,13 @@ async function menuApi(message: string, input: any, ws: WebSocket) {
 	}
 }
 
-function ordersApi(message: string, input: any, ws: WebSocket, managerWs: WebSocket[]) {
+function ordersApi(message: string, input: any, ws: WebSocket, managerWs: WebSocket[], employeeWs: WebSocket[]) {
 	switch (message) {
 		case OrdersServiceMessages.CREATE_ORDER:
 			checkOrder(input).then((res) => {
 				switch (res) {
 					case StatusCodes.OK:
-						handleNewOrder(httpOrders.post('/orders/', input), ws, managerWs)
+						handleNewOrder(httpOrders.post('/orders/', input), ws, managerWs, employeeWs)
 						break
 					case StatusCodes.INTERNAL_SERVER_ERROR:
 						ws.send(createErrorMessage(res, "ERROR_MICROSERVICE_NOT_AVAILABLE"))
