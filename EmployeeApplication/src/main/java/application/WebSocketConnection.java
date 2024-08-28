@@ -9,6 +9,7 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.WebSocket;
 import io.vertx.core.http.WebSocketClient;
 import io.vertx.core.json.JsonObject;
+import java.util.Objects;
 
 /**
  * This class is in charge of connecting to the server and handling the GUI update when it receives
@@ -59,6 +60,16 @@ public class WebSocketConnection extends AbstractVerticle {
     }
   }
 
+  private boolean checkMessage(Buffer message) {
+    return Objects.equals(message.toJsonObject().getString("message"), "NEW_ORDER_CREATED");
+  }
+
+  private Buffer log() {
+    JsonObject json = new JsonObject();
+    json.put("message", "EMPLOYEE");
+    return Buffer.buffer(json.toString());
+  }
+
   private void connect(WebSocketClient client, JsonObject request) {
     client.connect(
         3000,
@@ -70,12 +81,17 @@ public class WebSocketConnection extends AbstractVerticle {
 
             ws.handler(
                 message -> {
-                  Response res = message.toJsonObject().mapTo(Response.class);
-                  checkResponseAndUpdateView(res, ctx);
-                  checkResponseAndReconnect(res, ws, request);
-                  view.setMessageLabel(res.message());
+                  if (checkMessage(message)) {
+                    ws.write(Buffer.buffer(String.valueOf(request)));
+                  } else {
+                    Response res = message.toJsonObject().mapTo(Response.class);
+                    checkResponseAndUpdateView(res, ctx);
+                    checkResponseAndReconnect(res, ws, request);
+                    view.setMessageLabel(res.message());
+                  }
                 });
 
+            ws.write(log());
             ws.write(Buffer.buffer(String.valueOf(request)));
           } else {
             connect(client, request);
