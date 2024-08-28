@@ -10,9 +10,6 @@ spotless {
     }
 }
 
-tasks.javadoc{
-    javadocTool.set(javaToolchains.javadocToolFor(java.toolchain))
-}
 dependencies{
     implementation(libs.vertx.core)
     implementation(libs.jackson)
