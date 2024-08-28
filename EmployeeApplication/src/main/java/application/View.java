@@ -12,13 +12,9 @@ import javax.swing.*;
 /** application.Main GUI Frame */
 public class View extends JFrame {
 
-  /**
-   * Panel that contains all the order cards
-   */
+  /** Panel that contains all the order cards */
   private final JPanel ordersPanel;
-  /**
-   * Label that contains the status message
-   */
+  /** Label that contains the status message */
   private final JLabel messageLabel;
 
   /** application.Main GUI Frame Constructor */
