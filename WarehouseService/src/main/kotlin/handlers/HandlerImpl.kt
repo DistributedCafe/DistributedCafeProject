@@ -11,7 +11,6 @@ import domain.Ingredient
 import io.vertx.ext.web.RoutingContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import server.MongoUtils
 import java.net.HttpURLConnection
 
 class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
@@ -34,8 +33,6 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
         val response =
             if (body == null) {
                 WarehouseServiceResponse(null, Message.ERROR_WRONG_PARAMETERS)
-            } else if (!MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
-                WarehouseServiceResponse(null, Message.ERROR_DB_NOT_AVAILABLE)
             } else {
                 try {
                     warehouseService.createIngredient(Json.decodeFromString(body))
@@ -51,16 +48,10 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
         getIngredients(warehouseService.getAllIngredients(), context)
     }
 
-    private suspend fun getIngredients(
-        warehouseServiceResponse: WarehouseServiceResponse<List<Ingredient>>,
+    private fun getIngredients(
+        response: WarehouseServiceResponse<List<Ingredient>>,
         context: RoutingContext,
     ) {
-        val response =
-            if (MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
-                warehouseServiceResponse
-            } else {
-                WarehouseServiceResponse(null, Message.ERROR_DB_NOT_AVAILABLE)
-            }
         context.response().statusCode = WarehouseMessageToCode.convert(response.response)
         checkIfError(response.response, Json.encodeToString(response.data), context)
     }
@@ -74,8 +65,6 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
         val response =
             if (body == null) {
                 WarehouseServiceResponse(null, Message.ERROR_WRONG_PARAMETERS)
-            } else if (!MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
-                WarehouseServiceResponse(null, Message.ERROR_DB_NOT_AVAILABLE)
             } else {
                 try {
                     warehouseService.updateConsumedIngredientsQuantity(Json.decodeFromString(body))
@@ -93,8 +82,6 @@ class HandlerImpl(private val mongoInfo: MongoInfo) : Handler {
         val response =
             if (ingredientName == null || quantity == null) {
                 WarehouseServiceResponse(null, Message.ERROR_WRONG_PARAMETERS)
-            } else if (!MongoUtils.isDbSuccessfullyConnected(mongoInfo)) {
-                WarehouseServiceResponse(null, Message.ERROR_DB_NOT_AVAILABLE)
             } else {
                 try {
                     warehouseService.restock(
