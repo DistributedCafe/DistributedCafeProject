@@ -4,7 +4,7 @@ import { Item } from "../domain/item"
 /**
  * Mongo Client
  */
-const DB_CONN_STRING = "mongodb://localhost:27017"
+const DB_CONN_STRING = "mongodb://mongo:27017"
 const DB_NAME = "Menu"
 const COLLECTION_NAME = "Items"
 

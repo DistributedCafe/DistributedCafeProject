@@ -3,7 +3,7 @@ import * as mongoDB from "mongodb"
 /**
  * Mongo Client
  */
-const DB_CONN_STRING = "mongodb://localhost:27017"
+const DB_CONN_STRING = "mongodb://mongo:27017"
 const DB_NAME = "Orders"
 const COLLECTION_NAME = "Orders"
 

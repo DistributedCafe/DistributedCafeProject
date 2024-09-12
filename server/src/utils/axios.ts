@@ -6,21 +6,21 @@ import WebSocket from 'ws'
  * Connection with the warehouse microservice
  */
 export const http = axios.create({
-	baseURL: 'http://localhost:8080'
+	baseURL: 'http://warehouse-service:8080'
 })
 
 /**
  * Connection with the orders microservice
  */
 export const httpOrders = axios.create({
-	baseURL: 'http://localhost:8090'
+	baseURL: 'http://orders-service:8090'
 })
 
 /**
  * Connection with the menu microservice
  */
 export const httpMenu = axios.create({
-	baseURL: 'http://localhost:8085'
+	baseURL: 'http://menu-service:8085'
 })
 
 /**

@@ -5,7 +5,7 @@
  * @param collectionName name of the collection
  */
 data class MongoInfo(
-    var mongoAddress: String = "mongodb://localhost:27017/",
+    var mongoAddress: String = "mongodb://mongo:27017/",
     val databaseName: String = "Warehouse",
     val collectionName: String = "Ingredient",
 )

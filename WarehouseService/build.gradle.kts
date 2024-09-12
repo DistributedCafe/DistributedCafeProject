@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.serialization)
     id("application")
     id("jacoco")
+    alias(libs.plugins.johnrengelman.shadow)
 }
 
 jacoco {
@@ -44,8 +45,13 @@ ktlint {
     }
 }
 
-
 application {
     mainClass.set("server.Main")
 }
 
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    mergeServiceFiles()
+    manifest.attributes["Main-Class"] = application.mainClass
+    archiveFileName.set("${project.name}.jar")
+    destinationDirectory.set(file("${layout.buildDirectory.get()}/output"))
+}
