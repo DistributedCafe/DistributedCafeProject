@@ -1,47 +1,56 @@
-version: '2.1'
-services: # services which our app going to use. (list of containers we want to create)
-  mongo: # container name 
-    image: mongo # On which image container will build
+services:
+  mongo:
+    image: mongo
     ports:
       - "27017:27017"
+    networks:
+      - DistributedCafeNetwork
+
+  server:
+    ports:
+      - "127.0.0.1:3000:3000"
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    networks:
+      - DistributedCafeNetwork
 
   orders-service:
-    image: orders-service
     ports:
-      - "8090:8090"
+      - "127.0.0.1:8090:8090"
     depends_on:
       - mongo
     build:
       context: ./orders-service
       dockerfile: Dockerfile
+    networks:
+      - DistributedCafeNetwork
 
   menu-service:
-    image: menu-service
     ports:
-      - "8085:8085"
+      - "127.0.0.1:8085:8085"
     depends_on:
       - mongo
     build:
       context: ./menu-service
       dockerfile: Dockerfile
+    networks:
+      - DistributedCafeNetwork
 
   warehouse-service:
-    image: warehouse-service
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     depends_on:
       - mongo
     build:
-      context: ./
-      dockerfile: WarehouseService/Dockerfile
-
-  server:
-    image: server
-    ports:
-      - "3000:3000"
-    build:
-      context: ./server
+      context: ./WarehouseService
       dockerfile: Dockerfile
+    networks:
+      - DistributedCafeNetwork
+
+networks:
+  DistributedCafeNetwork:
+    driver: bridge
 
 
 
