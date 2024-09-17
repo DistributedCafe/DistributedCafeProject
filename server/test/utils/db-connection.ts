@@ -23,7 +23,7 @@ Object.freeze(DbCollections)
 /**
  * Mongo Client
  */
-const DB_CONN_STRING = "mongodb://localhost:27017"
+const DB_CONN_STRING = "mongodb://mongo:27017"
 
 const client: mongoDB.MongoClient = new mongoDB.MongoClient(DB_CONN_STRING)
 
