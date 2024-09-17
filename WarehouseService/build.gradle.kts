@@ -28,6 +28,8 @@ tasks.compileKotlin {
     }
 }
 
+tasks.run
+
 dependencies {
     testImplementation(libs.bundles.kotlin.testing)
     testImplementation(libs.bundles.cucumber.testing)

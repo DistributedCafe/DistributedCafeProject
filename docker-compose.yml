@@ -2,7 +2,7 @@ services:
   mongo:
     image: mongo
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017"
     networks:
       - DistributedCafeNetwork
 
@@ -39,7 +39,7 @@ services:
 
   warehouse-service:
     ports:
-      - "127.0.0.1:8080:8080"
+      - "8080:8080"
     depends_on:
       - mongo
     build:
