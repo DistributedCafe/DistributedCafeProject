@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.serialization)
     id("application")
     id("jacoco")
+    id("java")
     alias(libs.plugins.johnrengelman.shadow)
 }
 
@@ -14,6 +15,17 @@ jacoco {
 
 repositories {
     mavenCentral()
+}
+
+tasks.compileJava {
+    sourceCompatibility = JavaVersion.VERSION_17.toString()
+    targetCompatibility = JavaVersion.VERSION_17.toString()
+}
+
+tasks.compileKotlin {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 dependencies {
