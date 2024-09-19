@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand",
     "start": "npx ts-node ./src/app.ts",
     "prepare": "ts-patch install && typia patch"
   },
