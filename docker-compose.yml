@@ -2,9 +2,12 @@ services:
   mongo:
     image: "mongo:latest"
     ports:
-      - "127.0.0.1:27017:27017"
+      - "27017:27017"
     networks:
       - DistributedCafeNetwork
+    volumes:
+      - db:/data/db
+      - db_config:/data/configdb
 
   server:
     ports:
@@ -47,11 +50,15 @@ services:
       dockerfile: Dockerfile
     networks:
       - DistributedCafeNetwork
+    volumes:
+      - warehouse-service:/home/gradle/.gradle
 
 networks:
   DistributedCafeNetwork:
     driver: bridge
 
-
-
+volumes:
+  db:
+  db_config:
+  warehouse-service:
  
