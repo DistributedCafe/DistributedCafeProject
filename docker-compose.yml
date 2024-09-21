@@ -68,6 +68,21 @@ services:
     networks:
       - DistributedCafeNetwork
 
+  customer-application:
+    ports:
+      - "8100:80"
+    depends_on:
+      - mongo
+      - server
+      - menu-service
+      - orders-service
+      - warehouse-service
+    build:
+      context: ./customer-application
+      dockerfile: Dockerfile
+    networks:
+      - DistributedCafeNetwork
+
 networks:
   DistributedCafeNetwork:
     driver: bridge
