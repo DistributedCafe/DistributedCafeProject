@@ -19,7 +19,7 @@ export const httpMenu = createAxios(process.env.MENU_ADDRESS, '8085')
 
 function createAxios(address: string | undefined, port: string): AxiosInstance {
 	return axios.create({
-		baseURL: 'http://' + (address != undefined ? address : 'localhost') + ':' + port
+		baseURL: 'http://' + (address ?? 'localhost') + ':' + port
 	})
 }
 /**
