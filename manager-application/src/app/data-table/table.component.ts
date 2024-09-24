@@ -36,7 +36,7 @@ export class TableComponent implements OnInit {
 	@Input()
 	initialRequest!: RequestMessage
 
-	display = true
+	display = false
 	error = false
 	errorMessage = ''
 	dataSource = Array()
