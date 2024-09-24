@@ -40,6 +40,9 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport)
+    jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
+    jvmArgs("--add-opens=java.base/java.lang=ALL-UNNAMED")
+
 }
 
 tasks.jacocoTestReport {
