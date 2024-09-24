@@ -158,7 +158,7 @@ class RoutesTester : BaseTest() {
     }
 
     @Test
-    fun environmentVariablesTest()  {
+    fun environmentVariablesTest() {
         var mongoInfo = MongoInfo()
         val address = "mongodb://mongo:27017"
         mongoInfo.mongoAddress shouldBe "mongodb://localhost:27017"
