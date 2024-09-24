@@ -23,7 +23,7 @@ jobs:
           ./gradlew jacocoTestReport
 
       - name: Coverage server
-        uses: DistributedCafe/DistributedCafeProject/.github/serverTest@add-dockerization
+        uses: DistributedCafe/DistributedCafeProject/.github/serverTest@develop
 
       - name: Kill node 
         run: killall node
