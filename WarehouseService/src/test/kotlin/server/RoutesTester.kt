@@ -8,6 +8,7 @@ import Quantity
 import UpdateQuantity
 import com.mongodb.client.model.Filters
 import domain.Ingredient
+import io.kotest.extensions.system.withEnvironment
 import io.kotest.matchers.shouldBe
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
@@ -154,5 +155,17 @@ class RoutesTester : BaseTest() {
 
         negativeResult.statusCode() shouldBe HttpURLConnection.HTTP_NOT_FOUND
         negativeResult.statusMessage() shouldBe Message.ERROR_EMPTY_WAREHOUSE.toString()
+    }
+
+    @Test
+    fun environmentVariablesTest() {
+        var mongoInfo = MongoInfo()
+        val address = "mongodb://mongo:27017"
+        mongoInfo.mongoAddress shouldBe "mongodb://localhost:27017"
+
+        withEnvironment("DB_CONNECTION_ADDRESS", address) {
+            mongoInfo = MongoInfo()
+            mongoInfo.mongoAddress shouldBe address
+        }
     }
 }
