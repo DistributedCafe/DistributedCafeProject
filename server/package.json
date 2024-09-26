@@ -7,7 +7,7 @@
     "test": "jest --runInBand",
     "start": "npx ts-node ./src/server.ts",
     "prepare": "ts-patch install && typia patch",
-    "build": "webpack --mode=development --config webpack.node.config.js"
+    "build": "webpack --mode=production --config webpack.node.config.js"
   },
   "author": "Elisa Albertini and Eleonora Bertoni",
   "license": "MIT",
