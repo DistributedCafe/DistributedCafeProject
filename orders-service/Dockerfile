@@ -1,8 +1,13 @@
-FROM node:20-slim
+FROM node:20-slim AS build
+WORKDIR /tmp
+COPY package*.json webpack.node.config.js tsconfig.json . 
+COPY src ./src
+RUN npm install
+RUN npm run build
+FROM node:20-slim AS start
 WORKDIR /app
 ENV DB_CONNECTION_ADDRESS "mongodb://mongo:27017"
-COPY . .
 EXPOSE 8090
-RUN npm install
-COPY . .
-CMD [ "npx", "ts-node","/app/src/app.ts" ]
+COPY --from=build tmp/dist/orders-service/bundle.js .
+CMD [ "node","bundle.js" ]
+

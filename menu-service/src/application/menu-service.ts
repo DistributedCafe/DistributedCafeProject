@@ -1,4 +1,4 @@
-import { MenuMessage } from "../../menu-message"
+import { MenuMessage } from "../menu-message"
 import { IngredientInRecipe, Item } from "../domain/item"
 import * as repository from "../repository/repository"
 

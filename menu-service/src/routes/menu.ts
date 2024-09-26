@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { assertEquals } from 'typia'
 import { IngredientInRecipe, Item } from "../domain/item";
 import { addNewItem, getItemByName, getAllMenuItems, updateMenuItem, getAllAvailableMenuItems } from "../application/menu-service";
-import { MenuMessage } from "../../menu-message";
+import { MenuMessage } from "../menu-message";
 
 const router = express.Router();
 

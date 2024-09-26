@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { MenuMessage } from '../../menu-message';
+import { MenuMessage } from '../../src/menu-message';
 
 /**
  * This interface represents the response given by an API
