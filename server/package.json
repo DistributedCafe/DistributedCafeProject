@@ -11,6 +11,9 @@
   },
   "author": "Elisa Albertini and Eleonora Bertoni",
   "license": "MIT",
+  "overrides": {
+    "glob": "11.0.0"
+  },
   "dependencies": {
     "axios": "^1.7.2",
     "express": "^4.19.2",
