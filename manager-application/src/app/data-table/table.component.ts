@@ -14,7 +14,7 @@ import { MessageCode } from '../../utils/codes';
 
 /**
  * Component that implements a table displaying the ingredients or items 
- * present in the warehouse. If the db is empty or an 
+ * present in the dbs. If the db is empty or an 
  * error occurs it shows it.
  */
 @Component({

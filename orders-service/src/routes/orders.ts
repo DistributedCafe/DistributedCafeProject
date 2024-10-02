@@ -39,7 +39,8 @@ router.get('/:orderId', async (req: Request, res: Response) => {
 })
 
 /**
- * PUT '/orders' API handles the update of one specific Order delegating to the service and sending a notify email when needed
+ * PUT '/orders' API handles the update of one specific Order delegating to the service and 
+ * sending a notify email when needed
  */
 router.put('/', async (req: Request, res: Response) => {
 	try {

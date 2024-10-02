@@ -12,7 +12,7 @@ import java.util.List;
 public record Response(String message, int code, List<Order> data) {
 
   /**
-   * It says if the server response is code based on the code.
+   * It says if the server response is ok based on its code.
    *
    * @return true if the code is ok, false otherwise
    */
