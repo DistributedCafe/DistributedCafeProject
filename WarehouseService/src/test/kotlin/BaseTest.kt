@@ -17,8 +17,4 @@ open class BaseTest : AnnotationSpec() {
         collection.deleteMany(Filters.empty())
         collection.insertMany(ingredients)
     }
-
-    fun getWrongInfo(): MongoInfo {
-        return MongoInfo("mongodb://localhost:27016/")
-    }
 }

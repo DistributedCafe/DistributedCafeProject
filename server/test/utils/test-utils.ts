@@ -61,7 +61,7 @@ function openWsRoute(address: string) {
 }
 
 /**
- * This function opems the check service used for the routes tests
+ * This function opens the web socket used for the routes tests
  * @param address 
  */
 export function openWsCheckService(address: string) {
@@ -182,7 +182,7 @@ export function createResponseMessage(response: ApiResponse, data: any): Respons
 }
 
 /**
- * Check if a web socket is open and closes it if it is
+ * Check if a web socket is open and closes it
  * @param ws web socket that have to be close
  */
 export function closeWsIfOpened(ws: WebSocket) {

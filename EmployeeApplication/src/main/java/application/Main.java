@@ -5,7 +5,7 @@ import io.vertx.core.Vertx;
 /** application.Main Class */
 public class Main {
   /**
-   * main starts the Employee Application GUI and the websocket communication with the server
+   * Tis class starts the Employee Application GUI and the websocket communication with the server
    *
    * @param args provided when run
    */

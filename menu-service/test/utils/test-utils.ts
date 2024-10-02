@@ -17,8 +17,8 @@ export async function addItem(item: Item) {
 }
 
 /**
- * Utility function to get the last inserted Item
- * @returns the last inserted Item
+ * Utility function to get the last inserted item
+ * @returns the last inserted item
  */
 export async function getLastInsertedItem(): Promise<Item> {
 	let menuItems = (await getMenuItems()).find({}, { projection: { _id: 0 } })

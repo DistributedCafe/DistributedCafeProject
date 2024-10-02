@@ -14,7 +14,7 @@ import { WarehouseIngredient } from './schema/item'
  * This function is used to call the correct microservice and API based on the received RequestMessage. 
  * It also sends the answer back through the websocket
  * @param message sent by the client through the websocket
- * @param currentWs the websocket communication used
+ * @param currentWs the websocket used for the communication
  * @param managerWs list of manager application web socket 
  * @param employeeWs list of employee application web socket 
  */

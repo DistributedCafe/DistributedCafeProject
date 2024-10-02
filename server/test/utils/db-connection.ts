@@ -54,7 +54,7 @@ export async function getCollection(dbName: string, dbCollection: string) {
 }
 
 /**
- * Delete all the orders present in the collection
+ * Delete all the data present in the collection
  * @param dbName 
  * @param dbCollection 
  */
