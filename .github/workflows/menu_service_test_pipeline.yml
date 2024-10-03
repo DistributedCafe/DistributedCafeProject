@@ -12,5 +12,5 @@ jobs:
         working-directory: menu-service
         run: |
           npm install
-          npx jest 
+          npm test
         shell: bash

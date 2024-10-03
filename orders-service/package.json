@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "test": "jest --runInBand",
-    "start": "npx ts-node ./src/app.ts",
+    "start": "ts-node ./src/app.ts",
     "prepare": "ts-patch install && typia patch",
     "build": "webpack --mode=production --config webpack.node.config.js"
   },
