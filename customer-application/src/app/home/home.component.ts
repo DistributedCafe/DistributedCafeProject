@@ -19,7 +19,7 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class HomeComponent {
 
-	constructor(private router: Router) { }
+	constructor(private readonly router: Router) { }
 
 	onCartClick() {
 		this.router.navigate(["cart"])

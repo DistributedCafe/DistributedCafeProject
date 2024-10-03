@@ -67,7 +67,7 @@ export class TableComponent implements OnInit {
 		}
 	}
 
-	constructor(private dialog: MatDialog) { }
+	constructor(private readonly dialog: MatDialog) { }
 
 	ngOnInit(): void {
 		this.ws = new WebSocket('ws://localhost:3000')
