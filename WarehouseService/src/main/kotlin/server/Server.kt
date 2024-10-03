@@ -48,5 +48,6 @@ class Server(private val mongoInfo: MongoInfo, private val port: Int) : Coroutin
         }
 
         vertx.createHttpServer().requestHandler(router).listen(port)
+        println("listening on port :$port")
     }
 }
