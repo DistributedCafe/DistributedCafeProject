@@ -35,6 +35,7 @@ dependencies {
     implementation(libs.bundles.vertx)
     implementation(libs.mongodb.driver)
     implementation(libs.bundles.kotlinx)
+    implementation(libs.logback)
 }
 
 tasks.test {
