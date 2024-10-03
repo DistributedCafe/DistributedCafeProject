@@ -4,7 +4,7 @@
   "description": "",
   "main": "./src/app.ts",
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand",
     "start": "ts-node ./src/app.ts",
     "prepare": "ts-patch install && typia patch",
     "build": "webpack --mode=production --config webpack.node.config.js"

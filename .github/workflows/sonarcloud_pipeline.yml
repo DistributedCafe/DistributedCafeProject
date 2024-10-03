@@ -23,7 +23,7 @@ jobs:
           ./gradlew jacocoTestReport
 
       - name: Coverage server
-        uses: DistributedCafe/DistributedCafeProject/.github/serverTest@develop
+        uses: DistributedCafe/DistributedCafeProject/.github/serverTest@update-pipeline
 
       - name: Kill node 
         run: killall node
@@ -32,14 +32,14 @@ jobs:
         working-directory: orders-service
         run: |
           npm install
-          npx jest --coverage
+          npm test
         shell: bash
 
       - name: Coverage menu-service
         working-directory: menu-service
         run: |
           npm install
-          npx jest --coverage
+          npm test
         shell: bash
 
       - name: Merge coverage

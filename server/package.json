@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "test": "jest --runInBand",
-    "start": "npx ts-node ./src/server.ts",
+    "start": "ts-node ./src/server.ts",
     "prepare": "ts-patch install && typia patch",
     "build": "webpack --mode=production --config webpack.node.config.js"
   },
