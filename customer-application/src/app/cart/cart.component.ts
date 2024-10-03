@@ -72,7 +72,7 @@ export class CartComponent {
 		window.location.reload()
 	}
 
-	constructor(private router: Router, notification: MatSnackBar) {
+	constructor(private readonly router: Router, notification: MatSnackBar) {
 		this.ws = new WebSocket('ws://localhost:3000')
 
 		this.ws.onerror = () => {
