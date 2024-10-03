@@ -19,6 +19,9 @@ $dokka.location:/MongoInfo/mongoAddress/#/PointingToDeclaration/-warehouse-serv
 $dokka.location:/Quantity///PointingToDeclaration/-warehouse-service/[root]/-quantity/index.html
 $dokka.location:/Quantity/Quantity/#kotlin.Int/PointingToDeclaration/-warehouse-service/[root]/-quantity/-quantity.html
 $dokka.location:/Quantity/quantity/#/PointingToDeclaration/-warehouse-service/[root]/-quantity/quantity.html
+$dokka.location:/SetupLogger///PointingToDeclaration/-warehouse-service/[root]/-setup-logger/index.html
+$dokka.location:/SetupLogger/SetupLogger/#/PointingToDeclaration/-warehouse-service/[root]/-setup-logger/-setup-logger.html
+$dokka.location:/SetupLogger/setupLogger/#/PointingToDeclaration/-warehouse-service/[root]/-setup-logger/setup-logger.html
 $dokka.location:/UpdateQuantity///PointingToDeclaration/-warehouse-service/[root]/-update-quantity/index.html
 $dokka.location:/UpdateQuantity/UpdateQuantity/#kotlin.String#kotlin.Int/PointingToDeclaration/-warehouse-service/[root]/-update-quantity/-update-quantity.html
 $dokka.location:/UpdateQuantity/name/#/PointingToDeclaration/-warehouse-service/[root]/-update-quantity/name.html
