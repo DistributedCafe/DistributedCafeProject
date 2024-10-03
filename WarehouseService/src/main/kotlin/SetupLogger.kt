@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
  * This class setup the context loggers
  */
 class SetupLogger {
-    fun setupLogger()  {
+    fun setupLogger() {
         val loggerContext: LoggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
         for (l in loggerContext.loggerList) {
             l.level = Level.OFF
