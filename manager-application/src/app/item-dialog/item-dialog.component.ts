@@ -9,7 +9,6 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogContent } from '@angular/material/
 import { Ingredient } from '../../utils/schema/ingredient';
 import { IArray } from '../../utils/array';
 import { MenuServiceMessages, RequestMessage, ResponseMessage, WarehouseServiceMessages } from '../../utils/schema/messages';
-import { Service } from '../../utils/service';
 import { checkWsConnectionAndSend } from '../../utils/send';
 import { buildRecipe } from '../../utils/recipe';
 import { SendButtonComponent } from '../send-button/send-button.component';

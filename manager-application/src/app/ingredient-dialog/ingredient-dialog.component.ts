@@ -10,7 +10,6 @@ import {
 	MatDialogTitle,
 } from '@angular/material/dialog';
 import { RequestMessage, WarehouseServiceMessages } from '../../utils/schema/messages';
-import { Service } from '../../utils/service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SendButtonComponent } from '../send-button/send-button.component';
