@@ -16,7 +16,6 @@ import { Service } from '../../utils/service';
 export class MenuComponent {
 	displayedColumns: string[] = ['name', 'recipe', 'price', 'button'];
 	initialRequest: RequestMessage = {
-		client_name: Service.MENU,
 		client_request: MenuServiceMessages.GET_ITEMS,
 		input: ''
 	}

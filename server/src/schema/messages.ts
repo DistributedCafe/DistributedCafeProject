@@ -13,7 +13,6 @@ export interface ServiceResponse<T> {
  * This interface represents the request the client sends to the server
  */
 export interface RequestMessage {
-	client_name: string
 	client_request: string
 	input: any
 }

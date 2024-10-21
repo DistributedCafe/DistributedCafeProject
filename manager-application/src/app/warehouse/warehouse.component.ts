@@ -16,7 +16,6 @@ import { Service } from '../../utils/service';
 export class WarehouseComponent {
 	displayedColumns: string[] = ['name', 'quantity', 'button'];
 	req: RequestMessage = {
-		client_name: Service.WAREHOUSE,
 		client_request: WarehouseServiceMessages.GET_ALL_INGREDIENT,
 		input: ''
 	}

@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ItemCardComponent } from "../item-card/item-card.component";
 import { Item } from '../../utils/schema/item';
 import { MenuServiceMessages, RequestMessage, ResponseMessage } from '../../utils/schema/message';
-import { Service } from '../../utils/service';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MessageCode } from '../../utils/codes';
@@ -31,7 +30,6 @@ export class MenuComponent {
 		this.ws = new WebSocket('ws://localhost:3000')
 
 		const request: RequestMessage = {
-			client_name: Service.MENU,
 			client_request: MenuServiceMessages.GET_AVAILABLE_ITEMS,
 			input: ""
 		}

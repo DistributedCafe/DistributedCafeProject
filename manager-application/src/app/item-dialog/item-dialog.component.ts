@@ -47,7 +47,6 @@ export class ItemDialogComponent {
 
 	constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData, public dialog: MatDialog) {
 		const initialRequest: RequestMessage = {
-			client_name: Service.WAREHOUSE,
 			client_request: WarehouseServiceMessages.GET_ALL_INGREDIENT,
 			input: ''
 		}
@@ -95,7 +94,6 @@ export class ItemDialogComponent {
 
 		if (this.isUpdate) {
 			request = {
-				client_name: Service.MENU,
 				client_request: MenuServiceMessages.UPDATE_ITEM,
 				input: {
 					name: data.data!.name,
@@ -105,7 +103,6 @@ export class ItemDialogComponent {
 			}
 		} else {
 			request = {
-				client_name: Service.MENU,
 				client_request: MenuServiceMessages.CREATE_ITEM,
 				input: {
 					name: this.name,
