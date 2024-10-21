@@ -159,7 +159,6 @@ export async function checkMessage(msg: ResponseMessage, expectedResponse: Respo
  */
 export function createRequestMessage(client: string, request: string, input: any) {
 	return {
-		client_name: client,
 		client_request: request,
 		input: input
 	}

@@ -14,7 +14,7 @@ public final class Request {
    */
   public static JsonObject createJsonRequest(String message, JsonObject input) {
     var request = new JsonObject();
-    request.put("client_name", "Orders").put("client_request", message).put("input", input);
+    request.put("client_request", message).put("input", input);
     return request;
   }
 }

@@ -10,7 +10,6 @@ import {
 	MatDialogTitle,
 } from '@angular/material/dialog';
 import { RequestMessage, WarehouseServiceMessages } from '../../utils/schema/messages';
-import { Service } from '../../utils/service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SendButtonComponent } from '../send-button/send-button.component';
@@ -49,7 +48,6 @@ export class IngredientDialogComponent {
 		let request: RequestMessage
 		if (!this.isUpdate) {
 			request = {
-				client_name: Service.WAREHOUSE,
 				client_request: WarehouseServiceMessages.CREATE_INGREDIENT,
 				input: {
 					name: this.name,
@@ -58,7 +56,6 @@ export class IngredientDialogComponent {
 			}
 		} else {
 			request = {
-				client_name: Service.WAREHOUSE,
 				client_request: WarehouseServiceMessages.RESTOCK_INGREDIENT,
 				input: {
 					name: this.data.data!.name,

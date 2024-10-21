@@ -11,7 +11,6 @@ import { CommonModule } from '@angular/common';
 import validator from 'email-validator'
 import { NewOrder, OrderType } from '../../utils/schema/order';
 import { OrdersServiceMessages, RequestMessage } from '../../utils/schema/message';
-import { Service } from '../../utils/service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MessageCode } from '../../utils/codes'
 import { NotAvailableError } from '../../utils/error';
@@ -126,7 +125,6 @@ export class CartComponent {
 				items: this.formatOrder()
 			}
 			const req: RequestMessage = {
-				client_name: Service.ORDERS,
 				client_request: OrdersServiceMessages.CREATE_ORDER,
 				input: order
 			}
