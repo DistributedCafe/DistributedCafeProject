@@ -1,7 +1,6 @@
 import { createServer, IncomingMessage, Server, ServerResponse } from "http"
 import { NEW_ORDER_CREATED, OrdersServiceMessages } from "../../src/utils/messages"
 import { RequestMessage, ResponseMessage } from '../../src/schema/messages'
-import { Service } from "../../src/utils/service"
 import { ApiResponse } from "./api-response"
 import { DbCollections, DbNames, getCollection } from "./db-connection"
 import { addIdandState } from "./order-json-utils"
@@ -158,7 +157,7 @@ export async function checkMessage(msg: ResponseMessage, expectedResponse: Respo
  * @param input body of the request
  * @returns a request message
  */
-export function createRequestMessage(client: Service, request: string, input: any) {
+export function createRequestMessage(client: string, request: string, input: any) {
 	return {
 		client_name: client,
 		client_request: request,
