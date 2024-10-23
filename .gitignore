@@ -170,3 +170,6 @@ testem.log
 /tmp
 /out-tsc
 /bazel-out
+
+# docs
+/docs/javadoc/legal
