@@ -8,8 +8,11 @@ nav_order: 1
 # Introduction
 // TODO introduction
 
-## API documentation - SWAGGER
-API documentation can be found at this link: [SWAGGER](https://app.swaggerhub.com/apis/ElisaAlbertini/DistributedCafe)
+## REST API documentation - SWAGGER
+REST API documentation can be found at this link: [SWAGGER](https://app.swaggerhub.com/apis/ElisaAlbertini/DistributedCafe)
+
+## WebSocket documentation - SWAGGER
+WebSocket documentation can be found at this link: [SWAGGER](https://app.swaggerhub.com/apis/ElisaAlbertini/WebSocketDistributedCafe)
 
 ## WarehouseService documentation
 WarehouseService documentation can be found at this link: [WarehouseService documentation](./dokka/index.html)
