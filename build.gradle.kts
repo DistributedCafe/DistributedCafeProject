@@ -1,19 +1,33 @@
-import org.gradle.api.tasks.compile.JavaCompile
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     alias(libs.plugins.sonarqube)
-    id("java")
+    alias(libs.plugins.johnrengelman.shadow) apply false
+    id("application")
+
 }
 
-allprojects{
+subprojects {
+    apply(plugin = rootProject.libs.plugins.johnrengelman.shadow.get().pluginId)
+    apply(plugin = "application")
+
     repositories {
         mavenCentral()
+        gradlePluginPortal()
     }
 
-    tasks.withType<JavaCompile>  {
-        sourceCompatibility = JavaVersion.VERSION_17.toString()
-        targetCompatibility = JavaVersion.VERSION_17.toString()
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
     }
+
+    tasks.withType<ShadowJar> {
+        manifest.attributes["Main-Class"] = application.mainClass
+        archiveFileName.set("${project.name}.jar")
+        destinationDirectory.set(file("${layout.buildDirectory.get()}/output"))
+    }
+
 }
 
 sonar {
