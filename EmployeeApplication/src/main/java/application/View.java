@@ -14,6 +14,7 @@ public class View extends JFrame {
 
   /** Panel that contains all the order cards */
   private final JPanel ordersPanel;
+
   /** Label that contains the status message */
   private final JLabel messageLabel;
 
