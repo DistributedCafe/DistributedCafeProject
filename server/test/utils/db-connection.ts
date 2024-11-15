@@ -70,7 +70,7 @@ export async function cleanCollection(dbName: string, dbCollection: string) {
 export async function getLastInsertedItem() {
 	let menuItems = client.db(DbNames.MENU).collection(DbCollections.MENU).find({}, { projection: { _id: 0 } })
 	let last = (await menuItems.toArray()).pop()
-	return last!
+	return last
 }
 /**
   * Utility function to get the last inserted Order
