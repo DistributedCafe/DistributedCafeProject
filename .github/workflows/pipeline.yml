@@ -7,9 +7,9 @@ on:
       - develop
 jobs:
 
-  ktlintAndJavaCheck:
-    name: check format kotlin
-    uses: ./.github/workflows/ktlint_and_java_check_pipeline.yml
+  spotlessCheck:
+    name: check format kotlin and java
+    uses: ./.github/workflows/spotless_check_pipeline.yml
 
   tsFormatCheck:
     name: check format ts
@@ -41,6 +41,6 @@ jobs:
       - menuServiceTest
       - ordersServiceTest
       - serverTest
-      - ktlintAndJavaCheck
+      - spotlessCheck
     name: test kotlin with MongoDB
     uses: ./.github/workflows/mongodb_pipeline.yml
