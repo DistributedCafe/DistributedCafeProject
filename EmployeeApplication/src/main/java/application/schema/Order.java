@@ -13,9 +13,9 @@ import java.util.List;
  * @param items ordered menu items
  */
 public record Order(
-    String _id,
-    String customerEmail,
-    int price,
-    String type,
-    String state,
-    List<OrderItem> items) {}
+        String _id,
+        String customerEmail,
+        int price,
+        String type,
+        String state,
+        List<OrderItem> items) {}
