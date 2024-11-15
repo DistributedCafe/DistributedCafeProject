@@ -1,7 +1,5 @@
 plugins {
-    alias(libs.plugins.kotlin)
     alias(libs.plugins.dokka)
-    alias(libs.plugins.ktlint)
     alias(libs.plugins.serialization)
     id("jacoco")
 }
@@ -25,7 +23,6 @@ tasks.test {
     finalizedBy(tasks.jacocoTestReport)
     jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
     jvmArgs("--add-opens=java.base/java.lang=ALL-UNNAMED")
-
 }
 
 tasks.jacocoTestReport {
@@ -33,13 +30,6 @@ tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
         csv.required.set(true)
-    }
-}
-
-ktlint {
-    filter {
-        include("**/main/kotlin/**/*.kt")
-        exclude("**/*.gradle.kts")
     }
 }
 

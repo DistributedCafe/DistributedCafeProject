@@ -3,18 +3,36 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     alias(libs.plugins.sonarqube)
     alias(libs.plugins.johnrengelman.shadow) apply false
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.spotless)
     id("application")
-
 }
 
-subprojects {
-    apply(plugin = rootProject.libs.plugins.johnrengelman.shadow.get().pluginId)
-    apply(plugin = "application")
+allprojects {
+    apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)
+    apply(plugin = rootProject.libs.plugins.kotlin.get().pluginId)
 
     repositories {
         mavenCentral()
         gradlePluginPortal()
     }
+
+    spotless {
+        kotlin {
+            target("**/*.kt", "**/*.kts")
+            ktlint()
+        }
+
+        java {
+            googleJavaFormat().aosp()
+            formatAnnotations()
+        }
+    }
+}
+
+subprojects {
+    apply(plugin = rootProject.libs.plugins.johnrengelman.shadow.get().pluginId)
+    apply(plugin = "application")
 
     java {
         toolchain {
@@ -27,7 +45,6 @@ subprojects {
         archiveFileName.set("${project.name}.jar")
         destinationDirectory.set(file("${layout.buildDirectory.get()}/output"))
     }
-
 }
 
 sonar {
