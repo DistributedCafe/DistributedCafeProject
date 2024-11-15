@@ -58,7 +58,7 @@ export class IngredientDialogComponent {
 			request = {
 				client_request: WarehouseServiceMessages.RESTOCK_INGREDIENT,
 				input: {
-					name: this.data.data!.name,
+					name: this.data.data.name,
 					quantity: this.quantity
 				}
 			}

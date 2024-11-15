@@ -95,7 +95,7 @@ export class ItemDialogComponent {
 			request = {
 				client_request: MenuServiceMessages.UPDATE_ITEM,
 				input: {
-					name: data.data!.name,
+					name: data.data.name,
 					recipe: recipe,
 					price: this.price
 				}

@@ -40,7 +40,7 @@ export class HomeComponent {
 		if (localStorage.getItem(this.activePath) == undefined) {
 			localStorage.setItem(this.activePath, "")
 		} else {
-			const path = localStorage.getItem(this.activePath)!
+			const path = localStorage.getItem(this.activePath)
 			router.navigate([path])
 		}
 
