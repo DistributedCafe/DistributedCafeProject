@@ -1,20 +1,8 @@
-plugins {
-    alias(libs.plugins.spotless)
-}
-
-
-spotless {
-    java {
-        googleJavaFormat()
-        formatAnnotations()
-    }
-}
-
 application {
     mainClass.set("application.Main")
 }
 
-dependencies{
+dependencies {
     implementation(libs.vertx.core)
     implementation(libs.jackson)
 }
