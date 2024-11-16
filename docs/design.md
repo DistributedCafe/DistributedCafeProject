@@ -26,7 +26,6 @@ nav_order: 6
   
 **Business Decision**:
 * An order must contain at least one item to be sent
-* A customer can’t do two or more orders at the same time
 * A customer can order only available items and in the available quantity
 * The type of order must be always specified
 * The customer email must be always specified into the order  
@@ -52,13 +51,12 @@ nav_order: 6
 **Business Decision**:
 * The customer must see just the available items
 * An item is not available if the quantity of one of its ingredient in the warehouse is not enough
-* The recipe of an item must contain at least two ingredients
 * The quantity of all the ingredients of a recipe must be higher than zero
 
 **Inbound Communications**:
 * Show all items *(Manager application → a query)*
 * Show all available items *(Order context → a command)*
-* Add/modify/remove an item *(Manager application → a command)*
+* Add/modify an item *(Manager application → a command)*
 * Update menu *(Warehouse context → an event)*
 * Show all available items *(Customer application → a command)*
 
@@ -79,12 +77,12 @@ nav_order: 6
 
 **Inbound Communications**:
 * Update ingredients *(Order context → an event)*
-* Show all ingredients *(Manager application → a query)
+* Show all ingredients *(Manager application → a query)*
 * Add an ingredient *(Manager application → a command)*
 * Restock an ingredient *(Manager application → a command)*
 
 **Outbound Communications**:
-* Create update warehouse event *(an event → Menu context)*
+* Create missing ingredient notification *(an event → Menu context)*
 
 
 

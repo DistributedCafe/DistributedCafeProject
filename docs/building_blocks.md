@@ -23,6 +23,7 @@ nav_order: 7
 * **Item**: Entity
 * **Recipe**: Value Object
 * **Ingredient**: Entity
+* **Orders**: Repository
 * **Order**: Entity
 * **Order Type**: Value Object
   * At the table
@@ -34,8 +35,6 @@ nav_order: 7
   * Order completed
   * Order ready
   * Order pending
-* **Available item**: Service
-* **Available ingredient**: Service
 
 ## Building blocks reletionship
 // TODO introduction  
