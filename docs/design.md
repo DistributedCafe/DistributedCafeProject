@@ -31,14 +31,16 @@ nav_order: 6
 * The customer email must be always specified into the order  
 
 **Inbound Communications**:
-* Add/modify/remove an item from the order  *(Customer application → a command)*
 * Send new order *(Customer application → a command)*
 * Change order status *(Employee application → an event)*
-* Manage ready order *(Orders context → an event)*
+* Manage ready order event *(Orders context → an event)*
 * Show all orders *(Employee application → a query)*  
 
 **Outbound Communications**:
-* Create new order event *(an event → Warehouse context)*
+* Decrease ingredients quantity *(an command → Warehouse context)*
+* Ask available ingredients *(an query → Warehouse context)*
+* Ask items *(an query → Menu context)*
+* New order created notification *(an event → Employee application)*
 
 ### Menu Context
 **Description**: Management of the list of items that are part of the menu and their recipe
@@ -57,11 +59,10 @@ nav_order: 6
 * Show all items *(Manager application → a query)*
 * Show all available items *(Order context → a command)*
 * Add/modify an item *(Manager application → a command)*
-* Update menu *(Warehouse context → an event)*
 * Show all available items *(Customer application → a command)*
 
 **Outbound Communications**:
-* Show all available ingredients *(a command→ Warehouse context)*
+* Ask available ingredients *(an query → Warehouse context)*
 
 ### Warehouse Context
 **Description**: Management of the list of ingredients stored in the warehouse of the cafe
@@ -82,7 +83,7 @@ nav_order: 6
 * Restock an ingredient *(Manager application → a command)*
 
 **Outbound Communications**:
-* Create missing ingredient notification *(an event → Menu context)*
+* Missing ingredient notification *(an event → Manager application)*
 
 
 

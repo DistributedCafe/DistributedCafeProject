@@ -36,6 +36,6 @@ nav_order: 7
   * Order ready
   * Order pending
 
-## Building blocks reletionship
+## Building blocks relationship
 // TODO introduction  
 ![Warehouse](resources/images/Building%20blocks.png)
