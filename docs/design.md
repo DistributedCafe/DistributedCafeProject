@@ -1,28 +1,27 @@
 ---
 title: Design
 layout: default
-nav_order: 6
+nav_order: 7
 ---
 # Design
 
 ## Context
-// TODO introduction
-* *Orders (Core domain)*: context concerning the management of an order. They are made by the customer using a web application and they are received by the employees using a PC software. This involves different orders and the cart
-* *Menu (Generic domain)*: context concerning the management of the menu. Everything related to the menu from the choice of the menu items to what it’s displayed to the customer
-* *Warehouse (Generic domain)*: context concerning the management of the warehouse. Everything related to the menu from the choice of the ingredients to the restock
+* *Orders (Core domain)*: context concerning the management of an order. 
+They are made by the customer using a web application and they are received by the employees using a PC software.
+This context contains everything related to the orders that allows to memorize them, manage their state and properly send the emails to the customer
+* *Menu (Generic domain)*: context concerning the management of the menu. 
+This context contains everything related to the menu from the choice of the menu items to what it’s displayed to the customer
+* *Warehouse (Generic domain)*: context concerning the management of the warehouse. 
+This context contains everything related to the warehouse from the choice of the ingredients to the restock
 
 ### Context Map
-// TODO introduction  
+We chose to use *customer-supplier pattern* in order to design our context map because it suits our scenario where the implementation of all the api it's up to us permitting more collaboration. Also, it's easy to determine which context provides functionalities (upstream) and which ones need them (downstream) so it helps to maximize the integration among their models. 
+
 <img src="resources/images/Context%20Map.png" width="400">
 
 ## Bounded Context Canvas
 ### Orders Context
 **Description**: Management of the customers orders comprehensive of the list of items the customer would like to purchase, the type of the order, the state of the order and the customer contact  
-
-**Strategic classification**:
-* **Domain**: Core
-* **Business Model**: Engagement creator
-* **Evolution**: Commodity  
   
 **Business Decision**:
 * An order must contain at least one item to be sent
@@ -45,11 +44,6 @@ nav_order: 6
 ### Menu Context
 **Description**: Management of the list of items that are part of the menu and their recipe
 
-**Strategic classification**:
-* **Domain**: Generic
-* **Business Model**: Engagement creator
-* **Evolution**: Commodity  
-
 **Business Decision**:
 * The customer must see just the available items
 * An item is not available if the quantity of one of its ingredient in the warehouse is not enough
@@ -66,11 +60,6 @@ nav_order: 6
 
 ### Warehouse Context
 **Description**: Management of the list of ingredients stored in the warehouse of the cafe
-
-**Strategic classification**:
-* **Domain**: Generic
-* **Business Model**: Engagement creator
-* **Evolution**: Commodity  
 
 **Business Decision**:
 * Each ingredient have its own quantity
