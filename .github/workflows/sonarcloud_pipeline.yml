@@ -50,10 +50,10 @@ jobs:
           npx istanbul-merge --out coverage.json ${{ github.workspace }}/menu-service/coverage/coverage-final.json ${{ github.workspace }}/orders-service/coverage/coverage-final.json ${{ github.workspace }}/server/coverage/coverage-final.json
           npx istanbul report --dir coverage --include ${{ github.workspace }}/menu-service/final-coverage/coverage.json lcov
 
-      - name: SonarQube Scan
+      - name: Sonar Scan
         run: |
           chmod +x gradlew
-          ./gradlew build sonar
+          ./gradlew sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

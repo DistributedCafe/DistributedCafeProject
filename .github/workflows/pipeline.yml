@@ -21,26 +21,17 @@ jobs:
     name: test server
     uses: ./.github/workflows/server_test_pipeline.yml
 
-  ordersServiceTest:
+  menuAndOrdersServiceTest:
     needs:
       - serverTest
       - tsFormatCheck
-    name: test orders-service
-    uses: ./.github/workflows/orders_service_test_pipeline.yml
-
-  menuServiceTest:
-    needs:
-      - ordersServiceTest
-      - serverTest
-      - tsFormatCheck
-    name: test menu-service
-    uses: ./.github/workflows/menu_service_test_pipeline.yml
+    name: test menu-service and orders-service
+    uses: ./.github/workflows/menu_and_orders_service_test_pipeline.yml
 
   kotlinTest:
     needs:
-      - menuServiceTest
-      - ordersServiceTest
+      - menuAndOrdersServiceTest
       - serverTest
       - spotlessCheck
-    name: test kotlin with MongoDB
-    uses: ./.github/workflows/mongodb_pipeline.yml
+    name: test WarehouseService
+    uses: ./.github/workflows/warehouse_service_pipeline.yml
