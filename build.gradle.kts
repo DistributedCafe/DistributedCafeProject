@@ -1,8 +1,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
+
 plugins {
     alias(libs.plugins.sonarqube)
-    alias(libs.plugins.johnrengelman.shadow) apply false
+    alias(libs.plugins.gradleup.shadow) apply false
     alias(libs.plugins.kotlin)
     alias(libs.plugins.spotless)
     id("application")
@@ -31,7 +32,7 @@ allprojects {
 }
 
 subprojects {
-    apply(plugin = rootProject.libs.plugins.johnrengelman.shadow.get().pluginId)
+    apply(plugin = rootProject.libs.plugins.gradleup.shadow.get().pluginId)
     apply(plugin = "application")
 
     java {
