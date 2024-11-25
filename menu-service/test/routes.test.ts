@@ -4,7 +4,7 @@ import { server } from '../src/app'
 import { assertEquals } from 'typia'
 import { addItem, emptyMenuDb, getLastInsertedItem } from './utils/test-utils'
 import { Item } from '../src/domain/item'
-import { ApiResponse, EMPTY_MENU_DB, ERROR_ITEM_ALREADY_EXISTS, ERROR_ITEM_NOT_FOUND, ERROR_WRONG_PARAMETERS, OK } from './utils/ApiResponse'
+import { ApiResponse, EMPTY_MENU_DB, ERROR_ITEM_ALREADY_EXISTS, ERROR_ITEM_NOT_FOUND, ERROR_WRONG_PARAMETERS, OK } from './utils/api-response'
 import { friedEgg, omelette, pizza, scrambledEgg, updatedOmelette, wrongItem } from './utils/test-data'
 
 const http = axios.create({
