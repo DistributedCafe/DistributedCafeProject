@@ -24,7 +24,9 @@ In addiction, we used also conventional commits to enable semantic release based
 ### API documentation
 Since the app development required the web socket documentation and the server development required the API documentation, we used *Swagger* to publish both of the docs in order to have an easy way to consult them.
 
-The API documentation is available here: [Documentation](./documentation.md).
+The API documentation is available here: 
+* *REST API*: [DistributedCafe API documentation](https://app.swaggerhub.com/apis/ElisaAlbertini/DistributedCafe)
+* *WebSocket*: [DistributedCafe WebSocket documentation](https://app.swaggerhub.com/apis/ElisaAlbertini/WebSocketDistributedCafe)
 
 ## Build automation
 ### Multiproject structure
@@ -80,7 +82,18 @@ It's been used:
 
 In order to publish all the documentation at once, the task merge all of them together and deploy it in the *report* branch thank to a github action called *[github-pages-deploy-action](https://github.com/JamesIves/github-pages-deploy-action)*.
 
-The code documentation is available here: [Documentation](./documentation.md).
+The code documentation is available here:
+
+* **Back-end documentation**
+
+    * *WarehouseService*: [WarehouseService documentation](./dokka/index.html)
+    * *Menu Service*: [Menu Service documentation](./typedoc/menu-service/index.html)
+    * *Orders Service*: [Orders Service documentation](./typedoc/orders-service/index.html)
+    * *Server*: [Server documentation](./typedoc/server/index.html)
+* **Front-end documentation**
+    * *Manager application*: [Manager application documentation](./typedoc/manager-application/index.html)
+    * *Customer application*: [Customer application documentation](./typedoc/customer-application/index.html)
+    * *Employee application*: [Employee application documentation](./javadoc/index.html)
 
 #### Code formatting
 When a new pull request is created, it triggers tasks to check the code formatting. If any checker finds improperly formatted code, the action fails.
