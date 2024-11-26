@@ -4,7 +4,7 @@ layout: default
 nav_order: 5
 ---
 # Use Cases
-// TODO introduction
+These are the *use cases diagrams* made in order to have an easier way to collect the project requirements.
 
 ## Use case of the orders management
 ![Use case of the orders management](resources/images/use%20case%20customer-employee.png)  

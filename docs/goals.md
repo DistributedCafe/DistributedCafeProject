@@ -5,7 +5,8 @@ nav_order: 2
 ---
 
 # Goals
-// TODO introduction
+In order to define the main goals of the project we initially defined scenarios via impact map, and we also used that to define Gherkin features for testing warehouse repository.  
+After that we defined business and project goals in order to have a plan to follow.
 
 ## Scenarios
 
@@ -35,18 +36,6 @@ Feature: Interacting with the warehouse
 * Allowing the employees to manage them in real time from an application
 * Allowing the management of the menu in an easier way using a web app
 * Allowing the management of the inventory in an easier way using a web app
-
-## Project goal
-The goal of our project is to:
-* Front-end:
-  * implement a Java application (for the employees)
-  * implement an Angular application (for the customers)
-  * implement an Angular application (for the managers)
-* Back-end:
-  * implement microservices exposing REST API
-  * implement a WebSocket connection with a server that interacts behind the scenes with microservices
-
-We implement also containerization using Docker.
 
 ## Continuous Integration
 
