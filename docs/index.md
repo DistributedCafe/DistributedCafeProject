@@ -12,9 +12,9 @@ The goal of the project is to build a distributed system to manage different asp
 * Management of the menu
 * Management of the orders (both for the customers and the employees)
 
-## Project goal
+## Project goals
 
-The goal of our project is to:
+The goals of our project is to:
 * Front-end:
   * implement a Java application (for the employees)
   * implement an Angular application (for the customers)

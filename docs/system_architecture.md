@@ -7,7 +7,7 @@ nav_order: 9
 # System architecture
 
 ## Microservices architecture
-The microservice is structured in layers:
+The microservices are structured in layers:
 * *Domain*: implementation of the domain entities according to DDD
 * *Repository*: encapsulation of the access and management of the database according to DDD
 * *Application*: encapsulation of the services and the business logic according to DDD

@@ -10,18 +10,18 @@ nav_order: 7
 They are made by the customer using a web application and they are received by the employees using a PC software.
 This context contains everything related to the orders that allows to memorize them, manage their state and properly send the emails to the customer
 * *Menu (Generic domain)*: context concerning the management of the menu. 
-This context contains everything related to the menu from the choice of the menu items to what it’s displayed to the customer
+This context contains everything related to the menu from the choice of the menu items to what is displayed to the customer
 * *Warehouse (Generic domain)*: context concerning the management of the warehouse. 
 This context contains everything related to the warehouse from the choice of the ingredients to the restock
 
 ### Context Map
-We chose to use *customer-supplier pattern* in order to design our context map because it suits our scenario where the implementation of all the api it's up to us permitting more collaboration. Also, it's easy to determine which context provides functionalities (upstream) and which ones need them (downstream) so it helps to maximize the integration among their models. 
+We chose to use *customer-supplier pattern* in order to design our context map because it suits our scenario where the implementation of all the api is up to us, allowing more collaboration. Also, it's easy to determine which context provides functionalities (upstream) and which ones need them (downstream) so it helps to maximize the integration among their models. 
 
 <img src="resources/images/Context%20Map.png" width="400">
 
 ## Bounded Context Canvas
 ### Orders Context
-**Description**: Management of the customers orders comprehensive of the list of items the customer would like to purchase, the type of the order, the state of the order and the customer contact  
+**Description**: Management of the customers orders comprehensive of the list of items the customer would like to purchase, the type of the order, the state of the order and the customer email  
   
 **Business Decision**:
 * An order must contain at least one item to be sent
@@ -36,9 +36,9 @@ We chose to use *customer-supplier pattern* in order to design our context map b
 * Show all orders *(Employee application → a query)*  
 
 **Outbound Communications**:
-* Decrease ingredients quantity *(an command → Warehouse context)*
-* Ask available ingredients *(an query → Warehouse context)*
-* Ask items *(an query → Menu context)*
+* Decrease ingredients quantity *(a command → Warehouse context)*
+* Ask available ingredients *(a query → Warehouse context)*
+* Ask items *(a query → Menu context)*
 * New order created notification *(an event → Employee application)*
 
 ### Menu Context
@@ -56,13 +56,13 @@ We chose to use *customer-supplier pattern* in order to design our context map b
 * Show all available items *(Customer application → a command)*
 
 **Outbound Communications**:
-* Ask available ingredients *(an query → Warehouse context)*
+* Ask available ingredients *(a query → Warehouse context)*
 
 ### Warehouse Context
 **Description**: Management of the list of ingredients stored in the warehouse of the cafe
 
 **Business Decision**:
-* Each ingredient have its own quantity
+* Each ingredient has its own quantity
 * The quantity of an ingredient can’t be minor of zero
 
 **Inbound Communications**:
