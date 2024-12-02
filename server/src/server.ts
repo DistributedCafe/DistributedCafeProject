@@ -10,6 +10,7 @@ import { is } from 'typia'
  */
 const app = express()
 const server = createServer(app)
+let PORT = 3000
 
 const wss = new WebSocketServer({ server })
 const manager = "MANAGER"
@@ -41,4 +42,4 @@ wss.on('connection', (ws: WebSocket) => {
 	})
 })
 
-server.listen(3000, () => console.log('listening on port :3000'))
+server.listen(PORT, () => console.log(`listening on port :${PORT}`))
