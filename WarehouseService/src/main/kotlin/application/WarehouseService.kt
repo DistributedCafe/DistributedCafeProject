@@ -2,6 +2,7 @@ package application
 
 import UpdateQuantity
 import domain.Ingredient
+
 /**
  * Interface exposing application methods
  */
