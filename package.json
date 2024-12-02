@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "semantic-release-preconfigured-conventional-commits": "latest"
+  },
+  "engines": {
+    "node": ">=22.11"
+  }
+}
