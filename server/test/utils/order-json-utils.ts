@@ -8,7 +8,7 @@ import { OrderState } from "./test-utils"
  * @param order that has to be modified
  * @returns the modified order
  */
-export async function addIdandState(order: any) {
+export async function addIdAndState(order: any) {
 	let last = await getLastInsertedOrder()
 	let output = { ...order }
 	output["_id"] = last?._id.toString()

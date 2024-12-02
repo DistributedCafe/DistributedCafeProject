@@ -11,8 +11,8 @@ import { appConfig } from './app/app.config';
   `,
 	imports: [HomeComponent],
 })
-export class DemoComponent {
+export class AppComponent {
 	name = '';
 }
 
-bootstrapApplication(DemoComponent, appConfig);
+bootstrapApplication(AppComponent, appConfig);

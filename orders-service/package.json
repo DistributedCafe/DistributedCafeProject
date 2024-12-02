@@ -1,7 +1,6 @@
 {
   "name": "orders-service",
-  "version": "0.0.0",
-  "private": true,
+  "main": "./src/app.ts",
   "scripts": {
     "test": "jest --runInBand",
     "start": "ts-node ./src/app.ts",

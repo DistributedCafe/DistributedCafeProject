@@ -10,12 +10,13 @@ import { is } from 'typia'
  */
 const app = express()
 const server = createServer(app)
+let PORT = 3000
 
 const wss = new WebSocketServer({ server })
 const manager = "MANAGER"
 
 let managerWs = Array()
-let employyWs = Array()
+let employeeWs = Array()
 
 wss.on('connection', (ws: WebSocket) => {
 
@@ -25,9 +26,9 @@ wss.on('connection', (ws: WebSocket) => {
 		console.log('received: %s', data)
 		const parsedData = JSON.parse(data)
 		if (is<Log>(parsedData)) {
-			parsedData.message == manager ? managerWs.push(ws) : employyWs.push(ws)
+			parsedData.message == manager ? managerWs.push(ws) : employeeWs.push(ws)
 		} else {
-			checkService(parsedData, ws, managerWs, employyWs)
+			checkService(parsedData, ws, managerWs, employeeWs)
 		}
 	})
 
@@ -41,4 +42,4 @@ wss.on('connection', (ws: WebSocket) => {
 	})
 })
 
-server.listen(3000, () => console.log('listening on port :3000'))
+server.listen(PORT, () => console.log(`listening on port :${PORT}`))
