@@ -3,7 +3,7 @@ import { NEW_ORDER_CREATED, OrdersServiceMessages } from "../../src/utils/messag
 import { RequestMessage, ResponseMessage } from '../../src/schema/messages'
 import { ApiResponse } from "./api-response"
 import { DbCollections, DbNames, getCollection } from "./db-connection"
-import { addIdandState } from "./order-json-utils"
+import { addIdAndState } from "./order-json-utils"
 import { WebSocket, WebSocketServer } from 'ws'
 import { checkService } from "../../src/check-service"
 import express from "express"
@@ -122,7 +122,7 @@ export async function checkMessage(msg: ResponseMessage, expectedResponse: Respo
 	expect(msg.message).toBe(expectedResponse.message)
 	if (msg.code == StatusCodes.OK) {
 		if (request?.client_request == OrdersServiceMessages.CREATE_ORDER) {
-			expect(msg.data).toStrictEqual(await addIdandState(expectedData))
+			expect(msg.data).toStrictEqual(await addIdAndState(expectedData))
 			//check ingredient db
 			let ingredients = {} as IArray
 			request.input.items.forEach(async (i: any) => {
@@ -225,7 +225,7 @@ export function createConnectionAndCallNewOrder(requestMessage: RequestMessage, 
 			} else {
 				connections.set(ws, msg)
 				if (connections.size == 3) {
-					const orederRes = JSON.parse(connections.get(wsArray[orderWsMsg])!)
+					const orderRes = JSON.parse(connections.get(wsArray[orderWsMsg])!)
 					const managerRes = JSON.parse(connections.get(wsArray[managerWsMsg])!)
 					const employeeRes = JSON.parse(connections.get(wsArray[employeeWsMsg])!)
 
@@ -234,8 +234,8 @@ export function createConnectionAndCallNewOrder(requestMessage: RequestMessage, 
 					expect(wsArray[employeeWsMsg] == ws).toBeFalsy
 
 					// server
-					expectedResponse.data = await addIdandState(expectedResponse.data)
-					checkMessage(orederRes, expectedResponse, requestMessage).then(() => {
+					expectedResponse.data = await addIdAndState(expectedResponse.data)
+					checkMessage(orderRes, expectedResponse, requestMessage).then(() => {
 						expect(employeeRes.message).toBe(NEW_ORDER_CREATED)
 						expect(managerRes.message).toBe("NEW_MISSING_INGREDIENTS")
 						expect(managerRes.data).toStrictEqual([egg])

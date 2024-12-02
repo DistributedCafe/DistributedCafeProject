@@ -31,7 +31,7 @@ export async function createOrder(customerEmail: string, price: number, type: Or
 }
 
 /**
- * It returs a Promise with the repository response and all the orders in the repository
+ * It returns a Promise with the repository response and all the orders in the repository
  * @returns OrdersMessage.OK if there are orders, OrdersMessage.EMPTY_ORDERS_DB otherwise
  */
 export async function getAllOrders(): Promise<RepositoryResponse<Order[]>> {
@@ -53,7 +53,7 @@ export async function getAllOrders(): Promise<RepositoryResponse<Order[]>> {
  * @param orderId 
  * @returns a Promise with the RepositoryResponse. If the provided id is not valid or does not exist in the database, 
  * the message is ORDER_ID_NOT_FOUND and the data is undefined. 
- * Otherwsise, the message is OK and the data is the order
+ * Otherwise, the message is OK and the data is the order
  */
 export async function findOrderById(orderId: string): Promise<RepositoryResponse<Order>> {
 	if (!ObjectId.isValid(orderId)) {
@@ -78,7 +78,7 @@ export async function findOrderById(orderId: string): Promise<RepositoryResponse
  * @param newState 
  * @returns a Promise with the RepositoryResponse. If the provided id is not valid or the update is not successful, 
  * the message is ORDER_ID_NOT_FOUND and the data is undefined. 
- * Otherwsise, the message is OK and the data is the updated order.
+ * Otherwise, the message is OK and the data is the updated order.
  */
 export async function updateOrder(orderId: string, newState: OrderState): Promise<RepositoryResponse<Order>> {
 	if (!ObjectId.isValid(orderId)) {

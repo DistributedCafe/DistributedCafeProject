@@ -14,7 +14,7 @@ export async function emptyOrders() {
 }
 
 /**
- * Utily function to 
+ * Utility function to 
  * @returns some samples items
  */
 export function getTestItems() {
@@ -25,7 +25,7 @@ export function getTestItems() {
 }
 
 /**
-* Utily function to 
+* Utility function to 
 * @returns some samples orders
 */
 export function getTestOrders() {
@@ -45,7 +45,7 @@ export function getTestOrders() {
 }
 
 /**
- * Utily function to fill the database with the sample orders
+ * Utility function to fill the database with the sample orders
  */
 export async function fillOrders() {
 	let collection = await getOrdersCollection()

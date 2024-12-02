@@ -21,7 +21,7 @@ export function toInsertOrder(customerEmail: string, price: number, type: OrderT
 }
 
 /**
- * Converts a MongoOrder to an Order trasforming the Mongo id into a string
+ * Converts a MongoOrder to an Order transforming the Mongo id into a string
  * @param id 
  * @param order 
  * @returns the converted Order

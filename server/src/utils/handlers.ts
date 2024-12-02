@@ -119,7 +119,7 @@ function sendToAllWs(WsArray: WebSocket[], msg: string) {
 }
 
 /**
- * This function handles the creation of a new order. If the new order is sucessfully created, 
+ * This function handles the creation of a new order. If the new order is successfully created, 
  * it removes the ingredients necessary to complete the order from the warehouse.
  * If one or more ingredients become missing, it sends to all the manager frontends logged a notification.
  * At the end, it sends a message back with the response of the API.

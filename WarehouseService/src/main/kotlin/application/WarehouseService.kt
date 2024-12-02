@@ -2,7 +2,9 @@ package application
 
 import UpdateQuantity
 import domain.Ingredient
-
+/**
+ * Interface exposing application methods
+ */
 interface WarehouseService {
     /**
      * @return a list of all the ingredients in the warehouse and WarehouseMessage.OK

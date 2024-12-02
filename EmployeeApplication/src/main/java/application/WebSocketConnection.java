@@ -15,7 +15,7 @@ import java.util.Objects;
  * This class is in charge of connecting to the server and handling the GUI update when it receives
  * messages from the server. When start is called it connects the websocket to the server and
  * initializes the message handler. The handler updates the GUI when order data arrives, if the
- * server is not able to provide the data the websocket resends the request. If the connection is
+ * server is not able to provide the data the websocket sends the request again. If the connection is
  * successful it asks all the orders from the server. If the connection is not successful it keeps
  * trying to reconnect.
  */

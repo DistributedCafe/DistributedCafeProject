@@ -55,7 +55,7 @@ export async function getItemByName(name: string): Promise<RepositoryResponse<It
 }
 
 /**
- * It returs a Promise with the repository response and all the items in the repository
+ * It returns a Promise with the repository response and all the items in the repository
  * @returns MenuMessage.OK if there are items, MenuMessage.EMPTY_ORDERS_DB otherwise
  */
 export async function getAllItems(): Promise<RepositoryResponse<Item[]>> {
@@ -70,7 +70,7 @@ export async function getAllItems(): Promise<RepositoryResponse<Item[]>> {
 }
 
 /**
- * It returs a Promise with the repository response and all the updated item
+ * It returns a Promise with the repository response and all the updated item
  * @param name 
  * @param item 
  * @returns MenuMessage.OK if the item was successfully updated, MenuMessage.ERROR_ITEM_NOT_FOUND otherwise
@@ -91,7 +91,7 @@ export async function updateItem(name: string, item: any): Promise<RepositoryRes
 }
 
 /**
- * It returs a Promise with the RepositoryResponse and all the available items in the repository.
+ * It returns a Promise with the RepositoryResponse and all the available items in the repository.
  * An item is available when its recipe ingredients are contained in the available ingredient list
  * @param availableIngredients 
  * @returns MenuMessage.OK if there are available items, MenuMessage.EMPTY_MENU_DB otherwise
