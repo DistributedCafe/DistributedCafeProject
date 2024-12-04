@@ -29,7 +29,6 @@ jobs:
 
   serverTest:
     needs:
-      - tsFormatCheck
       - kotlinTest
       - menuAndOrdersServiceTest
     name: test server

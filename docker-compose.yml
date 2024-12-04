@@ -11,6 +11,10 @@ services:
  
   server:
     image: distributedcafe/server
+    depends_on:
+      - warehouse-service
+      - orders-service
+      - menu-service
     ports:
       - "3000:3000"
     networks:
@@ -50,11 +54,7 @@ services:
     ports:
       - "8095:80"
     depends_on:
-      - mongo
       - server
-      - menu-service
-      - orders-service
-      - warehouse-service
     networks:
       - DistributedCafeNetwork
  
@@ -63,11 +63,7 @@ services:
     ports:
       - "8100:80"
     depends_on:
-      - mongo
       - server
-      - menu-service
-      - orders-service
-      - warehouse-service
     networks:
       - DistributedCafeNetwork
  
