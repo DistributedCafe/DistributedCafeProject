@@ -29,6 +29,9 @@ The API documentation is available here:
 * *REST API*: [DistributedCafe API documentation](https://app.swaggerhub.com/apis/ElisaAlbertini/DistributedCafe)
 * *WebSocket*: [DistributedCafe WebSocket documentation](https://app.swaggerhub.com/apis/ElisaAlbertini/WebSocketDistributedCafe)
 
+### Pull request template
+We decided to add a template for pull requests as a guideline. It is useful for the team and other developers, since our project is distributed under a MIT license.
+
 ## Build automation
 ### Multiproject structure
 The project contains subprojects running on different platforms (JVM and Node.js). All the JVM subprojects are managed with *Gradle* while the others are managed with *npm*.
@@ -63,19 +66,17 @@ The coverage must be &ge; 80% and the code duplication must be &le; 3% to pass s
 ### Coverage
 To generate the coverage report for each back-end component we used *JaCoCo* and *Jest*.
 
-## CI
+## CI - github actions 
 
-### github action
-
-#### <ins>**Reusable actions<ins>**
+### Reusable actions
 We decided to create two reusable actions to avoid repetition. One is meant to start the tests of *server* and one is meant to initialize the actions when a component needs to be tested.
 
-#### <ins>**Testing<ins>**
+### Testing
 Each backend component has a workflow that runs their Unit tests and Jest tests. It uses a github action called *[mongodb-github-action](https://github.com/supercharge/mongodb-github-action)* to create the db.    
 In order to test the server we need to start all the microservices and the server.
 These workflows are used inside the main pipeline for pull requests.
 
-#### <ins>**Documentation<ins>**
+### Documentation
 There is a specific workflow that generate and deploy documentation each time a push is made on the *develop* and *main* branch.  
 It's been used:
 * *Typedoc* to generate documentation for TypeScript
@@ -97,24 +98,28 @@ The code documentation is available here:
     * *Customer application*: [Customer application documentation](./typedoc/customer-application/index.html)
     * *Employee application*: [Employee application documentation](./javadoc/index.html)
 
-#### <ins>**Code formatting<ins>**
+### Code formatting
 When a new pull request is created, it triggers tasks to check the code formatting. If any checker finds improperly formatted code, the action fails.
 
-#### <ins>**SonarCloud<ins>**
+### SonarCloud
 SonarCloud analysis is triggered when a push or a pull request is made on *develop* or *main* branch.  
 First, it generates the coverage report for all the back-end components. Then, in order to generate an unified *lcov* report, it merges the *Jest* reports, thanks to *[nyc](https://www.npmjs.com/package/nyc)* npm package.  
 Additionally, SonarCloud provides a *github app* which enables an inline report of the pull request analysis.
 
-#### <ins>**Pull request template<ins>**
-We decided to add a template for pull requests as a guideline. It is useful for the team and other developers, since our project is distributed under a MIT license.
+### Semantic release
+When a push is made on the *main* branch, it triggers the semantic release pipeline. It sets up the environment and creates the WarehouseService and EmployeeApplication jars, the assets. Lastly, it does the release calling the npm package *semantic-release* given the GH_TOKEN that allows to push on a protected branch.  
+We preconfigured the semantic release thanks to the npm plugin *[semantic-release-preconfigured-conventional-commits](https://statics.teams.cdn.office.net/evergreen-assets/safelinks/1/atp-safelinks.html)* that requires a configuration file (*release.config.js*) in which we specified the assets and the plugins.
 
-#### <ins>**Repository secrets<ins>**
-We stored the sensible information required by the workflow organization thanks to *Repository secrets*.  
+### Repository secrets
+We stored the sensible information required by the github actions thanks to *Repository secrets*.  
 In particular we need:
-* SONAR_TOKEN to enable SonarCloud analysis
+* *SONAR_TOKEN* to enable SonarCloud analysis
+* *DOCKER_USERNAME & DOCKER_PASSWORD* to enable the publication of the docker images
+* *GH_TOKEN* to enable semantic release on protected branches
 
 ## CD
-//TODO 
+### Docker Hub
+When a new version is released it triggers the docker pipeline that publishes the docker images of all the components of the system, except from EmployeeApplication, on a *Docker Hub* repository. In this way the latest version can always be pulled.
 
 ### Github pages
 Our GitHub Pages site is currently being built from the */docs* folder in the *report* branch. It publishes the documentation of our project, composed by the code documentation and the project report.
