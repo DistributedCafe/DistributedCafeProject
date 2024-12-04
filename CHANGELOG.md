@@ -1,3 +1,18 @@
+## [1.0.1](https://github.com/DistributedCafe/DistributedCafeProject/compare/1.0.0...1.0.1) (2024-12-04)
+
+### Documentation
+
+* add report link and project execution info in readme ([599a263](https://github.com/DistributedCafe/DistributedCafeProject/commit/599a2639c32da102a1a3b51dc7762e458fca284e))
+
+### Build and continuous integration
+
+* remove concurrency and conditional step in release pipeline ([8cbc7f8](https://github.com/DistributedCafe/DistributedCafeProject/commit/8cbc7f89d1d826533611209500b67388e0ca9709))
+* remove useless needs dependency in pipeline ([d8a73e9](https://github.com/DistributedCafe/DistributedCafeProject/commit/d8a73e9bbb9311075b3491f799556aa7a6cf7507))
+
+### Refactoring
+
+* fix containers dependencies ([57df826](https://github.com/DistributedCafe/DistributedCafeProject/commit/57df826b472cccfc86aaaf95708fcc0bb0e92df1))
+
 ## 1.0.0 (2024-12-02)
 
 ### Features
