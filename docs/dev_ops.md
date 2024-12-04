@@ -12,7 +12,7 @@ We chose to use git, and github in particular, to version our project.
 * **Branch "develop"**: branch that stores the code during the development of a new version of the project. Each new feature, fix, refactoring process etc. is developed in its own branch made from develop.
 * **Branch "report"**: branch where all the documentation is stored. It contains the report published in the github pages and also the documentation of the code automatically generated.
 
-#### <ins>**Branch protection rules<ins>**
+### Branch protection rules
 We decided to use branch protections rules in *main* and *develop* branches.  
 In order to push there is required to make a *pull request* from another branch. It is necessary that all the commits made in the new branch are signed and that one of the owners of the repository makes a review of the new code. 
 Thanks to github actions, we also implemented *status checks* that are required to pass before merging.
@@ -72,18 +72,18 @@ To generate the coverage report for each back-end component we used *JaCoCo* and
 We decided to create two reusable actions to avoid repetition. One is meant to start the tests of *server* and one is meant to initialize the actions when a component needs to be tested.
 
 ### Testing
-Each backend component has a workflow that runs their Unit tests and Jest tests. It uses a github action called *[mongodb-github-action](https://github.com/supercharge/mongodb-github-action)* to create the db.    
+Each backend component has a workflow that runs their Unit tests and Jest tests. It uses a github action called *[mongodb-github-action](https://github.com/supercharge/mongodb-github-action)* to create the db. They are used inside the main pipeline for pull requests to check if the tests are successful.  
+
 In order to test the server we need to start all the microservices and the server.
-These workflows are used inside the main pipeline for pull requests.
 
 ### Documentation
-There is a specific workflow that generate and deploy documentation each time a push is made on the *develop* and *main* branch.  
+There is a specific workflow that generates and deploys documentation each time a push is made on the *develop* and *main* branch.  
 It's been used:
 * *Typedoc* to generate documentation for TypeScript
 * *Dokka* to generate documentation for Kotlin
 * *Javadoc* to generate documentation for Java  
 
-In order to publish all the documentation at once, the task merge all of them together and deploy it in the *report* branch thank to a github action called *[github-pages-deploy-action](https://github.com/JamesIves/github-pages-deploy-action)*.
+In order to publish all the documentation at once, the task merges all of them together and deploys it in the *report* branch thank to a github action called *[github-pages-deploy-action](https://github.com/JamesIves/github-pages-deploy-action)*.
 
 The code documentation is available here:
 
@@ -103,23 +103,25 @@ When a new pull request is created, it triggers tasks to check the code formatti
 
 ### SonarCloud
 SonarCloud analysis is triggered when a push or a pull request is made on *develop* or *main* branch.  
-First, it generates the coverage report for all the back-end components. Then, in order to generate an unified *lcov* report, it merges the *Jest* reports, thanks to *[nyc](https://www.npmjs.com/package/nyc)* npm package.  
+First, it generates the coverage report for all the back-end components. Then, in order to generate an unified *lcov* file, it merges the *Jest* reports, thanks to *[nyc](https://www.npmjs.com/package/nyc)* npm package.  
 Additionally, SonarCloud provides a *github app* which enables an inline report of the pull request analysis.
 
 ### Semantic release
+We decided to rely on semantic release to generate version tags based on the information provided by conventional commit messages.  
 When a push is made on the *main* branch, it triggers the semantic release pipeline. It sets up the environment and creates the WarehouseService and EmployeeApplication jars, the assets. Lastly, it does the release calling the npm package *semantic-release* given the GH_TOKEN that allows to push on a protected branch.  
 We preconfigured the semantic release thanks to the npm plugin *[semantic-release-preconfigured-conventional-commits](https://statics.teams.cdn.office.net/evergreen-assets/safelinks/1/atp-safelinks.html)* that requires a configuration file (*release.config.js*) in which we specified the assets and the plugins.
 
 ### Repository secrets
 We stored the sensible information required by the github actions thanks to *Repository secrets*.  
-In particular we need:
+In particular we create the following secrets:
 * *SONAR_TOKEN* to enable SonarCloud analysis
 * *DOCKER_USERNAME & DOCKER_PASSWORD* to enable the publication of the docker images
 * *GH_TOKEN* to enable semantic release on protected branches
 
 ## CD
 ### Docker Hub
-When a new version is released it triggers the docker pipeline that publishes the docker images of all the components of the system, except from EmployeeApplication, on a *Docker Hub* repository. In this way the latest version can always be pulled.
+When a new version is released it triggers the docker pipeline. It publishes, on a *Docker Hub* repository, the docker images of all the components of the system, except EmployeeApplication.  
+Thanks to this operation it's always possible to pull the latest version of the images.
 
 ### Github pages
-Our GitHub Pages site is currently being built from the */docs* folder in the *report* branch. It publishes the documentation of our project, composed by the code documentation and the project report.
+Our GitHub Pages site is currently built from the */docs* folder in the *report* branch. It publishes the documentation of our project, composed by the code documentation and the project report.

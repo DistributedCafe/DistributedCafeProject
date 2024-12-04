@@ -41,8 +41,8 @@ Feature: Interacting with the warehouse
 
 * Usage of CI processes to:
   * Back-end self-assessment policy and quality assurance: 
-    * In order to keep *development* and *main* branches clean, it’s required to use pull requests. Each of them starts the CI. It checks if the code is formatted, if all tests pass and if the coverage is high enough
-    * After every push on *development* and *main* branches CI releases the new code and the relative information on SonarCloud. The developers have to follow the hints given by tool
+    * In order to keep *develop* and *main* branches clean, it’s required to use pull requests. Each of them starts the CI. It checks if the code is formatted, if all tests pass and if the coverage is high enough
+    * After every push on *develop* and *main* branches CI releases the new code and the relative information on SonarCloud. The developers have to follow the hints given by tool
     * Each commit is signed and it must follow the “conventional commits pattern”
   * After every push in the *main* branch, CI will start the *semantic release* 
   * Generate and deliver the code documentation automatically (using adequate plugins)

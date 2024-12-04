@@ -27,7 +27,7 @@ In the docker compose we have the following services:
 * server
 * menu-service
 * orders-service
-* WarehouseService
+* warehouse-service
 * manager-application
 * customer-application 
 
@@ -35,12 +35,13 @@ Each service has its local port mapped and it connects to a *bridge* network cal
 Also, some of them have a list of the services they depend on and one or more volumes, depending on the starting image they use.  
 
 The services dependencies are the following:
-* *mongo*: it has no dependencies since it's the first image that have to be built
-* *server*: it depends on WarehouseService container, menu-service container and order-service container
+* *mongo*: it has no dependencies since it's the first image that has to be built
+* *server*: it depends on warehouse-service container, menu-service container and order-service container
 * *warehouse-service, menu-service and order-service*: they depend on mongo container
 * *manager-application and customer-application*: they depends on server container
 
 We already built and published their images on Docker Hub, so the docker compose have just to pull them.
 
 ## Script
-We provide a script called *start.sh* that generates the shadowJar of *EmployeeApplication* and starts it. It also run the docker compose.
+We provide a script called *start.sh* that generates the shadowJar of *EmployeeApplication* and starts it. It also runs the docker compose.  
+It is required to have Docker Desktop and Java 17.

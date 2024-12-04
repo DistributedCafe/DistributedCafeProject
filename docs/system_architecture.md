@@ -12,7 +12,7 @@ The microservices are structured in layers:
 * *Repository*: encapsulation of the access and management of the database according to DDD
 * *Application*: encapsulation of the services and the business logic according to DDD
 * *Handler*: management of http requests
-* *API*: exposed by *routes* in menu-service and orders-service and exposed by *server* in WarehouseService
+* *API*: exposed by *routes* in menu-service and orders-service, exposed by *server* in WarehouseService
 
 ## Testing
 Concerning **WarehouseService**, the structure of the test follows the structure of the microservice. We have JUnit tests for *Repository*, *Application* and *Server* and we have also *Cucumber* tests for the repository layer.  
@@ -24,4 +24,4 @@ Server is the component that maps the messages arriving from the front-end appli
 
 For many APIs, once one of them has been called, the server simply waits for the response and sends it back.
 
-In some cases, its job is to manage the interactions between the microservices for those functionalities that are implemented relying on more than one API calls. The server decides the order of the requests, waits for their responses and, based on the results, manages the next step dealing with errors if needed.
+In some cases, the server job is to manage the interactions between the microservices for those functionalities that are implemented relying on more than one API calls. It decides the order of the requests, waits for their responses and, based on the results, manages the next step dealing with errors if needed.

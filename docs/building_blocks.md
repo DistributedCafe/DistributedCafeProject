@@ -1,7 +1,7 @@
 ---
 title: Building blocks
 layout: default
-nav_order: 6
+nav_order: 7
 ---
 # Building blocks
 
@@ -46,7 +46,7 @@ nav_order: 6
 |PUT_ORDER|It collects the order that has to be modified and updates it. After that it returns all the orders. When a *take away* order or a *home delivery* order becomes ready it sends an email|updated information of the order|all the orders|
 |GET_ALL_ORDERS|It gets all the orders||all the orders|
 |CREATE_ITEM|It creates a new item|new item|new item|
-|GET_ITEMS|It gets all the item||all the items|
+|GET_ITEMS|It gets all the items||all the items|
 |UPDATE_ITEM|It updates an item|updated information of the item|updated item|
 |GET_AVAILABLE_ITEMS|It gets all the items made by ingredients that are available in the warehouse|available ingredients names|all the available items|
 |GET_ITEM_BY_NAME|It gets an item given its name|name of the item|collected item|
