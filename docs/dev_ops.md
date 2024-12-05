@@ -106,6 +106,9 @@ SonarCloud analysis is triggered when a push or a pull request is made on *devel
 First, it generates the coverage report for all the back-end components. Then, in order to generate an unified *lcov* file, it merges the *Jest* reports, thanks to *[nyc](https://www.npmjs.com/package/nyc)* npm package.  
 Additionally, SonarCloud provides a *github app* which enables an inline report of the pull request analysis.
 
+The SonarCloud dashboard is available here: *[SonarCloud](https://sonarcloud.io/project/overview?id=DistributedCafe_DistributedCafeProject)*
+
+
 ### Semantic release
 We decided to rely on semantic release to generate version tags based on the information provided by conventional commit messages.  
 When a push is made on the *main* branch, it triggers the semantic release pipeline. It sets up the environment and creates the WarehouseService and EmployeeApplication jars, the assets. Lastly, it does the release calling the npm package *semantic-release* given the GH_TOKEN that allows to push on a protected branch.  
