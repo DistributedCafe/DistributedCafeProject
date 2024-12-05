@@ -26,8 +26,8 @@ In addiction, we used also conventional commits to enable semantic release based
 We used *Swagger* to publish both the web socket documentation, required for the app development, and the API documentation, required for server development. This way we can easily consult them.
 
 The API documentation is available here: 
-* *REST API*: [DistributedCafe API documentation](https://app.swaggerhub.com/apis/ElisaAlbertini/DistributedCafe)
-* *WebSocket*: [DistributedCafe WebSocket documentation](https://app.swaggerhub.com/apis/ElisaAlbertini/WebSocketDistributedCafe)
+* *REST API*: [DistributedCafe API documentation](https://app.swaggerhub.com/apis/ElisaAlbertini/DistributedCafe/1.0.1)
+* *WebSocket*: [DistributedCafe WebSocket documentation](https://app.swaggerhub.com/apis/ElisaAlbertini/WebSocketDistributedCafe/1.0.1)
 
 ### Pull request template
 We decided to add a template for pull requests as a guideline. It is useful for the team and other developers, since our project is distributed under a MIT license.
