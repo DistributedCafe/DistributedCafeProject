@@ -109,7 +109,7 @@ Additionally, SonarCloud provides a *github app* which enables an inline report 
 ### Semantic release
 We decided to rely on semantic release to generate version tags based on the information provided by conventional commit messages.  
 When a push is made on the *main* branch, it triggers the semantic release pipeline. It sets up the environment and creates the WarehouseService and EmployeeApplication jars, the assets. Lastly, it does the release calling the npm package *semantic-release* given the GH_TOKEN that allows to push on a protected branch.  
-We preconfigured the semantic release thanks to the npm plugin *[semantic-release-preconfigured-conventional-commits](https://statics.teams.cdn.office.net/evergreen-assets/safelinks/1/atp-safelinks.html)* that requires a configuration file (*release.config.js*) in which we specified the assets and the plugins.
+We preconfigured the semantic release thanks to the npm plugin *[semantic-release-preconfigured-conventional-commits](https://www.npmjs.com/package/semantic-release-conventional-commits)* that requires a configuration file (*release.config.js*) in which we specified the assets and the plugins.
 
 ### Repository secrets
 We stored the sensible information required by the github actions thanks to *Repository secrets*.  
