@@ -48,7 +48,7 @@ Feature: Interacting with the warehouse
   * Generate and deliver the code documentation automatically (using adequate plugins)
 
 ## CD Goal
-* Provide a way to build and publish automatically the images on Docker Hub or the executable Jars when there is a new release of the project. 
+Provide a way to build and publish automatically the images on Docker Hub or the executable Jars when there is a new release of the project. 
 
 
 
