@@ -89,14 +89,14 @@ The code documentation is available here:
 
 * **Back-end documentation**
 
-    * *WarehouseService*: [WarehouseService documentation](./dokka/index.html)
-    * *Menu Service*: [Menu Service documentation](./typedoc/menu-service/index.html)
-    * *Orders Service*: [Orders Service documentation](./typedoc/orders-service/index.html)
-    * *Server*: [Server documentation](./typedoc/server/index.html)
+    * *WarehouseService*: [WarehouseService documentation](./dokka/modules.html)
+    * *Menu Service*: [Menu Service documentation](./typedoc/menu-service/modules.html)
+    * *Orders Service*: [Orders Service documentation](./typedoc/orders-service/modules.html)
+    * *Server*: [Server documentation](./typedoc/server/modules.html)
 * **Front-end documentation**
-    * *Manager application*: [Manager application documentation](./typedoc/manager-application/index.html)
-    * *Customer application*: [Customer application documentation](./typedoc/customer-application/index.html)
-    * *Employee application*: [Employee application documentation](./javadoc/index.html)
+    * *Manager application*: [Manager application documentation](./typedoc/manager-application/modules.html)
+    * *Customer application*: [Customer application documentation](./typedoc/customer-application/modules.html)
+    * *Employee application*: [Employee application documentation](./javadoc/modules.html)
 
 ### Code formatting
 When a new pull request is created, it triggers tasks to check the code formatting. If any checker finds improperly formatted code, the action fails.
